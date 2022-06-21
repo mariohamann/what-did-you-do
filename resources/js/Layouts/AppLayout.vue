@@ -49,9 +49,23 @@ const logout = () => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+
                                 <JetNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </JetNavLink>
+                                <JetNavLink :href="route('me')" :active="route().current('me')">
+                                    Me
+                                </JetNavLink>
+                                <JetNavLink :href="route('connections')" :active="route().current('connections')">
+                                    Connections
+                                </JetNavLink>
+                                <JetNavLink :href="route('others')" :active="route().current('others')">
+                                    Others
+                                </JetNavLink>
+
+                                <!-- <JetNavLink :href="route('lists')" :active="route().current('lists')">
+                                    Me
+                                </JetNavLink> -->
                             </div>
                         </div>
 

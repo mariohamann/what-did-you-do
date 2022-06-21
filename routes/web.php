@@ -29,7 +29,24 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+
+    Route::get('/me', function () {
+        return Inertia::render('List');
+    })->name('me');
+
+
+    Route::get('/connections', function () {
+        return Inertia::render('Connections');
+    })->name('connections');
+
+
+    Route::get('/others', function () {
+        return Inertia::render('Others');
+    })->name('others');
+
 });
