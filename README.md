@@ -1,7 +1,7 @@
 ## what-did-you-do
 
 ### Prerequisites
-You need PHP, Composer, Node.js and pnpm Follow those guideline https://laravel.com/docs/9.x/valet#installation UNTIL `composer global require laravel/valet` as we don't need Valet. From that on PHP and Composer should work.
+You need PHP, Composer, Node.js and pnpm Follow those guideline https://laravel.com/docs/9.x/valet#installation. From that on PHP and Composer should work.
 
 ### Installation
 - `cd` in the repo
@@ -10,10 +10,11 @@ You need PHP, Composer, Node.js and pnpm Follow those guideline https://laravel.
 - duplicate `.env.example` and rename it to `.env`
 - `php artisan migrate:fresh` (to setup the database)
 - `pnpm i` (installs all node packages – make sure to have pnpm installed)
+- Link your local repo to valet with `valet link`. From that on the website should be available from `what-did-you-do.test`
+- Updaate your `.env`: `APP_URL=http://what-did-you-do.test/`
 
 ### Run it
-- `pnpm run hot` (enables HMR for Vue)
-- In other terminal: `php artisan serve`
+- `pnpm run dev`
 
 
 ------------
