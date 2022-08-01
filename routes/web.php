@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Doing;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,17 +38,18 @@ Route::middleware([
 
 
     Route::get('/me', function () {
-        return Inertia::render('List');
+        return Inertia::render('List', [
+            'title' => 'My Doings',
+            'doings' => Doing::all()->filter(function ($doing) {
+            return $doing->user_id == auth()->user()->id;
+        })]);
     })->name('me');
 
-
-    Route::get('/connections', function () {
-        return Inertia::render('Connections');
-    })->name('connections');
-
-
     Route::get('/others', function () {
-        return Inertia::render('Others');
+        return Inertia::render('List', [
+            'title' => 'Doings of others',
+            'doings' => Doing::all()->filter(function ($doing) {
+                return $doing->user_id !== auth()->user()->id;
+            })]);
     })->name('others');
-
 });
