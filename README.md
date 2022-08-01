@@ -8,13 +8,16 @@ You need PHP, Composer, Node.js and pnpm Follow those guideline https://laravel.
 - `php composer install` (installs all PHP packages)
 - `touch database/database.sqlite` (creates an empty local database)
 - duplicate `.env.example` and rename it to `.env`
-- `php artisan migrate:fresh` (to setup the database)
+- `php artisan migrate:fresh --seed` (to setup the database)
 - `pnpm i` (installs all node packages – make sure to have pnpm installed)
 - Link your local repo to valet with `valet link`. From that on the website should be available from `what-did-you-do.test`
-- Updaate your `.env`: `APP_URL=http://what-did-you-do.test/`
+- Update your `.env`: `APP_URL=http://what-did-you-do.test/`
+- run it with `pnpm run dev`
+- Test users are already setup: `test1@example.com` and `test2@example.com` with password `!password`
 
-### Run it
-- `pnpm run dev`
+### After updates
+- run `pnpm i` and `composer install`
+- run `php artisan migrate` to update the database or `php artisan migrate:refresh --seed` to reset your local database to the default one (the latter is often preferrable)
 
 
 ------------
