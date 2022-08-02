@@ -78,6 +78,9 @@ defineProps({ doings: Object });
                                             <Doing
                                                 v-for="doing in doings.data"
                                                 :doing="doing"
+                                                :categories="
+                                                    $page.props.categories
+                                                "
                                                 v-bind:key="doing.id"
                                             />
                                         </tbody>

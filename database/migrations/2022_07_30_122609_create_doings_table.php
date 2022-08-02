@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->text('content');
             $table->foreignId('user_id');
+            $table->foreignId('category_id');
             $table->foreignId('doing_id')->nullable();
             $table->timestamps();
         });

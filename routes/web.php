@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Doing;
+use App\Models\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ Route::middleware([
         "/me",
         fn() => Inertia::render("List", [
             "title" => "My Doings",
+            "categories" => Category::all(),
             "doings" => Doing::where(
                 "user_id",
                 "=",
@@ -51,6 +53,7 @@ Route::middleware([
         "/others",
         fn() => Inertia::render("List", [
             "title" => "Doings of others",
+            "categories" => Category::all(),
             "doings" => Doing::where(
                 "user_id",
                 "<>",

@@ -19,6 +19,7 @@ class DoingFactory extends Factory
         return [
             'content' => $this->faker->paragraph(2),
             'user_id' => random_int(1, 12),
+            'category_id' => random_int(1, 5),
         ];
     }
 }
