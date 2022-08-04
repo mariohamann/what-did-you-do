@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Doing from "@/Components/Doing.vue";
+import CreateDoing from "@/Components/CreateDoing.vue";
 import Pagination from "../Components/Pagination.vue";
 
-defineProps({ doings: Object });
+defineProps({ doings: Object, me: Boolean });
 </script>
 
 <template>
@@ -16,18 +17,10 @@ defineProps({ doings: Object });
 
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
 
+        <CreateDoing v-if="me" />
+
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="mb-4 justify-end sm:flex sm:items-center">
-                    <div class="mt-4 sm:mt-0 sm:flex-none">
-                        <button
-                            type="button"
-                            class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-                        >
-                            Add item
-                        </button>
-                    </div>
-                </div>
                 <div class="overflow-hidden bg-white shadow-xl sm:rounded-lg">
                     <div class="flex flex-col">
                         <div
@@ -60,15 +53,7 @@ defineProps({ doings: Object });
                                                     scope="col"
                                                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                                                 >
-                                                    Public
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    class="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                                                >
-                                                    <span class="sr-only"
-                                                        >Edit</span
-                                                    >
+                                                    User
                                                 </th>
                                             </tr>
                                         </thead>
@@ -76,11 +61,8 @@ defineProps({ doings: Object });
                                             class="divide-y divide-gray-200 bg-white"
                                         >
                                             <Doing
-                                                v-for="doing in doings.data"
+                                                v-for="doing in (doings.data as Doing[])"
                                                 :doing="doing"
-                                                :categories="
-                                                    $page.props.categories
-                                                "
                                                 v-bind:key="doing.id"
                                             />
                                         </tbody>

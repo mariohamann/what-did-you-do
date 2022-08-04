@@ -30,15 +30,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be visible for serialization.
      *
      * @var array
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
+    protected $visible = [
+        'name', 'id'
     ];
 
     /**

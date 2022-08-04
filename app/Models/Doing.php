@@ -10,12 +10,16 @@ class Doing extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'category_id', 'content']; //<---- Add this line
+
+    protected $visible = ['user', 'category_id', 'content'];
+
     /**
      * Get the owner of the doing.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function creator()
+    public function author()
     {
         return $this->belongsTo(\Laravel\Jetstream\Jetstream::userModel(), 'user_id');
     }

@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@babel/plugin-syntax-dynamic-import': ^7.8.3
   '@headlessui/vue': ^1.6.5
+  '@heroicons/vue': ^1.0.6
   '@inertiajs/inertia': ^0.11.0
   '@inertiajs/inertia-vue3': ^0.6.0
   '@inertiajs/progress': ^0.2.7
@@ -26,6 +27,7 @@ specifiers:
 dependencies:
   '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.18.5
   '@headlessui/vue': 1.6.5_vue@3.2.37
+  '@heroicons/vue': 1.0.6_vue@3.2.37
 
 devDependencies:
   '@inertiajs/inertia': 0.11.0
@@ -261,6 +263,14 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       vue: ^3.2.0
+    dependencies:
+      vue: 3.2.37
+    dev: false
+
+  /@heroicons/vue/1.0.6_vue@3.2.37:
+    resolution: {integrity: sha512-ng2YcCQrdoQWEFpw+ipFl2rZo8mZ56v0T5+MyfQQvNqfKChwgP6DMloZLW+rl17GEcHkE3H82UTAMKBKZr4+WA==}
+    peerDependencies:
+      vue: '>= 3'
     dependencies:
       vue: 3.2.37
     dev: false

@@ -1,14 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import Switch from "@/Components/Switch.vue";
+import { usePage } from "@inertiajs/inertia-vue3";
 const props = defineProps({
-    doing: Object,
-    categories: Object,
+    doing: {
+        type: Object as () => Doing,
+        required: true,
+    },
 });
 
-// TODO: This could be provided by backend, too. But for now, we'll just calculate it on the client.
-const category = props.categories.find(
-    (category) => category.id === props.doing.category_id
-);
+/*
+The category could be provided by the backend, too.
+For now, we'll just calculate it on the client to reduce load on the database.
+*/
+
+const calculateCategory = () => {
+    const categories = [...(usePage().props.value.categories as Category[])];
+    return categories.find(
+        (category) => category.id === props.doing.category_id
+    ) as Category;
+};
+
+const category = calculateCategory();
 </script>
 
 <template>
@@ -24,14 +36,7 @@ const category = props.categories.find(
             </span>
         </td>
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <Switch />
-        </td>
-        <td
-            class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
-        >
-            <a href="#" class="text-indigo-600 hover:text-indigo-900"
-                >Edit<span class="sr-only">, Lindsay Walton</span></a
-            >
+            {{ doing.user.name }}
         </td>
     </tr>
 </template>

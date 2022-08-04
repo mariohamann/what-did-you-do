@@ -27,6 +27,25 @@ Route::get(
     ])
 );
 
+function getDoings($me) {
+    return Inertia::render("List", [
+            "title" => $me ? "My Doings" : "Doings by others",
+            "me" => $me,
+            "categories" => Category::all(),
+            "doings" => Doing::where(
+                "user_id",
+                $me ? "=" : "<>",
+                auth()->user()->id
+            )
+            ->orderBy('id', 'desc')
+            ->paginate(24)
+            ->through(function ($doing) {
+                $doing->user = $doing->author;
+                return $doing;
+            })
+        ]);
+}
+
 Route::middleware([
     "auth:sanctum",
     config("jetstream.auth_session"),
@@ -38,27 +57,26 @@ Route::middleware([
 
     Route::get(
         "/me",
-        fn() => Inertia::render("List", [
-            "title" => "My Doings",
-            "categories" => Category::all(),
-            "doings" => Doing::where(
-                "user_id",
-                "=",
-                auth()->user()->id
-            )->paginate(24),
-        ])
+fn () => getDoings(true)
+    )->name("me");
+
+    Route::post(
+        "/me",
+        function () {
+            $attributes = Request::validate([
+                'content' => 'required',
+                'category_id' => 'required|exists:App\Models\Category,id',
+            ]);
+
+            Doing::create([
+                "user_id" => auth()->user()->id,
+                ...$attributes,
+            ]);
+        }
     )->name("me");
 
     Route::get(
         "/others",
-        fn() => Inertia::render("List", [
-            "title" => "Doings of others",
-            "categories" => Category::all(),
-            "doings" => Doing::where(
-                "user_id",
-                "<>",
-                auth()->user()->id
-            )->paginate(24),
-        ])
+        fn () => getDoings(false)
     )->name("others");
 });
