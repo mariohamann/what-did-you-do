@@ -11,7 +11,7 @@ class Action extends Model
 
     protected $fillable = ['user_id', 'category_id', 'description'];
 
-    protected $visible = ['user', 'category_id', 'description', 'newlikes'];
+    protected $visible = ['user', 'category_id', 'description'];
 
     /**
      * Get the owner of the action.
