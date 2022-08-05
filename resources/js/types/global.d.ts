@@ -9,7 +9,7 @@ type User = {
     name: string;
 };
 
-type Doing = {
+type Action = {
     id: number;
     user: User;
     content: string;

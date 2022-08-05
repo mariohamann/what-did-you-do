@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Doing;
+use App\Models\Action;
 use App\Models\Category;
 
 /*
@@ -27,21 +27,21 @@ Route::get(
     ])
 );
 
-function getDoings($me) {
+function getActions($me) {
     return Inertia::render("List", [
-            "title" => $me ? "My Doings" : "Doings by others",
+            "title" => $me ? "My Actions" : "Actions by others",
             "me" => $me,
             "categories" => Category::all(),
-            "doings" => Doing::where(
+            "actions" => Action::where(
                 "user_id",
                 $me ? "=" : "<>",
                 auth()->user()->id
             )
             ->orderBy('id', 'desc')
             ->paginate(24)
-            ->through(function ($doing) {
-                $doing->user = $doing->author;
-                return $doing;
+            ->through(function ($action) {
+                $action->user = $action->author;
+                return $action;
             })
         ]);
 }
@@ -57,7 +57,7 @@ Route::middleware([
 
     Route::get(
         "/me",
-fn () => getDoings(true)
+fn () => getActions(true)
     )->name("me");
 
     Route::post(
@@ -68,7 +68,7 @@ fn () => getDoings(true)
                 'category_id' => 'required|exists:App\Models\Category,id',
             ]);
 
-            Doing::create([
+            Action::create([
                 "user_id" => auth()->user()->id,
                 ...$attributes,
             ]);
@@ -77,6 +77,6 @@ fn () => getDoings(true)
 
     Route::get(
         "/others",
-        fn () => getDoings(false)
+        fn () => getActions(false)
     )->name("others");
 });

@@ -12,12 +12,12 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('doings', function (Blueprint $table) {
+        Schema::create('actions', function (Blueprint $table) {
             $table->id();
             $table->text('content');
             $table->foreignId('user_id');
             $table->foreignId('category_id');
-            $table->foreignId('doing_id')->nullable();
+            $table->foreignId('action_id')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('doings');
+        Schema::dropIfExists('actions');
     }
 };

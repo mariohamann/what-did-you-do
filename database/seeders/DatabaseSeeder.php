@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        \App\Models\Doing::factory(200)->create();
+        \App\Models\Action::factory(200)->create();
 
     }
 }

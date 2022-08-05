@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Doing extends Model
+class Action extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class Doing extends Model
     protected $visible = ['user', 'category_id', 'content'];
 
     /**
-     * Get the owner of the doing.
+     * Get the owner of the action.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -24,7 +24,7 @@ class Doing extends Model
     }
 
     /**
-     * Get the category of the doing. This is hard coded with Sushi.
+     * Get the category of the action. This is hard coded with Sushi.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -34,12 +34,12 @@ class Doing extends Model
     }
 
     /**
-     * Get original doing from which this doing was forked.
+     * Get original action from which this action was forked.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function original()
     {
-        return $this->belongsTo($this, 'doing_id');
+        return $this->belongsTo($this, 'action_id');
     }
 }

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AppLayout from "@/Layouts/AppLayout.vue";
-import Doing from "@/Components/Doing.vue";
-import CreateDoing from "@/Components/CreateDoing.vue";
+import Action from "@/Components/Action.vue";
+import CreateAction from "@/Components/CreateAction.vue";
 import Pagination from "../Components/Pagination.vue";
 
-defineProps({ doings: Object, me: Boolean });
+defineProps({ actions: Object, me: Boolean });
 </script>
 
 <template>
@@ -17,7 +17,7 @@ defineProps({ doings: Object, me: Boolean });
 
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
 
-        <CreateDoing v-if="me" />
+        <CreateAction v-if="me" />
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -60,14 +60,14 @@ defineProps({ doings: Object, me: Boolean });
                                         <tbody
                                             class="divide-y divide-gray-200 bg-white"
                                         >
-                                            <Doing
-                                                v-for="doing in (doings.data as Doing[])"
-                                                :doing="doing"
-                                                v-bind:key="doing.id"
+                                            <Action
+                                                v-for="action in (actions.data as Action[])"
+                                                :action="action"
+                                                v-bind:key="action.id"
                                             />
                                         </tbody>
                                     </table>
-                                    <Pagination :pagination="doings" />
+                                    <Pagination :pagination="actions" />
                                 </div>
                             </div>
                         </div>
