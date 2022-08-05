@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Action;
 use App\Models\Category;
+use App\Models\Like;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Models\Category;
 
 Route::get(
     "/",
-    fn() => Inertia::render("Welcome", [
+    fn () => Inertia::render("Welcome", [
         "canLogin" => Route::has("login"),
         "canRegister" => Route::has("register"),
         "laravelVersion" => Application::VERSION,
@@ -27,22 +28,32 @@ Route::get(
     ])
 );
 
-function getActions($me) {
+function getActions($me)
+{
+    $paginatedActions = Action::where(
+        "user_id",
+        $me ? "=" : "<>",
+        auth()->user()->id
+    )
+            ->orderBy('id', 'desc')
+            ->paginate(24);
+    $paginatedActions->getCollection()->transform(
+        fn ($action) => [
+            "id" => $action->id,
+            "user" => $action->author,
+            "category_id" => $action->category->id,
+            "description" => $action->description,
+            "likes" => [
+                "total" => $action->likes->count(),
+                "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
+            ],
+        ]
+    );
     return Inertia::render("List", [
             "title" => $me ? "My Actions" : "Actions by others",
             "me" => $me,
             "categories" => Category::all(),
-            "actions" => Action::where(
-                "user_id",
-                $me ? "=" : "<>",
-                auth()->user()->id
-            )
-            ->orderBy('id', 'desc')
-            ->paginate(24)
-            ->through(function ($action) {
-                $action->user = $action->author;
-                return $action;
-            })
+            "actions" => $paginatedActions
         ]);
 }
 
@@ -51,13 +62,35 @@ Route::middleware([
     config("jetstream.auth_session"),
     "verified",
 ])->group(function () {
-    Route::get("/dashboard", fn() => Inertia::render("Dashboard"))->name(
+    Route::get("/dashboard", fn () => Inertia::render("Dashboard"))->name(
         "dashboard"
     );
 
     Route::get(
         "/me",
-fn () => getActions(true)
+        fn () => getActions(true)
+    )->name("me");
+
+    Route::post(
+        "/like",
+        function () {
+            $attributes = Request::validate([
+                'action_id' => 'required|exists:App\Models\Action,id',
+            ]);
+
+            $liked = Like::where("user_id", auth()->user()->id)->where("action_id", $attributes["action_id"]);
+
+            if($liked->count() > 0) {
+                $liked->delete();
+            }
+            else{
+                Like::create([
+                    "user_id" => auth()->user()->id,
+                    ...$attributes,
+                ]);
+            }
+
+        }
     )->name("me");
 
     Route::post(
