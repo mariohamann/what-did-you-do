@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
+        \App\Models\User::factory(300)->create();
 
         \App\Models\User::factory()->create([
             'name' => 'Test User 1',
@@ -28,8 +28,9 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('!password'),
         ]);
 
+        \App\Models\Action::factory(2000)->create();
 
-        \App\Models\Action::factory(200)->create();
+        \App\Models\Like::factory(10000)->create();
 
     }
 }

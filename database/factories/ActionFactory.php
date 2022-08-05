@@ -17,8 +17,8 @@ class ActionFactory extends Factory
     public function definition()
     {
         return [
-            'description' => $this->faker->paragraph(2),
-            'user_id' => random_int(1, 12),
+            'description' => $this->faker->paragraph(1),
+            'user_id' => random_int(1, 302),
             'category_id' => random_int(1, 5),
         ];
     }
