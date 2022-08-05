@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
+            $table->text('description');
             $table->foreignId('user_id');
             $table->foreignId('category_id');
             $table->foreignId('action_id')->nullable();

@@ -3,12 +3,12 @@
         <div
             class="overflow-hidden rounded-lg border border-gray-300 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
         >
-            <label for="content" class="sr-only">Content</label>
+            <label for="description" class="sr-only">Content</label>
             <textarea
-                v-model="form.content"
+                v-model="form.description"
                 rows="3"
-                name="content"
-                id="content"
+                name="description"
+                id="description"
                 class="block w-full border-0 pb-0 pt-2.5 text-lg placeholder-gray-500 focus:ring-0"
                 placeholder="Describe what you did..."
             />
@@ -136,18 +136,18 @@ const categories = [...(usePage().props.value.categories as Category[])];
 const categorized = ref(categories[0] as Category);
 
 let form = reactive({
-    content: "",
+    description: "",
 });
 
 let submit = () => {
     Inertia.post(
         "/me",
         {
-            content: form.content,
+            description: form.description,
             category_id: categorized.value.id,
         },
         { preserveScroll: true }
     );
-    form.content = "";
+    form.description = "";
 };
 </script>

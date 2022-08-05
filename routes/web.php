@@ -64,7 +64,7 @@ fn () => getActions(true)
         "/me",
         function () {
             $attributes = Request::validate([
-                'content' => 'required',
+                'description' => 'required',
                 'category_id' => 'required|exists:App\Models\Category,id',
             ]);
 

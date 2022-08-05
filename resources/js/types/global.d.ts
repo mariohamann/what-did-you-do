@@ -12,6 +12,6 @@ type User = {
 type Action = {
     id: number;
     user: User;
-    content: string;
+    description: string;
     category_id: Category['id'];
 };

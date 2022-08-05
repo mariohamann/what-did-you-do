@@ -9,9 +9,9 @@ class Action extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'category_id', 'content']; //<---- Add this line
+    protected $fillable = ['user_id', 'category_id', 'description'];
 
-    protected $visible = ['user', 'category_id', 'content'];
+    protected $visible = ['user', 'category_id', 'description'];
 
     /**
      * Get the owner of the action.
