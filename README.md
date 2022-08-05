@@ -20,7 +20,7 @@ You need PHP, Composer, Node.js and pnpm Follow those guideline https://laravel.
 ### After updates
 
 -   run `pnpm i` and `composer install`
--   run `php artisan migrate` to update the database or `php artisan migrate:reset --seed` to reset your local database to the default one (the latter is often preferrable)
+-   run `php artisan migrate` to update the database or `php artisan migrate:fresh --seed` to reset your local database to the default one (the latter is often preferrable)
 
 ---
 
