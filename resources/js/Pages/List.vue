@@ -55,6 +55,7 @@ defineProps({ actions: Object, me: Boolean });
                                                 >
                                                     User
                                                 </th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody

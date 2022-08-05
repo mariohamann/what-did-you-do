@@ -10,7 +10,6 @@ const props = defineProps({
 });
 
 let submit = () => {
-    console.log("submit");
     Inertia.post(
         "/like",
         {
@@ -30,6 +29,16 @@ const calculateCategory = () => {
     return categories.find(
         (category) => category.id === props.action.category_id
     ) as Category;
+};
+
+const styles = {
+    like: {
+        default:
+            "inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2",
+        inactive:
+            "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-red-500",
+        active: "border-transparent bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+    },
 };
 
 const category = calculateCategory();
@@ -53,20 +62,13 @@ const category = calculateCategory();
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
             <form @submit.prevent="submit">
                 <button
-                    v-if="!action.likes.liked"
                     type="submit"
-                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                    <HeartIcon
-                        class="-ml-0.5 mr-2 h-4 w-4"
-                        aria-hidden="true"
-                    />
-                    {{ action.likes.total }}
-                </button>
-                <button
-                    v-else
-                    type="submit"
-                    class="inline-flex items-center rounded-md border border-transparent bg-red-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    :class="[
+                        action.likes.liked
+                            ? styles.like.active
+                            : styles.like.inactive,
+                        styles.like.default,
+                    ]"
                 >
                     <HeartIcon
                         class="-ml-0.5 mr-2 h-4 w-4"
