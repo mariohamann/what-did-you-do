@@ -9,6 +9,10 @@ type User = {
     name: string;
 };
 
+type Filters = {
+    search: string;
+};
+
 type Action = {
     id: number;
     user: User;
@@ -18,4 +22,29 @@ type Action = {
         liked: boolean;
     };
     category_id: Category['id'];
+};
+
+type LaravelListProps = {
+    filters: Filters;
+    me: boolean;
+    categories: Category[];
+    title: string;
+    user: {
+        id: number;
+        name: string;
+    };
+    actions: {
+        current_page: number;
+        links: { active: boolean; url: string; label: string; }[];
+        data: Action[];
+        first_page_url: string;
+        from: number;
+        last_page: number;
+        last_page_url: string;
+        next_page_url: string | null;
+        prev_page_url: string | null;
+        per_page: number;
+        to: number;
+        total: number;
+    };
 };

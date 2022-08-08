@@ -1,13 +1,14 @@
-<script setup>
-import { Link } from '@inertiajs/inertia-vue3';
-const props = defineProps({
-    pagination: Object
-}
-)
+<script setup lang="ts">
+import { Link } from "@inertiajs/inertia-vue3";
+import { usePage } from "@inertiajs/inertia-vue3";
+
+const pagination = (usePage().props.value as LaravelListProps).actions;
 </script>
 <template>
-    <nav class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
-        aria-label="Pagination">
+    <nav
+        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+        aria-label="Pagination"
+    >
         <div class="hidden sm:block">
             <p class="text-sm text-gray-700">
                 Showing
@@ -21,13 +22,21 @@ const props = defineProps({
                 results
             </p>
         </div>
-        <div class="flex-1 flex justify-between sm:justify-end">
-            <Link v-if="pagination.prev_page_url" :href="pagination.prev_page_url"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Previous </Link>
-            <Link v-if="pagination.next_page_url" :href="pagination.next_page_url"
-                class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Next </Link>
+        <div class="flex flex-1 justify-between sm:justify-end">
+            <Link
+                v-if="pagination.prev_page_url"
+                :href="pagination.prev_page_url"
+                class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+                Previous
+            </Link>
+            <Link
+                v-if="pagination.next_page_url"
+                :href="pagination.next_page_url"
+                class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+                Next
+            </Link>
         </div>
     </nav>
 </template>

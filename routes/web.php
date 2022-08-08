@@ -30,13 +30,18 @@ Route::get(
 
 function getActions($me)
 {
-    $paginatedActions = Action::where(
-        "user_id",
-        $me ? "=" : "<>",
-        auth()->user()->id
-    )
+    $paginatedActions = Action::query()
+            ->where(
+                "user_id",
+                $me ? "=" : "<>",
+                auth()->user()->id
+            )
+            ->when(Request::input('search'), function ($query, $search) {
+                $query->where("description", "like", "%{$search}%");
+            })
             ->orderBy('id', 'desc')
-            ->paginate(24);
+            ->paginate(24)
+            ->withQueryString();
     $paginatedActions->getCollection()->transform(
         fn ($action) => [
             "id" => $action->id,
@@ -53,7 +58,8 @@ function getActions($me)
             "title" => $me ? "My Actions" : "Actions by others",
             "me" => $me,
             "categories" => Category::all(),
-            "actions" => $paginatedActions
+            "actions" => $paginatedActions,
+            "filters" => Request::only(['search'])
         ]);
 }
 

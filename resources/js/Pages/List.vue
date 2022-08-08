@@ -3,6 +3,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 import Pagination from "../Components/Pagination.vue";
+import FilterAction from "../Components/FilterAction.vue";
 
 defineProps({ actions: Object, me: Boolean });
 </script>
@@ -21,7 +22,10 @@ defineProps({ actions: Object, me: Boolean });
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-xl sm:rounded-lg">
+                <FilterAction />
+                <div
+                    class="mt-8 overflow-hidden bg-white shadow-xl sm:rounded-lg"
+                >
                     <div class="flex flex-col">
                         <div
                             class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8"
@@ -68,7 +72,7 @@ defineProps({ actions: Object, me: Boolean });
                                             />
                                         </tbody>
                                     </table>
-                                    <Pagination :pagination="actions" />
+                                    <Pagination />
                                 </div>
                             </div>
                         </div>
