@@ -12,6 +12,75 @@
                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             />
             <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"></div>
+
+            <Listbox
+                as="div"
+                v-model="selectedCategory"
+                class="ml-4 flex-shrink-0"
+            >
+                <ListboxLabel class="sr-only"> Category </ListboxLabel>
+                <div class="relative">
+                    <ListboxButton
+                        class="relative inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-2 px-2 text-sm font-medium text-gray-500 hover:bg-gray-100 sm:px-3"
+                    >
+                        <TagIcon
+                            v-if="selectedCategory.id === null"
+                            class="h-5 w-5 flex-shrink-0 text-gray-300 sm:-ml-1"
+                            aria-hidden="true"
+                        />
+
+                        <span v-else>{{ selectedCategory.emoji }}</span>
+
+                        <span
+                            :class="[
+                                selectedCategory.id === null
+                                    ? ''
+                                    : 'text-gray-900',
+                                'hidden truncate sm:ml-2 sm:block',
+                            ]"
+                            >{{
+                                selectedCategory.id === null
+                                    ? "Category"
+                                    : selectedCategory.name
+                            }}</span
+                        >
+                    </ListboxButton>
+
+                    <transition
+                        leave-active-class="transition ease-in duration-100"
+                        leave-from-class="opacity-100"
+                        leave-to-class="opacity-0"
+                    >
+                        <ListboxOptions
+                            class="absolute right-0 z-10 mt-1 max-h-56 w-52 overflow-auto rounded-lg bg-white py-3 text-base shadow ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                        >
+                            <ListboxOption
+                                as="template"
+                                v-for="category in categories"
+                                :key="category.id"
+                                :value="category"
+                                v-slot="{ active }"
+                            >
+                                <li
+                                    :class="[
+                                        active ? 'bg-gray-100' : 'bg-white',
+                                        'relative cursor-default select-none py-2 px-3',
+                                    ]"
+                                >
+                                    <div class="flex items-center">
+                                        <span> {{ category.emoji }}</span>
+                                        <span
+                                            class="ml-3 block truncate font-medium"
+                                        >
+                                            {{ category.name }}
+                                        </span>
+                                    </div>
+                                </li>
+                            </ListboxOption>
+                        </ListboxOptions>
+                    </transition>
+                </div>
+            </Listbox>
         </div>
     </div>
 </template>
@@ -22,20 +91,50 @@ import { usePage } from "@inertiajs/inertia-vue3";
 import { Inertia } from "@inertiajs/inertia";
 import debounce from "lodash/debounce";
 
-let search = ref((usePage().props.value as LaravelListProps).filters.search);
+import {
+    Listbox,
+    ListboxButton,
+    ListboxLabel,
+    ListboxOption,
+    ListboxOptions,
+} from "@headlessui/vue";
+import { TagIcon } from "@heroicons/vue/solid";
+
+const laraveListProps = usePage().props.value as LaravelListProps;
+
+let search = ref(laraveListProps.filters.search);
+
+const categories = [
+    { name: "Select category", id: null },
+    ...laraveListProps.categories,
+];
+
+//
+const selectedCategory = ref(categories[0] as Category);
+
+const sendRequest = () => {
+    Inertia.get(
+        laraveListProps.me ? "/me" : "/others",
+        {
+            ...(search.value && { search: search.value }),
+            ...(selectedCategory.value.id && {
+                category: selectedCategory.value.id,
+            }),
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        }
+    );
+};
 
 watch(
-    search,
+    [search],
     debounce(function (value) {
-        Inertia.get(
-            "/others",
-            { search: value },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                replace: true,
-            }
-        );
+        sendRequest();
     }, 300)
 );
+
+watch([selectedCategory], () => sendRequest());
 </script>

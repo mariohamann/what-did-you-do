@@ -39,6 +39,9 @@ function getActions($me)
             ->when(Request::input('search'), function ($query, $search) {
                 $query->where("description", "like", "%{$search}%");
             })
+            ->when(Request::input('category'), function ($query, $category) {
+                $query->where("category_id", $category);
+            })
             ->orderBy('id', 'desc')
             ->paginate(24)
             ->withQueryString();
