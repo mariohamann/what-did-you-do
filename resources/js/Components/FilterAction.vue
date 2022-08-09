@@ -109,8 +109,9 @@ const categories = [
     ...laraveListProps.categories,
 ];
 
-//
-const selectedCategory = ref(categories[0] as Category);
+const selectedCategory = ref(
+    categories[laraveListProps.filters.category] || (categories[0] as Category)
+);
 
 const sendRequest = () => {
     Inertia.get(

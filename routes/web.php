@@ -62,7 +62,7 @@ function getActions($me)
             "me" => $me,
             "categories" => Category::all(),
             "actions" => $paginatedActions,
-            "filters" => Request::only(['search'])
+            "filters" => Request::only(['search', 'category']),
         ]);
 }
 
