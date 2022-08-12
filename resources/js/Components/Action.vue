@@ -2,6 +2,8 @@
 import { HeartIcon } from "@heroicons/vue/solid";
 import { usePage } from "@inertiajs/inertia-vue3";
 import { Inertia } from "@inertiajs/inertia";
+import { computed } from "vue";
+
 const props = defineProps({
     action: {
         type: Object as () => Action,
@@ -24,12 +26,14 @@ The category could be provided by the backend, too.
 For now, we'll just calculate it on the client to reduce load on the database.
 */
 
-const calculateCategory = () => {
-    const categories = [...(usePage().props.value.categories as Category[])];
-    return categories.find(
+
+const categories = usePage().props.value.categories as Category[];
+
+const category = computed(() =>
+    categories.find(
         (category) => category.id === props.action.category_id
-    ) as Category;
-};
+    ) as Category
+);
 
 const styles = {
     like: {
@@ -40,8 +44,6 @@ const styles = {
         active: "border-transparent bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
     },
 };
-
-const category = calculateCategory();
 </script>
 
 <template>

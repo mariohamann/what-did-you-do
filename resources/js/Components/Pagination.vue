@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Link } from "@inertiajs/inertia-vue3";
 import { usePage } from "@inertiajs/inertia-vue3";
+import { computed } from "vue";
 
-const pagination = (usePage().props.value as LaravelListProps).actions;
+const pagination = computed(() =>(usePage().props.value as LaravelListProps).actions);
 
 </script>
 <template>
