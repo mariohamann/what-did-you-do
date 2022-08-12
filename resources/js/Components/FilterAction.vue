@@ -24,7 +24,7 @@
                         class="relative inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-2 px-2 text-sm font-medium text-gray-500 hover:bg-gray-100 sm:px-3"
                     >
                         <TagIcon
-                            v-if="selectedCategory.id === null"
+                            v-if="selectedCategory.slug === null"
                             class="h-5 w-5 flex-shrink-0 text-gray-300 sm:-ml-1"
                             aria-hidden="true"
                         />
@@ -33,13 +33,13 @@
 
                         <span
                             :class="[
-                                selectedCategory.id === null
+                                selectedCategory.slug === null
                                     ? ''
                                     : 'text-gray-900',
                                 'hidden truncate sm:ml-2 sm:block',
                             ]"
                             >{{
-                                selectedCategory.id === null
+                                selectedCategory.slug === null
                                     ? "Category"
                                     : selectedCategory.name
                             }}</span
@@ -57,7 +57,7 @@
                             <ListboxOption
                                 as="template"
                                 v-for="category in categories"
-                                :key="category.id"
+                                :key="category.slug"
                                 :value="category"
                                 v-slot="{ active }"
                             >
@@ -105,12 +105,12 @@ const laraveListProps = usePage().props.value as LaravelListProps;
 let search = ref(laraveListProps.filters.search);
 
 const categories = [
-    { name: "Select category", id: null },
-    ...laraveListProps.categories,
+    { name: "Select category", id: null, slug: null, emoji: null },
+    ...laraveListProps.categories as Category[],
 ];
 
 const selectedCategory = ref(
-    categories[laraveListProps.filters.category] || (categories[0] as Category)
+    categories.find((category) => category.slug === laraveListProps.filters.category) || (categories[0] as Category)
 );
 
 const sendRequest = () => {
@@ -118,8 +118,8 @@ const sendRequest = () => {
         laraveListProps.me ? "/me" : "/others",
         {
             ...(search.value && { search: search.value }),
-            ...(selectedCategory.value.id && {
-                category: selectedCategory.value.id,
+            ...(selectedCategory.value.slug && {
+                category: (selectedCategory.value as Category).slug,
             }),
         },
         {

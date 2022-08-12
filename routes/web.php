@@ -31,32 +31,34 @@ Route::get(
 function getActions($me)
 {
     $paginatedActions = Action::query()
-            ->where(
-                "user_id",
-                $me ? "=" : "<>",
-                auth()->user()->id
-            )
-            ->when(Request::input('search'), function ($query, $search) {
-                $query->where("description", "like", "%{$search}%");
-            })
-            ->when(Request::input('category'), function ($query, $category) {
-                $query->where("category_id", $category);
-            })
-            ->orderBy('id', 'desc')
-            ->paginate(24)
-            ->withQueryString();
-    $paginatedActions->getCollection()->transform(
-        fn ($action) => [
-            "id" => $action->id,
-            "user" => $action->author,
-            "category_id" => $action->category->id,
-            "description" => $action->description,
-            "likes" => [
-                "total" => $action->likes->count(),
-                "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
-            ],
-        ]
-    );
+        ->where(
+            "user_id",
+            $me ? "=" : "<>",
+            auth()->user()->id
+        )
+        ->when(Request::input('search'), function ($query, $search) {
+            $query->where("description", "like", "%{$search}%");
+        })
+        ->when(Request::input('category'), function ($query, $category_slug) {
+            $categories = Category::all();
+            $category_id = $categories->where("slug", $category_slug)->first()->id;
+            $query->where("category_id", $category_id);
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(24)
+        ->withQueryString()
+        ->through(
+            fn ($action) => [
+                "id" => $action->id,
+                "user" => $action->author,
+                "category_id" => $action->category->id,
+                "description" => $action->description,
+                "likes" => [
+                    "total" => $action->likes->count(),
+                    "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
+                ],
+            ]
+        );
     return Inertia::render("List", [
             "title" => $me ? "My Actions" : "Actions by others",
             "me" => $me,

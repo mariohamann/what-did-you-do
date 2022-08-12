@@ -3,6 +3,7 @@ import { Link } from "@inertiajs/inertia-vue3";
 import { usePage } from "@inertiajs/inertia-vue3";
 
 const pagination = (usePage().props.value as LaravelListProps).actions;
+
 </script>
 <template>
     <nav

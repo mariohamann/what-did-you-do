@@ -12,7 +12,7 @@ type User = {
 
 type Filters = {
     search: string;
-    category: number;
+    category: string;
 };
 
 type Action = {
