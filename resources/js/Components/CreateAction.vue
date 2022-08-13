@@ -141,7 +141,7 @@ let form = reactive({
 
 let submit = () => {
     Inertia.post(
-        "/me",
+        "/create",
         {
             description: form.description,
             category_id: categorized.value.id,

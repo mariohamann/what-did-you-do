@@ -102,10 +102,23 @@ Route::middleware([
             }
 
         }
-    )->name("me");
+    )->name("like");
 
     Route::post(
-        "/me",
+        "/delete",
+        function () {
+            $attributes = Request::validate([
+                'action_id' => 'required|exists:App\Models\Action,id',
+            ]);
+
+            if(auth()->user()->id == Action::find($attributes["action_id"])->user_id) {
+                Action::find($attributes["action_id"])->delete();
+            }
+        }
+    )->name("delete");
+
+    Route::post(
+        "/create",
         function () {
             $attributes = Request::validate([
                 'description' => 'required',
@@ -117,7 +130,7 @@ Route::middleware([
                 ...$attributes,
             ]);
         }
-    )->name("me");
+    )->name("create");
 
     Route::get(
         "/others",
