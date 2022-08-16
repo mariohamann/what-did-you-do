@@ -9,7 +9,7 @@ class Action extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'category_id', 'description'];
+    protected $fillable = ['user_id', 'category_id', 'description', 'archived_at'];
 
     protected $visible = ['user', 'category_id', 'description'];
 

@@ -82,6 +82,12 @@
                 </div>
             </Listbox>
         </div>
+            <div class="flex items-center">
+                <input v-model="showArchived" id="archived" name="archived" value="archived" type="checkbox" class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500">
+                <label for="archived" class="ml-3 text-sm text-gray-600">
+                    Show Archived
+                </label>
+            </div>
     </div>
 </template>
 
@@ -113,6 +119,8 @@ const selectedCategory = ref(
     categories.find((category) => category.slug === laraveListProps.filters.category) || (categories[0] as Category)
 );
 
+const showArchived = ref( false );
+
 const sendRequest = () => {
     Inertia.get(
         laraveListProps.me ? "/me" : "/others",
@@ -121,6 +129,7 @@ const sendRequest = () => {
             ...(selectedCategory.value.slug && {
                 category: (selectedCategory.value as Category).slug,
             }),
+            ...(showArchived.value && {archived: showArchived.value}),
         },
         {
             preserveState: true,
@@ -137,5 +146,5 @@ watch(
     }, 300)
 );
 
-watch([selectedCategory], () => sendRequest());
+watch([selectedCategory, showArchived], () => sendRequest());
 </script>

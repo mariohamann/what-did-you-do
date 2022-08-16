@@ -20,6 +20,7 @@ class ActionFactory extends Factory
             'description' => $this->faker->paragraph(1),
             'user_id' => random_int(1, 302),
             'category_id' => random_int(1, 5),
+            'archived_at' => $this->faker->boolean(7) ? $this->faker->dateTimeBetween('-9 months', '-1 day') : null,
         ];
     }
 }

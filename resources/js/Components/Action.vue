@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HeartIcon, TrashIcon, ArchiveIcon } from "@heroicons/vue/solid";
+import { HeartIcon, TrashIcon, ArchiveIcon, ArrowCircleLeftIcon } from "@heroicons/vue/solid";
 import { usePage } from "@inertiajs/inertia-vue3";
 import { Inertia } from "@inertiajs/inertia";
 import { ref } from 'vue'
@@ -22,6 +22,17 @@ const isMine = computed(() => {
 });
 
 const inertiaPost = (endpoint: string) => {
+    if(endpoint === 'archive'){
+        Inertia.patch(
+            `/${endpoint}`,
+            {
+                action_id: props.action.id,
+            },
+            { preserveScroll: true }
+        );
+        return;
+    }
+
     Inertia.post(
         `/${endpoint}`,
         {
@@ -57,7 +68,7 @@ const styles = {
 </script>
 
 <template>
-    <tr>
+    <tr :class="action.archived_at ? 'bg-red-200' : ''">
         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
             {{ action.description }}
         </td>
@@ -72,12 +83,30 @@ const styles = {
             {{ action.user.name }}
         </td>
         <td v-if="isMine" class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            <form @submit.prevent="inertiaPost('archive')">
+                <button
+                    type="submit"
+                    :class="[ styles.like.inactive, styles.like.default, ]"
+                >
+                    <ArchiveIcon
+                        v-if="!action.archived_at"
+                        class="-ml-0.5 mr-2 h-4 w-4"
+                        aria-hidden="true"
+                    />
+                    <ArrowCircleLeftIcon
+                        v-else
+                        class="-ml-0.5 mr-2 h-4 w-4"
+                        aria-hidden="true"
+                    />
+                    {{ action.archived_at ? 'Restore' : 'Archive' }}
+                </button>
+            </form>
+        </td>
+        <td v-if="isMine" class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
             <button
                 type="button"
                 v-on:click="open = true"
-                :class="[ styles.like.inactive,
-                    styles.like.default,
-                ]"
+                :class="[ styles.like.inactive, styles.like.default, ]"
             >
                 <TrashIcon
                     class="-ml-0.5 mr-2 h-4 w-4"

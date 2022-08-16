@@ -19,6 +19,7 @@ type Action = {
     id: number;
     user: User;
     description: string;
+    archived_at: Date;
     likes: {
         total: number;
         liked: boolean;

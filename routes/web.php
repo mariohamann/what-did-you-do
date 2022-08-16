@@ -39,11 +39,15 @@ function getActions($me)
         ->when(Request::input('search'), function ($query, $search) {
             $query->where("description", "like", "%{$search}%");
         })
+        ->when(!Request::input('archived'), function ($query) {
+            $query->whereNull("archived_at");
+        }, )
         ->when(Request::input('category'), function ($query, $category_slug) {
             $categories = Category::all();
             $category_id = $categories->where("slug", $category_slug)->first()->id;
             $query->where("category_id", $category_id);
         })
+        ->orderBy('archived_at', 'asc')
         ->orderBy('id', 'desc')
         ->paginate(24)
         ->withQueryString()
@@ -51,6 +55,7 @@ function getActions($me)
             fn ($action) => [
                 "id" => $action->id,
                 "user" => $action->author,
+                "archived_at" => $action->archived_at,
                 "category_id" => $action->category->id,
                 "description" => $action->description,
                 "likes" => [
@@ -111,11 +116,30 @@ Route::middleware([
                 'action_id' => 'required|exists:App\Models\Action,id',
             ]);
 
-            if(auth()->user()->id == Action::find($attributes["action_id"])->user_id) {
-                Action::find($attributes["action_id"])->delete();
+            $action = Action::find($attributes["action_id"]);
+
+            if(auth()->user()->id == $action->user_id) {
+                $action->delete();
             }
         }
     )->name("delete");
+
+    Route::patch(
+        "/archive",
+        function () {
+            $attributes = Request::validate([
+                'action_id' => 'required|exists:App\Models\Action,id',
+            ]);
+
+            $action = Action::find($attributes["action_id"]);
+
+            if(auth()->user()->id == $action->user_id) {
+               $action->update([
+                    "archived_at" => $action->archived_at ? null : now(),
+                ]);
+            }
+        }
+    )->name("archive");
 
     Route::post(
         "/create",
