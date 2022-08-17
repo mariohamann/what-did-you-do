@@ -87,6 +87,32 @@ Route::middleware([
         fn () => getActions(true)
     )->name("me");
 
+
+    Route::get(
+        "/action/{action}",
+        fn (Action $action) => Inertia::render("Action", [
+            "categories" => Category::all(),
+            "action" => [
+                "id" => $action->id,
+                "name" => $action->name,
+                "description" => $action->description,
+                "category_id" => $action->category->id,
+                "user" => [
+                    "id" => $action->author->id,
+                    "name" => $action->author->name,
+                ],
+                "archived_at" => $action->archived_at,
+                "created_at" => $action->created_at->format("Y-m-d"),
+                "likes" => [
+                    "total" => $action->likes->count(),
+                    "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
+                ],
+            ],
+            "title" => 'Action',
+        ])
+    )->name("action");
+
+
     Route::post(
         "/like",
         function () {

@@ -57,7 +57,7 @@
                             <ListboxOption
                                 as="template"
                                 v-for="category in categories"
-                                :key="category.slug"
+                                :key="`category${category.slug}`"
                                 :value="category"
                                 v-slot="{ active }"
                             >
