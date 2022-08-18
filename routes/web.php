@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Action;
 use App\Models\Category;
 use App\Models\Like;
+use App\Http\Controllers\ActionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,11 +83,14 @@ Route::middleware([
         "dashboard"
     );
 
+    Route::resources([
+        'actions' => ActionController::class,
+    ]);
+
     Route::get(
         "/me",
         fn () => getActions(true)
     )->name("me");
-
 
     Route::get(
         "/action/{action}",
@@ -141,14 +145,11 @@ Route::middleware([
             $attributes = Request::validate([
                 'action_id' => 'required|exists:App\Models\Action,id',
             ]);
-
-            $action = Action::find($attributes["action_id"]);
-
-            if(auth()->user()->id == $action->user_id) {
-                $action->delete();
-            }
+            Action::find($attributes["action_id"])->delete();
         }
-    )->name("delete");
+    )
+    ->middleware('owned.by.user')
+    ->name("delete");
 
     Route::patch(
         "/archive",
@@ -158,14 +159,13 @@ Route::middleware([
             ]);
 
             $action = Action::find($attributes["action_id"]);
-
-            if(auth()->user()->id == $action->user_id) {
-               $action->update([
-                    "archived_at" => $action->archived_at ? null : now(),
-                ]);
-            }
+            $action->update([
+                "archived_at" => $action->archived_at ? null : now(),
+            ]);
         }
-    )->name("archive");
+    )
+    ->middleware('owned.by.user')
+    ->name("archive");
 
     Route::post(
         "/create",
