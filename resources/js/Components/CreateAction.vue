@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="submit" class="relative mx-auto mt-12 max-w-md">
+    <form @submit.prevent="createAction" class="relative mx-auto mt-12 max-w-md">
         <div
             class="overflow-hidden rounded-lg border border-gray-300 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
         >
@@ -139,9 +139,9 @@ let form = reactive({
     description: "",
 });
 
-let submit = () => {
+let createAction = () => {
     Inertia.post(
-        "/create",
+        "/actions",
         {
             description: form.description,
             category_id: categorized.value.id,

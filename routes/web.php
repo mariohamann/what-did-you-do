@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Action;
 use App\Models\Category;
-use App\Models\Like;
 use App\Http\Controllers\ActionController;
 
 /*
@@ -29,51 +28,6 @@ Route::get(
     ])
 );
 
-function getActions($me)
-{
-    $paginatedActions = Action::query()
-        ->where(
-            "user_id",
-            $me ? "=" : "<>",
-            auth()->user()->id
-        )
-        ->when(Request::input('search'), function ($query, $search) {
-            $query->where("description", "like", "%{$search}%");
-        })
-        ->when(!Request::input('archived'), function ($query) {
-            $query->whereNull("archived_at");
-        }, )
-        ->when(Request::input('category'), function ($query, $category_slug) {
-            $categories = Category::all();
-            $category_id = $categories->where("slug", $category_slug)->first()->id;
-            $query->where("category_id", $category_id);
-        })
-        ->orderBy('archived_at', 'asc')
-        ->orderBy('id', 'desc')
-        ->paginate(24)
-        ->withQueryString()
-        ->through(
-            fn ($action) => [
-                "id" => $action->id,
-                "user" => $action->author,
-                "archived_at" => $action->archived_at,
-                "category_id" => $action->category->id,
-                "description" => $action->description,
-                "likes" => [
-                    "total" => $action->likes->count(),
-                    "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
-                ],
-            ]
-        );
-    return Inertia::render("List", [
-            "title" => $me ? "My Actions" : "Actions by others",
-            "me" => $me,
-            "categories" => Category::all(),
-            "actions" => $paginatedActions,
-            "filters" => Request::only(['search', 'category']),
-        ]);
-}
-
 Route::middleware([
     "auth:sanctum",
     config("jetstream.auth_session"),
@@ -83,107 +37,12 @@ Route::middleware([
         "dashboard"
     );
 
-    Route::resources([
-        'actions' => ActionController::class,
-    ]);
+    Route::post('actions', [ActionController::class, 'store']);
+    Route::get('actions/{action}', [ActionController::class, 'show']);
+    Route::delete('actions/{action}', [ActionController::class, 'destroy']);
+    Route::patch('actions/{action}/archive', [ActionController::class, 'archive']);
+    Route::patch('actions/{action}/like', [ActionController::class, 'like']);
 
-    Route::get(
-        "/me",
-        fn () => getActions(true)
-    )->name("me");
-
-    Route::get(
-        "/action/{action}",
-        fn (Action $action) => Inertia::render("Action", [
-            "categories" => Category::all(),
-            "action" => [
-                "id" => $action->id,
-                "name" => $action->name,
-                "description" => $action->description,
-                "category_id" => $action->category->id,
-                "user" => [
-                    "id" => $action->author->id,
-                    "name" => $action->author->name,
-                ],
-                "archived_at" => $action->archived_at,
-                "created_at" => $action->created_at->format("Y-m-d"),
-                "likes" => [
-                    "total" => $action->likes->count(),
-                    "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
-                ],
-            ],
-            "title" => 'Action',
-        ])
-    )->name("action");
-
-
-    Route::post(
-        "/like",
-        function () {
-            $attributes = Request::validate([
-                'action_id' => 'required|exists:App\Models\Action,id',
-            ]);
-
-            $liked = Like::where("user_id", auth()->user()->id)->where("action_id", $attributes["action_id"]);
-
-            if($liked->count() > 0) {
-                $liked->delete();
-            }
-            else{
-                Like::create([
-                    "user_id" => auth()->user()->id,
-                    ...$attributes,
-                ]);
-            }
-
-        }
-    )->name("like");
-
-    Route::post(
-        "/delete",
-        function () {
-            $attributes = Request::validate([
-                'action_id' => 'required|exists:App\Models\Action,id',
-            ]);
-            Action::find($attributes["action_id"])->delete();
-        }
-    )
-    ->middleware('owned.by.user')
-    ->name("delete");
-
-    Route::patch(
-        "/archive",
-        function () {
-            $attributes = Request::validate([
-                'action_id' => 'required|exists:App\Models\Action,id',
-            ]);
-
-            $action = Action::find($attributes["action_id"]);
-            $action->update([
-                "archived_at" => $action->archived_at ? null : now(),
-            ]);
-        }
-    )
-    ->middleware('owned.by.user')
-    ->name("archive");
-
-    Route::post(
-        "/create",
-        function () {
-            $attributes = Request::validate([
-                'description' => 'required',
-                'category_id' => 'required|exists:App\Models\Category,id',
-            ]);
-
-            Action::create([
-                "user_id" => auth()->user()->id,
-                ...$attributes,
-            ]);
-        }
-    )->name("create");
-
-    Route::get(
-        "/others",
-        fn () => getActions(false)
-    )->name("others");
+    Route::get( "/me", [ActionController::class, 'indexMe'] )->name("me");
+    Route::get( "/others", [ActionController::class, 'indexOthers'] )->name("others");
 });

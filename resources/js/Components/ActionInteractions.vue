@@ -33,26 +33,22 @@ const isMine = computed(() => {
     return props.action.user.id === user.id;
 });
 
-const inertiaPost = (endpoint: string) => {
-    if (endpoint === "archive") {
-        Inertia.patch(
-            `/${endpoint}`,
-            {
-                action_id: props.action.id,
-            },
-            { preserveScroll: true }
-        );
-        return;
-    }
-
-    Inertia.post(
-        `/${endpoint}`,
-        {
-            action_id: props.action.id,
-        },
+const likeAction = () => {
+    Inertia.patch(
+        `/actions/${props.action.id}/like`,
+        {},
         { preserveScroll: true }
     );
 };
+
+const archiveAction = () => {
+    Inertia.patch(
+        `/actions/${props.action.id}/archive`,
+        {},
+        { preserveScroll: true }
+    );
+};
+
 
 const deleteAction = () => {
     Inertia.delete(
@@ -73,24 +69,23 @@ const styles = {
 </script>
 
 <template>
-    <form v-if="isMine" @submit.prevent="inertiaPost('archive')">
-        <button
-            type="submit"
-            :class="[styles.like.inactive, styles.like.default]"
-        >
-            <ArchiveIcon
-                v-if="!action.archived_at"
-                class="-ml-0.5 mr-2 h-4 w-4"
-                aria-hidden="true"
-            />
-            <ArrowCircleLeftIcon
-                v-else
-                class="-ml-0.5 mr-2 h-4 w-4"
-                aria-hidden="true"
-            />
-            {{ action.archived_at ? "Restore" : "Archive" }}
-        </button>
-    </form>
+    <button
+        v-if="isMine"
+        v-on:click="archiveAction"
+        :class="[styles.like.inactive, styles.like.default]"
+    >
+        <ArchiveIcon
+            v-if="!action.archived_at"
+            class="-ml-0.5 mr-2 h-4 w-4"
+            aria-hidden="true"
+        />
+        <ArrowCircleLeftIcon
+            v-else
+            class="-ml-0.5 mr-2 h-4 w-4"
+            aria-hidden="true"
+        />
+        {{ action.archived_at ? "Restore" : "Archive" }}
+    </button>
     <button
         v-if="isMine"
         type="button"
@@ -100,18 +95,17 @@ const styles = {
         <TrashIcon class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
         Delete
     </button>
-    <form @submit.prevent="inertiaPost('like')">
-        <button
-            type="submit"
-            :class="[
-                action.likes.liked ? styles.like.active : styles.like.inactive,
-                styles.like.default,
-            ]"
-        >
-            <HeartIcon class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
-            {{ action.likes.total }}
-        </button>
-    </form>
+    <button
+        v-on:click="likeAction"
+        type="submit"
+        :class="[
+            action.likes.liked ? styles.like.active : styles.like.inactive,
+            styles.like.default,
+        ]"
+    >
+        <HeartIcon class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
+        {{ action.likes.total }}
+    </button>
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="relative z-10" @close="open = false">
             <TransitionChild
