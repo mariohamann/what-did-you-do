@@ -119,7 +119,7 @@ const selectedCategory = ref(
     categories.find((category) => category.slug === laraveListProps.filters.category) || (categories[0] as Category)
 );
 
-const showArchived = ref( false );
+const showArchived = ref( laraveListProps.filters.archived );
 
 const sendRequest = () => {
     Inertia.get(

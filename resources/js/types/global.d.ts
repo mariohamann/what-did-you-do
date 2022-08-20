@@ -13,6 +13,7 @@ type User = {
 type Filters = {
     search: string;
     category: string;
+    archived: boolean;
 };
 
 type Action = {
