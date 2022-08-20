@@ -21,7 +21,7 @@ class ActionController extends Controller
     }
 
     /**
-     * Display a listing of the user's resource.
+     * Display a listing of the user's actions.
      *
      * @return \Illuminate\Http\Response
      */
@@ -32,15 +32,21 @@ class ActionController extends Controller
 
 
     /**
-     * Get a list of actions for Inertia
+     * Display a listing of other's actions.
      *
-     * @return Object
+     * @return \Illuminate\Http\Response
      */
     public function indexOthers(Request $request)
     {
         return $this->generateIndex(false, $request);
     }
 
+
+    /**
+     * Get a list of actions for Inertia
+     *
+     * @return Object
+     */
     private function generateIndex($me, Request $request) {
         $paginatedActions = Action::query()
             ->where(
@@ -67,19 +73,19 @@ class ActionController extends Controller
                 fn ($action) => $this->getActionForView($action)
             );
         return Inertia::render("List", [
-                "title" => $me ? "My Actions" : "Actions by others",
-                "me" => $me,
-                "categories" => Category::all(),
-                "actions" => $paginatedActions,
-                "filters" => $request->only(['search', 'category']),
+            "title" => $me ? "My Actions" : "Actions by others",
+            "me" => $me,
+            "categories" => Category::all(),
+            "actions" => $paginatedActions,
+            "filters" => $request->only(['search', 'category', 'archived']),
         ]);
     }
 
     /**
-     * Optimized action-view for Inertia
+     * Optimized action-content for Inertia
      *
      * @param  Action $action
-     * @return object
+     * @return array
      */
 
     private function getActionForView($action) {
@@ -113,7 +119,8 @@ class ActionController extends Controller
             "action" => [
                 ...$this->getActionForView($action),
                 "created_at" => $action->created_at->format("Y-m-d"),
-        ]]);
+            ]
+        ]);
     }
 
     // /**
