@@ -102,6 +102,9 @@ class ActionController extends Controller
                 "total" => $action->likes->count(),
                 "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
             ],
+            "inspirations" => [
+                "total" => $action->inspirations_descendants ? count($action->inspirations_descendants) : 0,
+            ],
         ];
     }
 
@@ -143,13 +146,49 @@ class ActionController extends Controller
     {
         $attributes = $request->validate([
             'description' => 'required',
+            'inspired_by' => 'nullable|exists:App\Models\Action,id',
             'category_id' => 'required|exists:App\Models\Category,id',
         ]);
 
-        Action::create([
+        $ancestors = null;
+
+        if($request->input('inspired_by')) {
+            $inspired_by_input = $request->input('inspired_by');
+            $inspired_by = Action::find($inspired_by_input);
+
+            // Get all ancestors by adding the parent to the parent's ancestors
+            $ancestors = json_decode($inspired_by->inspirations_ancestors);
+            $ancestors[] = $inspired_by_input;
+        }
+
+        $new_action = Action::create([
             "user_id" => auth()->user()->id,
+            "inspirations_ancestors" => json_encode($ancestors),
             ...$attributes,
         ]);
+
+        if($request->input('inspired_by')) {
+            $ancestor_actions = Action::whereIn("id", $ancestors)->get();
+
+            // Go through every ancestor action and add the newly created item to the list of descendants
+            foreach($ancestor_actions as $ancestor_action) {
+                // Save to all descendants
+                $descendants = $ancestor_action->inspirations_descendants;
+                $descendants[] = $new_action->id;
+
+
+
+                // Save to direct children
+                $children = $ancestor_action->inspirations_children;
+                $children[] = $new_action->id;
+
+                $ancestor_action->update([
+                    "inspirations_descendants" => $descendants,
+                    "inspirations_children" => $children,
+                ]);
+            }
+        }
+
     }
 
     // /**

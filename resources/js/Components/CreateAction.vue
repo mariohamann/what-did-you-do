@@ -132,11 +132,19 @@ import { TagIcon } from "@heroicons/vue/solid";
 
 const categories = [...(usePage().props.value.categories as Category[])];
 
+const props = defineProps({
+    inspiredBy: {
+        type: Object as () => Action,
+        default: null,
+    },
+});
+
 //
-const categorized = ref(categories[0] as Category);
+const categorized = ref(categories[props.inspiredBy?.category_id -1 ||  0] as Category);
+
 
 let form = reactive({
-    description: "",
+    description: props.inspiredBy?.description || "",
 });
 
 let createAction = () => {
@@ -145,6 +153,7 @@ let createAction = () => {
         {
             description: form.description,
             category_id: categorized.value.id,
+            inspired_by: props.inspiredBy?.id,
         },
         { preserveScroll: true }
     );

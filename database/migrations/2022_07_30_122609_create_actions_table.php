@@ -20,6 +20,9 @@ return new class extends Migration {
             $table->foreignId('action_id')->nullable();
             $table->date('archived_at')->nullable();
             $table->timestamps();
+            $table->json('inspirations_ancestors')->nullable();
+            $table->json('inspirations_descendants')->nullable();
+            $table->json('inspirations_children')->nullable();
         });
     }
 

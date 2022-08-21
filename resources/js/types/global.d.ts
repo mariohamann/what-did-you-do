@@ -27,6 +27,9 @@ type Action = {
         liked: boolean;
     };
     category_id: Category['id'];
+    inspirations: {
+        total: number;
+    };
 };
 
 type LaravelListProps = {
