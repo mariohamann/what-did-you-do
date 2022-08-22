@@ -7,6 +7,7 @@ use App\Models\Like;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Arr;
 
 class ActionController extends Controller
 {
@@ -150,39 +151,37 @@ class ActionController extends Controller
             'category_id' => 'required|exists:App\Models\Category,id',
         ]);
 
-        $ancestors = null;
+        $ancestor_ids = null;
 
         if($request->input('inspired_by')) {
             $inspired_by_input = $request->input('inspired_by');
             $inspired_by = Action::find($inspired_by_input);
 
             // Get all ancestors by adding the parent to the parent's ancestors
-            $ancestors = json_decode($inspired_by->inspirations_ancestors);
-            $ancestors[] = $inspired_by_input;
+            $ancestor_ids = json_decode($inspired_by->inspirations_ancestors);
+            $ancestor_ids[] = $inspired_by_input;
         }
 
         $new_action = Action::create([
             "user_id" => auth()->user()->id,
-            "inspirations_ancestors" => json_encode($ancestors),
+            "inspirations_ancestors" => json_encode($ancestor_ids),
             ...$attributes,
         ]);
 
         if($request->input('inspired_by')) {
-            $ancestor_actions = Action::whereIn("id", $ancestors)->get();
+            $ancestors = Action::whereIn("id", $ancestor_ids)->get();
 
             // Go through every ancestor action and add the newly created item to the list of descendants
-            foreach($ancestor_actions as $ancestor_action) {
+            foreach($ancestors as $ancestor) {
                 // Save to all descendants
-                $descendants = $ancestor_action->inspirations_descendants;
+                $descendants = $ancestor->inspirations_descendants;
                 $descendants[] = $new_action->id;
 
-
-
                 // Save to direct children
-                $children = $ancestor_action->inspirations_children;
+                $children = $ancestor->inspirations_children;
                 $children[] = $new_action->id;
 
-                $ancestor_action->update([
+                $ancestor->update([
                     "inspirations_descendants" => $descendants,
                     "inspirations_children" => $children,
                 ]);
@@ -260,6 +259,26 @@ class ActionController extends Controller
      */
     public function destroy(Action $action)
     {
+        $ancestors_ids = json_decode($action->inspirations_ancestors);
+        if($ancestors_ids) {
+            $ancestors = Action::whereIn("id", $ancestors_ids)->get();
+            // Go through every ancestor action and add the newly created item to the list of descendants
+            foreach($ancestors as $ancestor) {
+                // Remove from descendants
+                $descendants = $ancestor->inspirations_descendants;
+                $descendants = Arr::where($descendants, fn ($value) => $value !== $action->id);
+
+                // Remove from children
+                $children = $ancestor->inspirations_children;
+                $children = Arr::where($children, fn ($value) => $value !== $action->id);
+
+                $ancestor->update([
+                    "inspirations_descendants" => $descendants,
+                    "inspirations_children" => $children,
+                ]);
+            }
+        }
+
         $action->delete();
     }
 }
