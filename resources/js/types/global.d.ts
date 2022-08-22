@@ -30,6 +30,7 @@ type Action = {
     inspirations: {
         total: number;
     };
+    ancestors?: Action[];
 };
 
 type LaravelListProps = {

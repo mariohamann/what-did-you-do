@@ -118,12 +118,24 @@ class ActionController extends Controller
      */
     public function show(Action $action)
     {
+        $ancestor_ids = json_decode($action->inspirations_ancestors);
+        $ancestors = [];
+        if ($ancestor_ids) {
+            $ancestors = Action::whereIn("id", $ancestor_ids)->get()->map(function ($action) {
+                return  [
+                    ...$this->getActionForView($action),
+                    "created_at" => $action->created_at->format("Y-m-d")
+                ];
+            })->all();
+        }
+
         return Inertia::render("Action", [
             "categories" => Category::all(),
             "action" => [
                 ...$this->getActionForView($action),
                 "created_at" => $action->created_at->format("Y-m-d"),
-            ]
+                "ancestors" => $ancestors,
+            ],
         ]);
     }
 
