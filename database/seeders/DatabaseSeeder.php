@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -31,6 +30,5 @@ class DatabaseSeeder extends Seeder
         \App\Models\Action::factory(2000)->create();
 
         \App\Models\Like::factory(10000)->create();
-
     }
 }

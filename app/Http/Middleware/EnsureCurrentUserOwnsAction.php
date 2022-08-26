@@ -17,7 +17,7 @@ class EnsureCurrentUserOwnsAction
     public function handle(Request $request, Closure $next)
     {
         if (Action::find($request->input('action_id')) !== auth()->user()->id) {
-            abort(403, "You do not have permission to do that.");
+            abort(403, 'You do not have permission to do that.');
         }
 
         return $next($request);

@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import ActionInteractions from "@/Components/ActionInteractions.vue";
 import ActionCategory from "@/Components/ActionCategory.vue";
-import ActionAscendants from "@/Components/ActionAscendants.vue";
+import ActionAncestors from "@/Components/ActionAncestors.vue";
 
 defineProps({ action: { type: Object as () => Action, required: true } });
 </script>
@@ -107,7 +107,7 @@ defineProps({ action: { type: Object as () => Action, required: true } });
                 </div>
             </div>
             <div class="mx-auto mt-24 max-w-md">
-                <ActionAscendants
+                <ActionAncestors
                     v-if="action.ancestors?.length > 0"
                     :action="action"
                 />

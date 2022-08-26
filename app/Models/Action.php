@@ -13,7 +13,6 @@ class Action extends Model
 
     protected $visible = ['user', 'category_id', 'description'];
 
-
     protected $casts = [
         'inspirations_ancestors' => 'array',
         'inspirations_descendants' => 'array',

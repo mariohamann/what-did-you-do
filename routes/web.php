@@ -1,11 +1,9 @@
 <?php
 
+use App\Http\Controllers\ActionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Action;
-use App\Models\Category;
-use App\Http\Controllers\ActionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,22 +17,22 @@ use App\Http\Controllers\ActionController;
 */
 
 Route::get(
-    "/",
-    fn () => Inertia::render("Welcome", [
-        "canLogin" => Route::has("login"),
-        "canRegister" => Route::has("register"),
-        "laravelVersion" => Application::VERSION,
-        "phpVersion" => PHP_VERSION,
+    '/',
+    fn () => Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
     ])
 );
 
 Route::middleware([
-    "auth:sanctum",
-    config("jetstream.auth_session"),
-    "verified",
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
 ])->group(function () {
-    Route::get("/dashboard", fn () => Inertia::render("Dashboard"))->name(
-        "dashboard"
+    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name(
+        'dashboard'
     );
 
     Route::post('actions', [ActionController::class, 'store']);
@@ -43,6 +41,6 @@ Route::middleware([
     Route::patch('actions/{action}/archive', [ActionController::class, 'archive']);
     Route::patch('actions/{action}/like', [ActionController::class, 'like']);
 
-    Route::get( "/me", [ActionController::class, 'indexMe'] )->name("me");
-    Route::get( "/others", [ActionController::class, 'indexOthers'] )->name("others");
+    Route::get('/me', [ActionController::class, 'indexMe'])->name('me');
+    Route::get('/others', [ActionController::class, 'indexOthers'])->name('others');
 });

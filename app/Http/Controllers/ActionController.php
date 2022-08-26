@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Action;
-use App\Models\Like;
 use App\Models\Category;
+use App\Models\Like;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Arr;
+use Inertia\Inertia;
 
 class ActionController extends Controller
 {
@@ -15,8 +15,9 @@ class ActionController extends Controller
     {
         $this->middleware(function ($request, $next) {
             if ($request->route()->parameter('action')->user_id !== auth()->user()->id) {
-                abort(403, "You do not have permission to do that.");
+                abort(403, 'You do not have permission to do that.');
             }
+
             return $next($request);
         })->only(['destroy', 'archive']);
     }
@@ -31,7 +32,6 @@ class ActionController extends Controller
         return $this->generateIndex(true, $request);
     }
 
-
     /**
      * Display a listing of other's actions.
      *
@@ -42,29 +42,29 @@ class ActionController extends Controller
         return $this->generateIndex(false, $request);
     }
 
-
     /**
      * Get a list of actions for Inertia
      *
-     * @return Object
+     * @return object
      */
-    private function generateIndex($me, Request $request) {
+    private function generateIndex($me, Request $request)
+    {
         $paginatedActions = Action::query()
             ->where(
-                "user_id",
-                $me ? "=" : "<>",
+                'user_id',
+                $me ? '=' : '<>',
                 auth()->user()->id
             )
             ->when($request->input('search'), function ($query, $search) {
-                $query->where("description", "like", "%{$search}%");
+                $query->where('description', 'like', "%{$search}%");
             })
-            ->when(!$request->input('archived'), function ($query) {
-                $query->whereNull("archived_at");
+            ->when(! $request->input('archived'), function ($query) {
+                $query->whereNull('archived_at');
             }, )
             ->when($request->input('category'), function ($query, $category_slug) {
                 $categories = Category::all();
-                $category_id = $categories->where("slug", $category_slug)->first()->id;
-                $query->where("category_id", $category_id);
+                $category_id = $categories->where('slug', $category_slug)->first()->id;
+                $query->where('category_id', $category_id);
             })
             ->orderBy('archived_at', 'asc')
             ->orderBy('id', 'desc')
@@ -73,42 +73,42 @@ class ActionController extends Controller
             ->through(
                 fn ($action) => $this->getActionForView($action)
             );
-        return Inertia::render("List", [
-            "title" => $me ? "My Actions" : "Actions by others",
-            "me" => $me,
-            "categories" => Category::all(),
-            "actions" => $paginatedActions,
-            "filters" => $request->only(['search', 'category', 'archived']),
+
+        return Inertia::render('List', [
+            'title' => $me ? 'My Actions' : 'Actions by others',
+            'me' => $me,
+            'categories' => Category::all(),
+            'actions' => $paginatedActions,
+            'filters' => $request->only(['search', 'category', 'archived']),
         ]);
     }
 
     /**
      * Optimized action-content for Inertia
      *
-     * @param  Action $action
+     * @param  Action  $action
      * @return array
      */
-
-    private function getActionForView($action) {
+    private function getActionForView($action)
+    {
         return [
-            "id" => $action->id,
-            "user" => [
-                "id" => $action->author->id,
-                "name" => $action->author->name,
+            'id' => $action->id,
+            'user' => [
+                'id' => $action->author->id,
+                'name' => $action->author->name,
             ],
-            "archived_at" => $action->archived_at,
-            "category_id" => $action->category->id,
-            "description" => $action->description,
-            "likes" => [
-                "total" => $action->likes->count(),
-                "liked" => $action->likes->where("user_id", auth()->user()->id)->count() > 0,
+            'archived_at' => $action->archived_at,
+            'category_id' => $action->category->id,
+            'description' => $action->description,
+            'likes' => [
+                'total' => $action->likes->count(),
+                'liked' => $action->likes->where('user_id', auth()->user()->id)->count() > 0,
             ],
-            "inspirations" => [
-                "total" => $action->inspirations_descendants ? count($action->inspirations_descendants) : 0,
+            'inspirations' => [
+                'total' => $action->inspirations_descendants ? count($action->inspirations_descendants) : 0,
             ],
         ];
     }
-
 
     /**
      * Display the specified resource.
@@ -121,28 +121,29 @@ class ActionController extends Controller
         $ancestor_ids = json_decode($action->inspirations_ancestors);
         $ancestors = [];
         if ($ancestor_ids) {
-            $ancestors_from_database = Action::whereIn("id", $ancestor_ids)->get()->map(function ($action) {
+            $ancestors_from_database = Action::whereIn('id', $ancestor_ids)->get()->map(function ($action) {
                 return  [
                     ...$this->getActionForView($action),
-                    "created_at" => $action->created_at->format("Y-m-d")
+                    'created_at' => $action->created_at->format('Y-m-d'),
                 ];
             });
 
             // Show deleted ancestors as well;
             $ancestors = collect($ancestor_ids)->map(function ($id) use ($ancestors_from_database) {
-                if($ancestors_from_database->where('id', $id)->count() > 0) {
+                if ($ancestors_from_database->where('id', $id)->count() > 0) {
                     return $ancestors_from_database->where('id', $id)->first();
                 }
-                return ["id" => $id];
+
+                return ['id' => $id];
             });
         }
 
-        return Inertia::render("Action", [
-            "categories" => Category::all(),
-            "action" => [
+        return Inertia::render('Action', [
+            'categories' => Category::all(),
+            'action' => [
                 ...$this->getActionForView($action),
-                "created_at" => $action->created_at->format("Y-m-d"),
-                "ancestors" => $ancestors,
+                'created_at' => $action->created_at->format('Y-m-d'),
+                'ancestors' => $ancestors,
             ],
         ]);
     }
@@ -173,7 +174,7 @@ class ActionController extends Controller
 
         $ancestor_ids = null;
 
-        if($request->input('inspired_by')) {
+        if ($request->input('inspired_by')) {
             $inspired_by_input = $request->input('inspired_by');
             $inspired_by = Action::find($inspired_by_input);
 
@@ -183,16 +184,16 @@ class ActionController extends Controller
         }
 
         $new_action = Action::create([
-            "user_id" => auth()->user()->id,
-            "inspirations_ancestors" => json_encode($ancestor_ids),
+            'user_id' => auth()->user()->id,
+            'inspirations_ancestors' => json_encode($ancestor_ids),
             ...$attributes,
         ]);
 
-        if($request->input('inspired_by')) {
-            $ancestors = Action::whereIn("id", $ancestor_ids)->get();
+        if ($request->input('inspired_by')) {
+            $ancestors = Action::whereIn('id', $ancestor_ids)->get();
 
             // Go through every ancestor action and add the newly created item to the list of descendants
-            foreach($ancestors as $ancestor) {
+            foreach ($ancestors as $ancestor) {
                 // Save to all descendants
                 $descendants = $ancestor->inspirations_descendants;
                 $descendants[] = $new_action->id;
@@ -202,12 +203,11 @@ class ActionController extends Controller
                 $children[] = $new_action->id;
 
                 $ancestor->update([
-                    "inspirations_descendants" => $descendants,
-                    "inspirations_children" => $children,
+                    'inspirations_descendants' => $descendants,
+                    'inspirations_children' => $children,
                 ]);
             }
         }
-
     }
 
     // /**
@@ -242,15 +242,14 @@ class ActionController extends Controller
      */
     public function like(Action $action)
     {
-        $liked = Like::where("user_id", auth()->user()->id)->where("action_id", $action->id);
+        $liked = Like::where('user_id', auth()->user()->id)->where('action_id', $action->id);
 
-        if($liked->count() > 0) {
+        if ($liked->count() > 0) {
             $liked->delete();
-        }
-        else{
+        } else {
             Like::create([
-                "user_id" => auth()->user()->id,
-                "action_id" => $action->id,
+                'user_id' => auth()->user()->id,
+                'action_id' => $action->id,
             ]);
         }
     }
@@ -265,11 +264,9 @@ class ActionController extends Controller
     public function archive(Action $action)
     {
         $action->update([
-            "archived_at" => $action->archived_at ? null : now(),
+            'archived_at' => $action->archived_at ? null : now(),
         ]);
     }
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -280,10 +277,10 @@ class ActionController extends Controller
     public function destroy(Action $action)
     {
         $ancestors_ids = json_decode($action->inspirations_ancestors);
-        if($ancestors_ids) {
-            $ancestors = Action::whereIn("id", $ancestors_ids)->get();
+        if ($ancestors_ids) {
+            $ancestors = Action::whereIn('id', $ancestors_ids)->get();
             // Go through every ancestor action and remove this item from the list of descendants
-            foreach($ancestors as $ancestor) {
+            foreach ($ancestors as $ancestor) {
                 // Remove from descendants
                 $descendants = $ancestor->inspirations_descendants;
                 $descendants = Arr::where($descendants, fn ($value) => $value !== $action->id);
@@ -293,8 +290,8 @@ class ActionController extends Controller
                 $children = Arr::where($children, fn ($value) => $value !== $action->id);
 
                 $ancestor->update([
-                    "inspirations_descendants" => $descendants,
-                    "inspirations_children" => $children,
+                    'inspirations_descendants' => $descendants,
+                    'inspirations_children' => $children,
                 ]);
             }
         }

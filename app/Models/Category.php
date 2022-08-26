@@ -10,34 +10,34 @@ class Category extends Model
 
     protected $rows = [
         [
-            "id" => 1,
+            'id' => 1,
             'slug' => 'engagement',
             'name' => 'Engagement',
             'emoji' => '💪🏻',
         ],
         [
-            "id" => 2,
+            'id' => 2,
             'slug' => 'energy',
             'name' => 'Energy',
-            'emoji' => '⚡'
+            'emoji' => '⚡',
         ],
         [
-            "id" => 3,
+            'id' => 3,
             'slug' => 'consumption',
             'name' => 'Consumption',
             'emoji' => '🛒',
         ],
         [
-            "id" => 4,
+            'id' => 4,
             'slug' => 'food',
             'name' => 'Food',
-            'emoji' => '🥗'
+            'emoji' => '🥗',
         ],
         [
-            "id" => 5,
+            'id' => 5,
             'slug' => 'mobility',
             'name' => 'Mobility',
-            'emoji' => '🚗'
+            'emoji' => '🚗',
         ],
     ];
 }
