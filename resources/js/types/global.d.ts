@@ -16,6 +16,10 @@ type Filters = {
     archived: boolean;
 };
 
+type DeletedAction = {
+    id: number;
+}
+
 type Action = {
     id: number;
     user: User;
@@ -30,7 +34,7 @@ type Action = {
     inspirations: {
         total: number;
     };
-    ancestors?: Action[];
+    ancestors?: Action[] | DeletedAction[];
 };
 
 type LaravelListProps = {

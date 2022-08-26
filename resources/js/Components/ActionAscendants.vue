@@ -21,6 +21,7 @@
                             </span>
                         </div>
                         <div
+                            v-if="ancestor.created_at"
                             class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5"
                         >
                             <div>
@@ -40,6 +41,9 @@
                             >
                                 <time>{{ ancestor.created_at }}</time>
                             </div>
+                        </div>
+                        <div v-else class="pt-1.5 text-sm italic text-gray-500">
+                            Deleted action.
                         </div>
                     </div>
                 </div>

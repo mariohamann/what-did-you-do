@@ -121,12 +121,20 @@ class ActionController extends Controller
         $ancestor_ids = json_decode($action->inspirations_ancestors);
         $ancestors = [];
         if ($ancestor_ids) {
-            $ancestors = Action::whereIn("id", $ancestor_ids)->get()->map(function ($action) {
+            $ancestors_from_database = Action::whereIn("id", $ancestor_ids)->get()->map(function ($action) {
                 return  [
                     ...$this->getActionForView($action),
                     "created_at" => $action->created_at->format("Y-m-d")
                 ];
-            })->all();
+            });
+
+            // Show deleted ancestors as well;
+            $ancestors = collect($ancestor_ids)->map(function ($id) use ($ancestors_from_database) {
+                if($ancestors_from_database->where('id', $id)->count() > 0) {
+                    return $ancestors_from_database->where('id', $id)->first();
+                }
+                return ["id" => $id];
+            });
         }
 
         return Inertia::render("Action", [
@@ -274,13 +282,13 @@ class ActionController extends Controller
         $ancestors_ids = json_decode($action->inspirations_ancestors);
         if($ancestors_ids) {
             $ancestors = Action::whereIn("id", $ancestors_ids)->get();
-            // Go through every ancestor action and add the newly created item to the list of descendants
+            // Go through every ancestor action and remove this item from the list of descendants
             foreach($ancestors as $ancestor) {
                 // Remove from descendants
                 $descendants = $ancestor->inspirations_descendants;
                 $descendants = Arr::where($descendants, fn ($value) => $value !== $action->id);
 
-                // Remove from children
+                // Remove from direct children
                 $children = $ancestor->inspirations_children;
                 $children = Arr::where($children, fn ($value) => $value !== $action->id);
 
