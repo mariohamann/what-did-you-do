@@ -25,7 +25,7 @@ const category = computed(() =>
 
 <template>
     <span
-        class="mr-2 rounded border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-sm font-medium text-gray-900"
+        class="mr-2 rounded-full bg-[#E6F1FC] px-3 py-1 text-sm font-medium text-[#6B8AC7]"
     >
         {{ category.emoji }} {{ category.name }}
     </span>

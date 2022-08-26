@@ -74,7 +74,7 @@ class ActionController extends Controller
                 fn ($action) => $this->getActionForView($action)
             );
         return Inertia::render("List", [
-            "title" => $me ? "My Actions" : "Actions by others",
+            "title" => $me ? "My Actions" : "That’s what others are doing against climate change.",
             "me" => $me,
             "categories" => Category::all(),
             "actions" => $paginatedActions,

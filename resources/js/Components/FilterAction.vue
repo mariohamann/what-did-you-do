@@ -1,22 +1,21 @@
 <template>
     <div class="mx-auto max-w-md">
-        <label for="search" class="block text-sm font-medium text-gray-700"
-            >Quick search</label
-        >
-        <div class="relative mt-1 flex items-center">
-            <input
-                v-model="search"
-                type="text"
-                name="search"
-                id="search"
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            />
-            <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"></div>
-
+        <div class="relative mt-10 space-y-4">
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700"
+                    >Quick search</label
+                >
+                <input
+                    v-model="search"
+                    type="text"
+                    name="search"
+                    id="search"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+            </div>
             <Listbox
                 as="div"
                 v-model="selectedCategory"
-                class="ml-4 flex-shrink-0"
             >
                 <ListboxLabel class="sr-only"> Category </ListboxLabel>
                 <div class="relative">
@@ -81,13 +80,13 @@
                     </transition>
                 </div>
             </Listbox>
-        </div>
             <div class="flex items-center">
                 <input v-model="showArchived" id="archived" name="archived" value="archived" type="checkbox" class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500">
                 <label for="archived" class="ml-3 text-sm text-gray-600">
                     Show Archived
                 </label>
             </div>
+        </div>
     </div>
 </template>
 

@@ -4,77 +4,35 @@ import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 import Pagination from "../Components/Pagination.vue";
 import FilterAction from "../Components/FilterAction.vue";
+import MasonryWall from '@yeger/vue-masonry-wall';
 
 defineProps({ actions: Object, me: Boolean });
 </script>
 
 <template>
     <AppLayout title="List">
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ $page.props.title }}
-            </h2>
-        </template>
-
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
 
         <CreateAction v-if="me" />
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <FilterAction />
-                <div
-                    class="mt-8 overflow-hidden bg-white shadow-xl sm:rounded-lg"
-                >
-                    <div class="flex flex-col">
-                        <div
-                            class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8"
-                        >
-                            <div
-                                class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-                            >
-                                <div
-                                    class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
-                                >
-                                    <table
-                                        class="min-w-full divide-y divide-gray-300"
-                                    >
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th
-                                                    scope="col"
-                                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                                                >
-                                                    What did you do?
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    Category
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    User
-                                                </th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody
-                                            class="divide-y divide-gray-200 bg-white"
-                                        >
-                                            <Action
-                                                v-for="action in (actions.data as Action[])"
-                                                :action="action"
-                                                v-bind:key="action.id"
-                                            />
-                                        </tbody>
-                                    </table>
-                                    <Pagination />
-                                </div>
-                            </div>
+            <div class="mx-auto max-w-8xl sm:px-6 lg:px-8">
+                <div class="py-12 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
+                    <div class="flex flex-wrap">
+                        <div class="top-24 self-start pr-8 lg:w-1/4 lg:sticky">
+                            <h2 class="text-xl font-semibold mb-4">
+                                {{ $page.props.title }}
+                            </h2>
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis tempora adipisci suscipit</p>
+                            <FilterAction />
+                        </div>
+                        <div class="lg:w-3/4">
+                            <masonry-wall :items="actions?.data" :ssr-columns="1" :column-width="280" :gap="32">
+                                <template #default="{ item }">
+                                    <Action :action="item" v-bind:key="item.id" />
+                                </template>
+                            </masonry-wall>
+                            <Pagination />
                         </div>
                     </div>
                 </div>
