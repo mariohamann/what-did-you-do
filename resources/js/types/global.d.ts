@@ -1,63 +1,23 @@
-type Category = {
-    id: number;
-    name: string;
-    emoji: string;
-    slug: string;
-};
+import { PageProps as InertiaPageProps } from '@inertiajs/core';
+import { AxiosInstance } from 'axios';
+import ziggyRoute, { Config as ZiggyConfig } from 'ziggy-js';
+import { PageProps as AppPageProps } from './';
 
-type User = {
-    id: number;
-    name: string;
-};
+declare global {
+    interface Window {
+        axios: AxiosInstance;
+    }
 
-type Filters = {
-    search: string;
-    category: string;
-    archived: boolean;
-};
-
-type DeletedAction = {
-    id: number;
+    var route: typeof ziggyRoute;
+    var Ziggy: ZiggyConfig;
 }
 
-type Action = {
-    id: number;
-    user: User;
-    description: string;
-    archived_at: Date;
-    created_at: Date;
-    likes: {
-        total: number;
-        liked: boolean;
-    };
-    category_id: Category['id'];
-    inspirations: {
-        total: number;
-    };
-    ancestors?: Action[] | DeletedAction[];
-};
+declare module 'vue' {
+    interface ComponentCustomProperties {
+        route: typeof ziggyRoute;
+    }
+}
 
-type LaravelListProps = {
-    filters: Filters;
-    me: boolean;
-    categories: Category[];
-    title: string;
-    user: {
-        id: number;
-        name: string;
-    };
-    actions: {
-        current_page: number;
-        links: { active: boolean; url: string; label: string; }[];
-        data: Action[];
-        first_page_url: string;
-        from: number;
-        last_page: number;
-        last_page_url: string;
-        next_page_url: string | null;
-        prev_page_url: string | null;
-        per_page: number;
-        to: number;
-        total: number;
-    };
-};
+declare module '@inertiajs/core' {
+    interface PageProps extends InertiaPageProps, AppPageProps {}
+}

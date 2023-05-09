@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ActionController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,31 +16,23 @@ use Inertia\Inertia;
 |
 */
 
-Route::get(
-    '/',
-    fn () => Inertia::render('Welcome', [
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
-    ])
-);
-
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', fn () => Inertia::render('Dashboard'))->name(
-        'dashboard'
-    );
-
-    Route::post('actions', [ActionController::class, 'store']);
-    Route::get('actions/{action}', [ActionController::class, 'show']);
-    Route::delete('actions/{action}', [ActionController::class, 'destroy']);
-    Route::patch('actions/{action}/archive', [ActionController::class, 'archive']);
-    Route::patch('actions/{action}/like', [ActionController::class, 'like']);
-
-    Route::get('/me', [ActionController::class, 'indexMe'])->name('me');
-    Route::get('/others', [ActionController::class, 'indexOthers'])->name('others');
+    ]);
 });
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
