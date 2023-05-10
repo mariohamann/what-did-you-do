@@ -2,6 +2,7 @@
 
 use App\Data\WelcomeData;
 use App\Http\Controllers\ActionController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,17 @@ Route::get(
     '/dashboard',
     [ActionController::class, 'index']
 )->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth', 'verified')->group(function () {
+    Route::post(
+        '/like/{action}',
+        [LikeController::class, 'store'],
+    )->name('like.create');
+    Route::delete(
+        '/like/{action}',
+        [LikeController::class, 'destroy'],
+    )->name('like.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

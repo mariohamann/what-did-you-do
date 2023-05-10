@@ -26,5 +26,10 @@ const props = defineProps<{
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
             {{ action.user.name }}
         </td>
+        <td
+            class="flex gap-4 whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+        >
+            <ActionInteractions v-bind="action" />
+        </td>
     </tr>
 </template>

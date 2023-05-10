@@ -32,8 +32,14 @@ const isMine = computed(() => {
     return props.user.id === currentUserId;
 });
 
+console.log(props.likes);
+
 const likeAction = () => {
-    router.patch(`/actions/${props.id}/like`, {}, { preserveScroll: true });
+    if (props.likes.liked) {
+        router.delete(`/like/${props.id}`, { preserveScroll: true });
+    } else {
+        router.post(`/like/${props.id}`, {}, { preserveScroll: true });
+    }
 };
 
 const archiveAction = () => {
