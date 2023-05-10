@@ -11,12 +11,12 @@ const props = defineProps<ActionIndexData>();
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Index" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Dashboard
+                Index
             </h2>
         </template>
 

@@ -17,7 +17,7 @@ class ActionController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Dashboard', ActionIndexData::from([
+        return Inertia::render('Actions/Index', ActionIndexData::from([
             'categories' => CategoryData::collection(Category::all()),
             // list actions in inversed
             'actions' => ActionData::collection(Action::orderBy('created_at', 'desc')->get()),
@@ -94,7 +94,7 @@ class ActionController extends Controller
         // Log the serialized model for debugging
         // \Log::info($actionArray);
         return Inertia::render(
-            'Action/Show',
+            'Actions/Show',
             ActionData::from($actionArray)
         );
     }

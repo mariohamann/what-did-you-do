@@ -29,9 +29,9 @@ Route::get('/', function () {
 });
 
 Route::get(
-    '/dashboard',
+    '/index',
     [ActionController::class, 'index']
-)->middleware(['auth', 'verified'])->name('dashboard');
+)->middleware(['auth', 'verified'])->name('index');
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::post(

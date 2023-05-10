@@ -19,9 +19,9 @@ defineProps<WelcomeData>();
         >
             <Link
                 v-if="$page.props.auth.user"
-                :href="route('dashboard')"
+                :href="route('index')"
                 class="font-semibold text-gray-600 hover:text-gray-900 focus:rounded-sm focus:outline focus:outline-2 focus:outline-red-500 dark:text-gray-400 dark:hover:text-white"
-                >Dashboard</Link
+                >Index</Link
             >
 
             <template v-else>
