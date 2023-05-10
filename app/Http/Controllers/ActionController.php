@@ -19,7 +19,9 @@ class ActionController extends Controller
     {
         return Inertia::render('Dashboard', ActionIndexData::from([
             'categories' => CategoryData::collection(Category::all()),
-            'actions' => ActionData::collection(Action::all()),
+            // list actions in inversed
+            'actions' => ActionData::collection(Action::orderBy('created_at', 'desc')->get()),
+
         ]));
     }
 
@@ -36,15 +38,65 @@ class ActionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $attributes = $request->validate([
+            'description' => 'required',
+            'inspired_by' => 'nullable|exists:App\Models\Action,id',
+            'category_id' => 'required|exists:App\Models\Category,id',
+        ]);
+
+        $ancestor_ids = null;
+
+        if ($request->input('inspired_by')) {
+            $inspired_by_input = $request->input('inspired_by');
+            $inspired_by = Action::find($inspired_by_input);
+
+            // Get all ancestors by adding the parent to the parent's ancestors
+            $ancestor_ids = json_decode($inspired_by->inspirations_ancestors);
+            $ancestor_ids[] = $inspired_by_input;
+        }
+
+        $new_action = Action::create([
+            'user_id' => auth()->user()->id,
+            'inspirations_ancestors' => json_encode($ancestor_ids),
+            ...$attributes,
+        ]);
+
+        if ($request->input('inspired_by')) {
+            $ancestors = Action::whereIn('id', $ancestor_ids)->get();
+
+            // Go through every ancestor action and add the newly created item to the list of descendants
+            foreach ($ancestors as $ancestor) {
+                // Save to all descendants
+                $descendants = $ancestor->inspirations_descendants;
+                $descendants[] = $new_action->id;
+
+                // Save to direct children
+                $children = $ancestor->inspirations_children;
+                $children[] = $new_action->id;
+
+                $ancestor->update([
+                    'inspirations_descendants' => $descendants,
+                    'inspirations_children' => $children,
+                ]);
+            }
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+
+        $action = Action::findOrFail($id);
+        $actionArray = $action->toArray();
+
+        // Log the serialized model for debugging
+        // \Log::info($actionArray);
+        return Inertia::render(
+            'Action/Show',
+            ActionData::from($actionArray)
+        );
     }
 
     /**
@@ -66,8 +118,28 @@ class ActionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Action $action)
     {
-        //
+        $ancestors_ids = json_decode($action->inspirations_ancestors);
+        if ($ancestors_ids) {
+            $ancestors = Action::whereIn('id', $ancestors_ids)->get();
+            // Go through every ancestor action and remove this item from the list of descendants
+            foreach ($ancestors as $ancestor) {
+                // Remove from descendants
+                $descendants = $ancestor->inspirations_descendants;
+                $descendants = Arr::where($descendants, fn ($value) => $value !== $action->id);
+
+                // Remove from direct children
+                $children = $ancestor->inspirations_children;
+                $children = Arr::where($children, fn ($value) => $value !== $action->id);
+
+                $ancestor->update([
+                    'inspirations_descendants' => $descendants,
+                    'inspirations_children' => $children,
+                ]);
+            }
+        }
+
+        $action->delete();
     }
 }

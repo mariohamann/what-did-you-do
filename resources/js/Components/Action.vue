@@ -3,11 +3,9 @@ import { Link } from "@inertiajs/vue3";
 import ActionInteractions from "@/Components/ActionInteractions.vue";
 import ActionCategory from "@/Components/ActionCategory.vue";
 
-import type { ActionData } from "../types/generated.d.ts";
+import type { ActionData } from "@/types/generated.d.ts";
 
-const props = defineProps<{
-    action: ActionData;
-}>();
+defineProps<ActionData>();
 </script>
 
 <template>
@@ -15,21 +13,21 @@ const props = defineProps<{
         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
             <Link
                 class="underline decoration-gray-300 underline-offset-2 hover:decoration-indigo-300"
-                :href="`/actions/${action.id}`"
+                :href="`/action/${id}`"
             >
-                {{ action.description }}
+                {{ description }}
             </Link>
         </td>
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <ActionCategory v-bind="action.category" />
+            <ActionCategory v-bind="category" />
         </td>
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            {{ action.user.name }}
+            {{ user.name }}
         </td>
         <td
             class="flex gap-4 whitespace-nowrap px-3 py-4 text-sm text-gray-500"
         >
-            <ActionInteractions v-bind="action" />
+            <ActionInteractions v-bind="$props" />
         </td>
     </tr>
 </template>

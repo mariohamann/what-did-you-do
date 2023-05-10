@@ -44,6 +44,21 @@ Route::middleware('auth', 'verified')->group(function () {
     )->name('like.destroy');
 });
 
+Route::middleware('auth', 'verified')->group(function () {
+    Route::get(
+        '/action/{id}',
+        [ActionController::class, 'show']
+    )->name('action.show');
+    Route::post(
+        '/action',
+        [ActionController::class, 'store']
+    )->name('action.create');
+    Route::delete(
+        '/action/{action}',
+        [ActionController::class, 'destroy'],
+    )->name('action.destroy');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

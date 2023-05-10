@@ -18,7 +18,7 @@ import { ExclamationIcon } from "@heroicons/vue/outline";
 import { computed } from "vue";
 import CreateAction from "@/Components/CreateAction.vue";
 
-import type { ActionData } from "../types/generated.d.ts";
+import type { ActionData } from "@/types/generated.d.ts";
 
 const props = defineProps<ActionData>();
 
@@ -42,7 +42,7 @@ const likeAction = () => {
 };
 
 const deleteAction = () => {
-    router.delete(`/actions/${props.id}`, { preserveScroll: true });
+    router.delete(`/action/${props.id}`, { preserveScroll: true });
 };
 
 const styles = {

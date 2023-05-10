@@ -2,9 +2,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
+import CreateAction from "@/Components/CreateAction.vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
-import type { ActionIndexData, ActionData } from "../types/generated.d.ts";
+import type { ActionIndexData } from "@/types/generated.d.ts";
 
 const props = defineProps<ActionIndexData>();
 </script>
@@ -19,7 +20,9 @@ const props = defineProps<ActionIndexData>();
             </h2>
         </template>
 
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <CreateAction :categories="categories" />
+        </div>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -67,7 +70,7 @@ const props = defineProps<ActionIndexData>();
                                         >
                                             <Action
                                                 v-for="action in actions"
-                                                :action="action"
+                                                v-bind="action"
                                                 v-bind:key="action.id"
                                             />
                                         </tbody>

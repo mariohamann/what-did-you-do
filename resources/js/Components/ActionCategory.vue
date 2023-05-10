@@ -2,7 +2,7 @@
 import { usePage } from "@inertiajs/vue3";
 import { computed } from "vue";
 
-import type { CategoryData } from "../types/generated.d.ts";
+import type { CategoryData } from "@/types/generated.d.ts";
 
 const props = defineProps<CategoryData>();
 </script>

@@ -10,18 +10,16 @@ import {
 } from "@headlessui/vue";
 import { TagIcon } from "@heroicons/vue/solid";
 
-const categories = [...(usePage().props.value.categories as Category[])];
+import type { ActionData, CategoryData } from "@/types/generated.d.ts";
 
-const props = defineProps({
-    inspiredBy: {
-        type: Object as () => Action,
-        default: null,
-    },
-});
+const props = defineProps<{
+    categories: CategoryData[];
+    inspiredBy?: ActionData;
+}>();
 
 //
 const categorized = ref(
-    categories[props.inspiredBy?.category_id - 1 || 0] as Category
+    props.categories[props.inspiredBy?.category.id - 1 || 0]
 );
 
 let form = reactive({
@@ -30,7 +28,7 @@ let form = reactive({
 
 let createAction = () => {
     router.post(
-        "/actions",
+        "/action",
         {
             description: form.description,
             category_id: categorized.value.id,
