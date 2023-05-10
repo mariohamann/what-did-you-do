@@ -11,7 +11,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <tr :class="action.archived_at ? 'bg-red-200' : ''">
+    <tr>
         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
             <Link
                 class="underline decoration-gray-300 underline-offset-2 hover:decoration-indigo-300"

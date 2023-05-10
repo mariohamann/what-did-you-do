@@ -17,8 +17,8 @@ class LikeFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => random_int(1, 302),        // amount of generated users in DatabaseSeeder
-            'action_id' => random_int(1, 2000),     // amount of actions in DatabaseSeeder
+            'user_id' => random_int(1, 32),        // amount of generated users in DatabaseSeeder
+            'action_id' => random_int(1, 200),     // amount of actions in DatabaseSeeder
         ];
     }
 }

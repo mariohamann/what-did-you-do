@@ -10,7 +10,6 @@ class ActionData extends Data
         public int $id,
         public UserData $user,
         public string $description,
-        public ?string $archived_at,
         public string $created_at,
         public ActionLikesData $likes,
         public CategoryData $category,

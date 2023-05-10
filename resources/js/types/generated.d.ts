@@ -2,7 +2,6 @@ export type ActionData = {
     id: number;
     user: UserData;
     description: string;
-    archived_at: string | null;
     created_at: string;
     likes: ActionLikesData;
     category: CategoryData;

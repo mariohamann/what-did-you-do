@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('category_id');
             $table->foreignId('action_id')->nullable();
-            $table->date('archived_at')->nullable();
             $table->timestamps();
             $table->json('inspirations_ancestors')->nullable();
             $table->json('inspirations_descendants')->nullable();

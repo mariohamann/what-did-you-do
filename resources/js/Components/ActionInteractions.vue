@@ -3,7 +3,6 @@ import {
     HeartIcon,
     TrashIcon,
     LightBulbIcon,
-    ArchiveIcon,
     ArrowCircleLeftIcon,
 } from "@heroicons/vue/solid";
 import { usePage, router } from "@inertiajs/vue3";
@@ -42,10 +41,6 @@ const likeAction = () => {
     }
 };
 
-const archiveAction = () => {
-    router.patch(`/actions/${props.id}/archive`, {}, { preserveScroll: true });
-};
-
 const deleteAction = () => {
     router.delete(`/actions/${props.id}`, { preserveScroll: true });
 };
@@ -62,23 +57,6 @@ const styles = {
 </script>
 
 <template>
-    <button
-        v-if="isMine"
-        v-on:click="archiveAction"
-        :class="[styles.like.inactive, styles.like.default]"
-    >
-        <ArchiveIcon
-            v-if="!archived_at"
-            class="-ml-0.5 mr-2 h-4 w-4"
-            aria-hidden="true"
-        />
-        <ArrowCircleLeftIcon
-            v-else
-            class="-ml-0.5 mr-2 h-4 w-4"
-            aria-hidden="true"
-        />
-        {{ archived_at ? "Restore" : "Archive" }}
-    </button>
     <button
         v-if="isMine"
         type="button"
