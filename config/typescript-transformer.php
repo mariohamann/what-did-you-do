@@ -8,7 +8,7 @@ return [
 
     'auto_discover_types' => [
         app_path(),
-        base_path('routes')
+        base_path('routes'),
     ],
 
     /*

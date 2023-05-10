@@ -1,0 +1,11 @@
+vendor
+node_modules
+storage
+public/build
+composer.lock
+pnpm-lock.yaml
+resources/js/types/models.d.ts
+**/**.sqlite
+**/Partials/Result.vue
+**/**.php
+.prettierignore
