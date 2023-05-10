@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
+import Action from "@/Components/Action.vue";
+
+// It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
+import type { ActionIndexData, ActionData } from "../types/generated.d.ts";
+
+const props = defineProps<ActionIndexData>();
 </script>
 
 <template>
@@ -13,10 +19,64 @@ import { Head } from "@inertiajs/vue3";
             </h2>
         </template>
 
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
+
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
+                <div
+                    class="mt-8 overflow-hidden bg-white shadow-xl sm:rounded-lg"
+                >
+                    <div class="flex flex-col">
+                        <div
+                            class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8"
+                        >
+                            <div
+                                class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+                            >
+                                <div
+                                    class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+                                >
+                                    <table
+                                        class="min-w-full divide-y divide-gray-300"
+                                    >
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th
+                                                    scope="col"
+                                                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                                                >
+                                                    What did you do?
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                >
+                                                    Category
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                >
+                                                    User
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody
+                                            class="divide-y divide-gray-200 bg-white"
+                                        >
+                                            <Action
+                                                v-for="action in actions"
+                                                :action="action"
+                                                v-bind:key="action.id"
+                                            />
+                                        </tbody>
+                                    </table>
+                                    <Pagination />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

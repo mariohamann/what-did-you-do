@@ -5,6 +5,7 @@
         "dev": "vite",
         "build": "vue-tsc && vite build",
         "lint": "npx prettier --write . && php ./vendor/bin/pint",
+        "generate-types": "php artisan typescript:transform",
         "// prepare": "We don't want to start the prepare script for husky when we don't install the dev depencies.",
         "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
     },
@@ -29,5 +30,9 @@
     },
     "lint-staged": {
         "*": "pnpm lint"
+    },
+    "dependencies": {
+        "@headlessui/vue": "^1.7.13",
+        "@heroicons/vue": "1.0.6"
     }
 }
