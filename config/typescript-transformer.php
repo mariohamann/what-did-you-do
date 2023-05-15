@@ -1,5 +1,7 @@
 <?php
 
+use Spatie\TypeScriptTransformer\Formatters\PrettierFormatter;
+
 return [
     /*
      * The paths where typescript-transformer will look for PHP classes
@@ -69,7 +71,7 @@ return [
      * The generated TypeScript will not be formatted when no formatter was set.
      */
 
-    'formatter' => null,
+    'formatter' => PrettierFormatter::class,
 
     /*
      * Enums can be transformed into types or native TypeScript enums, by default
