@@ -17,6 +17,8 @@ class ActionData extends Data
         public int $descendants_count,
         /** @var ActionData[] */
         public DataCollection $ancestors,
+        public float $latitude,
+        public float $longitude,
     ) {
     }
 }

@@ -24,6 +24,9 @@ defineProps<ActionData>();
         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
             {{ user.name }}
         </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            {{ longitude }}, {{ latitude }}
+        </td>
         <td
             class="flex gap-4 whitespace-nowrap px-3 py-4 text-sm text-gray-500"
         >

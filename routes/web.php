@@ -27,12 +27,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]));
 });
-
-Route::get(
-    '/index',
-    [ActionController::class, 'index']
-)->middleware(['auth', 'verified'])->name('index');
-
 Route::middleware('auth', 'verified')->group(function () {
     Route::post(
         '/like/{action}',
@@ -43,6 +37,11 @@ Route::middleware('auth', 'verified')->group(function () {
         [LikeController::class, 'destroy'],
     )->name('like.destroy');
 });
+
+Route::get(
+    '/index',
+    [ActionController::class, 'index']
+)->middleware(['auth', 'verified'])->name('index');
 
 Route::middleware('auth', 'verified')->group(function () {
     Route::get(

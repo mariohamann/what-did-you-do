@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Data\ActionData;
 use App\Data\ActionIndexData;
 use App\Models\Action;
+use Faker\Generator as Faker;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,11 +14,16 @@ class ActionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $actionIds = $request->input('ids', []);
+
+        $actions = Action::when(! empty($actionIds), function ($query) use ($actionIds) {
+            return $query->whereIn('id', $actionIds);
+        })->orderBy('created_at', 'desc')->get();
+
         return Inertia::render('Actions/Index', ActionIndexData::from([
-            // list actions in inversed
-            'actions' => ActionData::collection(Action::orderBy('created_at', 'desc')->get()),
+            'actions' => ActionData::collection($actions),
         ]));
     }
 
@@ -32,12 +38,14 @@ class ActionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Faker $faker)
     {
         $attributes = $request->validate([
             'description' => 'required',
             'inspired_by' => 'nullable|exists:App\Models\Action,id',
             'category_id' => 'required|exists:App\Models\Category,id',
+            // 'latitude' => 'required|numeric',
+            // 'longitude' => 'required|numeric',
         ]);
 
         $ancestor_ids = null;
@@ -54,6 +62,8 @@ class ActionController extends Controller
         $new_action = Action::create([
             'user_id' => auth()->user()->id,
             'inspirations_ancestors' => json_encode($ancestor_ids),
+            'latitude' => $faker->latitude,
+            'longitude' => $faker->longitude,
             ...$attributes,
         ]);
 

@@ -7,6 +7,8 @@ export type ActionData = {
     category: CategoryData;
     descendants_count: number;
     ancestors: Array<ActionData>;
+    latitude: number;
+    longitude: number;
 };
 export type ActionIndexData = {
     actions: Array<ActionData>;

@@ -30,7 +30,7 @@ let createAction = () => {
             category_id: categorized.value.id,
             inspired_by: props.id,
         },
-        { preserveScroll: true }
+        { preserveScroll: true, preserveState: false }
     );
     form.description = "";
 };

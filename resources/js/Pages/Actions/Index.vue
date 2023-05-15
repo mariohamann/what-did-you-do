@@ -3,6 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
+import GetActions from "@/Components/GetActions.vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
 import type { ActionData } from "@/types/generated.d.ts";
@@ -22,6 +23,10 @@ let props = defineProps<{ actions: ActionData[] }>();
 
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <CreateAction v-bind="null" />
+        </div>
+
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <GetActions />
         </div>
 
         <div class="py-12">
@@ -61,6 +66,12 @@ let props = defineProps<{ actions: ActionData[] }>();
                                                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                                                 >
                                                     User
+                                                </th>
+                                                <th
+                                                    scope="col"
+                                                    class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                                                >
+                                                    Where
                                                 </th>
                                                 <th></th>
                                             </tr>
