@@ -5,9 +5,10 @@ export type ActionData = {
     created_at: string;
     likes: ActionLikesData;
     category: CategoryData;
+    descendants_count: number;
+    ancestors: Array<ActionData>;
 };
 export type ActionIndexData = {
-    categories: Array<CategoryData>;
     actions: Array<ActionData>;
 };
 export type ActionLikesData = {

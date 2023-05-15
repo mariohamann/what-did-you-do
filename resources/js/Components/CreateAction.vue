@@ -12,18 +12,14 @@ import { TagIcon } from "@heroicons/vue/solid";
 
 import type { ActionData, CategoryData } from "@/types/generated.d.ts";
 
-const props = defineProps<{
-    categories: CategoryData[];
-    inspiredBy?: ActionData;
-}>();
+const props = defineProps<ActionData>();
 
-//
-const categorized = ref(
-    props.categories[props.inspiredBy?.category.id - 1 || 0]
-);
+const categories = usePage().props.categories as CategoryData[];
+
+const categorized = ref(categories[props?.category?.id - 1 || 0]);
 
 let form = reactive({
-    description: props.inspiredBy?.description || "",
+    description: props.description || "",
 });
 
 let createAction = () => {
@@ -32,7 +28,7 @@ let createAction = () => {
         {
             description: form.description,
             category_id: categorized.value.id,
-            inspired_by: props.inspiredBy?.id,
+            inspired_by: props.id,
         },
         { preserveScroll: true }
     );

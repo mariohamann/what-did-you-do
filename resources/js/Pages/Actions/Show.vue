@@ -115,7 +115,9 @@ defineProps<ActionData>();
                     </blockquote>
                 </div>
             </div>
-            <div class="mx-auto mt-24 max-w-md"></div>
+            <div v-if="ancestors.length > 0" class="mx-auto mt-24 max-w-md">
+                <ActionAncestors v-bind="$props" />
+            </div>
         </section>
     </AuthenticatedLayout>
 </template>

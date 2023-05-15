@@ -5,9 +5,9 @@ import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
-import type { ActionIndexData } from "@/types/generated.d.ts";
+import type { ActionData } from "@/types/generated.d.ts";
 
-const props = defineProps<ActionIndexData>();
+let props = defineProps<{ actions: ActionData[] }>();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const props = defineProps<ActionIndexData>();
         </template>
 
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <CreateAction :categories="categories" />
+            <CreateAction v-bind="null" />
         </div>
 
         <div class="py-12">

@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Data\ActionData;
 use App\Data\ActionIndexData;
-use App\Data\CategoryData;
 use App\Models\Action;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -18,10 +16,8 @@ class ActionController extends Controller
     public function index()
     {
         return Inertia::render('Actions/Index', ActionIndexData::from([
-            'categories' => CategoryData::collection(Category::all()),
             // list actions in inversed
             'actions' => ActionData::collection(Action::orderBy('created_at', 'desc')->get()),
-
         ]));
     }
 
@@ -80,6 +76,8 @@ class ActionController extends Controller
                 ]);
             }
         }
+
+        return to_route('action.show', $new_action->id)->with('success', 'Action created.');
     }
 
     /**

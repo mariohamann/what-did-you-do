@@ -1,15 +1,20 @@
+<script setup lang="ts">
+import type { ActionData } from "@/types/generated.d.ts";
+defineProps<ActionData>();
+</script>
+
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
     <h2 class="mb-6 text-lg">Inspired by:</h2>
     <div class="flow-root">
         <ul role="list" class="-mb-8">
             <li
-                v-for="(ancestor, index) in action.ancestors?.slice().reverse()"
+                v-for="(ancestor, index) in ancestors?.slice().reverse()"
                 :key="ancestor.id"
             >
                 <div class="relative pb-8">
                     <span
-                        v-if="index !== action.ancestors?.length - 1"
+                        v-if="index !== ancestors?.length - 1"
                         class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
                         aria-hidden="true"
                     />
@@ -27,7 +32,7 @@
                             <div>
                                 <p class="text-sm text-gray-500">
                                     <a
-                                        :href="`/actions/${ancestor.id}`"
+                                        :href="`/action/${ancestor.id}`"
                                         class="font-medium text-gray-900"
                                         >{{ ancestor.description }}<br />
                                         <i class="mt-3 text-gray-400"
@@ -51,8 +56,3 @@
         </ul>
     </div>
 </template>
-
-<script setup lang="ts">
-defineProps({ action: { type: Object as () => Action, required: true } });
-</script>
-l

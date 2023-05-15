@@ -11,9 +11,9 @@ class Action extends Model
 
     protected $fillable = ['user_id', 'category_id', 'description', 'inspirations_ancestors', 'inspirations_descendants', 'inspirations_children'];
 
-    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category'];
+    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category', 'descendants_count', 'ancestors'];
 
-    protected $appends = ['likes', 'category', 'user'];
+    protected $appends = ['likes', 'category', 'user', 'descendants_count', 'ancestors'];
 
     protected $casts = [
         'inspirations_ancestors' => 'array',
@@ -77,5 +77,17 @@ class Action extends Model
     public function getCategoryAttribute()
     {
         return $this->category()->first();
+    }
+
+    public function getDescendantsCountAttribute()
+    {
+        return count($this->inspirations_descendants ?? []);
+    }
+
+    public function getAncestorsAttribute()
+    {
+        $ancestors = json_decode($this->inspirations_ancestors, true) ?? [];
+
+        return $this->whereIn('id', $ancestors)->get();
     }
 }
