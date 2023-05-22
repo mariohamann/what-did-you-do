@@ -20,7 +20,7 @@ export type ActionLikesData = {
 };
 export type ActionsJsonData = {
     id: number;
-    ca: string;
+    ca: number;
     la: number;
     ln: number;
 };
