@@ -24,6 +24,7 @@ class ActionController extends Controller
 
         return Inertia::render('Actions/Index', ActionIndexData::from([
             'actions' => ActionData::collection($actions),
+            'actions_json_url' => Action::getJsonFileUrl(),
         ]));
     }
 

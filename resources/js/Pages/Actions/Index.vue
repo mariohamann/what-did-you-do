@@ -4,11 +4,22 @@ import { Head } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 import GetActions from "@/Components/GetActions.vue";
+import { ref } from "vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
-import type { ActionData } from "@/types/generated.d.ts";
+import type { ActionIndexData, ActionsJsonData } from "@/types/generated.d.ts";
 
-let props = defineProps<{ actions: ActionData[] }>();
+let props = defineProps<ActionIndexData>();
+
+// amount of fetched elements from actions_json_url
+let actionsFromJsonLength = ref(0);
+
+// fetch data from actions_json_url and make a console log of the length of the json (array)
+fetch(props.actions_json_url)
+    .then((response) => response.json())
+    .then(
+        (data: ActionsJsonData[]) => (actionsFromJsonLength.value = data.length)
+    );
 </script>
 
 <template>
@@ -27,6 +38,10 @@ let props = defineProps<{ actions: ActionData[] }>();
 
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <GetActions />
+        </div>
+
+        <div class="mx-auto mt-12 max-w-7xl sm:px-6 lg:px-8">
+            Fetched elements from actions_json_url: {{ actionsFromJsonLength }}
         </div>
 
         <div class="py-12">
@@ -86,7 +101,6 @@ let props = defineProps<{ actions: ActionData[] }>();
                                             />
                                         </tbody>
                                     </table>
-                                    <Pagination />
                                 </div>
                             </div>
                         </div>

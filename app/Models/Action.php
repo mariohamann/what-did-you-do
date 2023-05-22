@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Data\ActionsJsonData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Action extends Model
 {
@@ -20,6 +22,17 @@ class Action extends Model
         'inspirations_descendants' => 'array',
         'inspirations_children' => 'array',
     ];
+
+    protected static function booted()
+    {
+        static::created(function ($action) {
+            $action->addToJsonFile();
+        });
+
+        static::deleted(function ($action) {
+            $action->removeFromJsonFile();
+        });
+    }
 
     /**
      * Get the owner of the action.
@@ -89,5 +102,49 @@ class Action extends Model
         $ancestors = json_decode($this->inspirations_ancestors, true) ?? [];
 
         return $this->whereIn('id', $ancestors)->get();
+    }
+
+    public function addToJsonFile()
+    {
+        $actionData = ActionsJsonData::from([
+            'id' => $this->id,
+            'ca' => $this->category->id,
+            'la' => round($this->latitude, 5),
+            'ln' => round($this->longitude, 5),
+        ]);
+
+        $existingData = json_decode(Storage::disk('public')->get('actions.json'), true);
+        $existingData[] = $actionData;
+
+        Storage::disk('public')->put('actions.json', json_encode($existingData));
+    }
+
+    public function removeFromJsonFile()
+    {
+        $existingData = json_decode(Storage::disk('public')->get('actions.json'), true);
+        $existingData = array_filter($existingData, function ($action) {
+            return $action['id'] !== $this->id;
+        });
+
+        Storage::disk('public')->put('actions.json', json_encode($existingData));
+    }
+
+    public static function createJsonFile()
+    {
+        $actions = Action::all()->map(function ($action) {
+            return ActionsJsonData::from([
+                'id' => $action->id,
+                'ca' => $action->category->id,
+                'la' => round($action->latitude, 5),
+                'ln' => round($action->longitude, 5),
+            ]);
+        });
+
+        Storage::disk('public')->put('actions.json', $actions->toJson());
+    }
+
+    public static function getJsonFileUrl()
+    {
+        return asset('storage/actions.json');
     }
 }

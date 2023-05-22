@@ -12,10 +12,17 @@ export type ActionData = {
 };
 export type ActionIndexData = {
     actions: Array<ActionData>;
+    actions_json_url: string;
 };
 export type ActionLikesData = {
     total: number;
     liked: boolean;
+};
+export type ActionsJsonData = {
+    id: number;
+    ca: string;
+    la: number;
+    ln: number;
 };
 export type CategoryData = {
     id: number;
