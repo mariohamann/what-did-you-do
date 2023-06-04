@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { ActionsJsonData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
 
-const props = defineProps<{ apiKey: string }>();
+const props = defineProps<{ apiKey: string; geoData: ActionsJsonData[] }>();
 
 const el = ref();
 let map = ref<maplibregl.Map>();
@@ -35,9 +36,9 @@ onMounted(() => {
             "bottom-right"
         );
 
-    // new MapbodxGeocder class is loaded via CDN in app.blade.php
-    // @ts-ignore
     map.value.addControl(
+        // new MapbodxGeocder class is loaded via CDN in app.blade.php
+        // @ts-ignore
         new MapboxGeocoder({
             accessToken: props.apiKey,
             mapboxgl: maplibregl,
@@ -61,5 +62,6 @@ onUnmounted(() => {
     <div class="mx-auto mt-12 max-w-md">
         <p>map component with apiKey: {{ apiKey }}</p>
         <div ref="el" class="h-96"></div>
+        <p>{{ JSON.stringify(geoData) }}</p>
     </div>
 </template>
