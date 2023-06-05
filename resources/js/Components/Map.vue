@@ -9,6 +9,25 @@ const props = defineProps<{ apiKey: string; geoData: ActionsJsonData[] }>();
 const el = ref();
 let map = ref<maplibregl.Map>();
 
+function createGeoJson(geoData: ActionsJsonData[]) {
+    return {
+        type: "FeatureCollection",
+        features: geoData.map((action) => {
+            return {
+                type: "Feature",
+                properties: {
+                    id: action.id,
+                    category: action.ca,
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [action.ln, action.la],
+                },
+            };
+        }),
+    };
+}
+
 onMounted(() => {
     map.value = new maplibregl.Map({
         container: el.value,
@@ -47,7 +66,7 @@ onMounted(() => {
                     screenSpeed: 7,
                     speed: 4,
                 },
-            }) as unknown as any,
+            }),
             "top-left"
         );
 
@@ -59,7 +78,7 @@ onMounted(() => {
             type: "geojson",
             // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
             // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-            data: "https://maplibre.org/maplibre-gl-js-docs/assets/earthquakes.geojson",
+            data: createGeoJson(props.geoData),
             cluster: true,
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
