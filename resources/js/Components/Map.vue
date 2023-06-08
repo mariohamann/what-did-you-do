@@ -4,12 +4,27 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
 
+interface GeoJSON {
+    type: string;
+    features: {
+        type: string;
+        properties: {
+            id: number;
+            category: number;
+        };
+        geometry: {
+            type: string;
+            coordinates: number[];
+        };
+    }[];
+}
+
 const props = defineProps<{ apiKey: string; geoData: ActionsJsonData[] }>();
 
-const el = ref();
+const mapCanvas = ref<HTMLElement>();
 let map = ref<maplibregl.Map>();
 
-function createGeoJson(geoData: ActionsJsonData[]) {
+function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
     return {
         type: "FeatureCollection",
         features: geoData.map((action) => {
@@ -28,66 +43,79 @@ function createGeoJson(geoData: ActionsJsonData[]) {
     };
 }
 
-onMounted(() => {
+function initMap(): void {
     map.value = new maplibregl.Map({
-        container: el.value,
+        container: mapCanvas.value!,
         attributionControl: false,
         style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
         center: [-74.5, 40], // starting position [lng, lat]
         zoom: 12, // starting zoom
-    })
-        .addControl(
-            new maplibregl.NavigationControl({
-                showCompass: false,
-                showZoom: true,
-                visualizePitch: false,
-            }),
-            "top-right"
-        )
-        .addControl(
-            new maplibregl.GeolocateControl({
-                positionOptions: undefined,
-                fitBoundsOptions: undefined,
-                trackUserLocation: true,
-                showAccuracyCircle: true,
-                showUserLocation: true,
-            }),
-            "bottom-right"
-        )
-        .addControl(
-            // new MapbodxGeocder class is loaded via CDN in app.blade.php
-            // @ts-ignore
-            new MapboxGeocoder({
-                accessToken: props.apiKey,
-                mapboxgl: maplibregl,
-                limit: 5,
-                dedupe: 1,
-                flyTo: {
-                    screenSpeed: 7,
-                    speed: 4,
-                },
-            }),
-            "top-left"
-        );
+    });
+    addNavigationControl(map.value);
+    addGeolocateControl(map.value);
+    addAutoCompleteControl(map.value);
+    addSourceAndLayers(map.value);
+}
 
-    map.value.on("load", function () {
+function addNavigationControl(map: maplibregl.Map): void {
+    map.addControl(
+        new maplibregl.NavigationControl({
+            showCompass: false,
+            showZoom: true,
+            visualizePitch: false,
+        }),
+        "top-right"
+    );
+}
+
+function addGeolocateControl(map: maplibregl.Map): void {
+    map.addControl(
+        new maplibregl.GeolocateControl({
+            positionOptions: undefined,
+            fitBoundsOptions: undefined,
+            trackUserLocation: true,
+            showAccuracyCircle: true,
+            showUserLocation: true,
+        }),
+        "bottom-right"
+    );
+}
+
+function addAutoCompleteControl(map: maplibregl.Map): void {
+    map.addControl(
+        // new MapbodxGeocder class is loaded via CDN in app.blade.php
+        // @ts-ignore
+        new MapboxGeocoder({
+            accessToken: props.apiKey,
+            mapboxgl: maplibregl,
+            limit: 5,
+            dedupe: 1,
+            flyTo: {
+                screenSpeed: 7,
+                speed: 4,
+            },
+        }),
+        "top-left"
+    );
+}
+
+function addSourceAndLayers(map: maplibregl.Map): void {
+    map.on("load", () => {
         // Add a new source from our GeoJSON data and
         // set the 'cluster' option to true. GL-JS will
         // add the point_count property to your source data.
-        map.value?.addSource("earthquakes", {
+        map.addSource("actions", {
             type: "geojson",
-            // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-            // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
             data: createGeoJson(props.geoData),
             cluster: true,
             clusterMaxZoom: 14, // Max zoom to cluster points on
             clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
         });
 
-        map.value?.addLayer({
+        map.addLayer({
             id: "clusters",
             type: "circle",
-            source: "earthquakes",
+            source: "actions",
             filter: ["has", "point_count"],
             paint: {
                 // Use step expressions (https://maplibre.org/maplibre-style-spec/#expressions-step)
@@ -116,10 +144,10 @@ onMounted(() => {
             },
         });
 
-        map.value?.addLayer({
+        map.addLayer({
             id: "cluster-count",
             type: "symbol",
-            source: "earthquakes",
+            source: "actions",
             filter: ["has", "point_count"],
             layout: {
                 "text-field": "{point_count_abbreviated}",
@@ -128,10 +156,10 @@ onMounted(() => {
             },
         });
 
-        map.value?.addLayer({
+        map.addLayer({
             id: "unclustered-point",
             type: "circle",
-            source: "earthquakes",
+            source: "actions",
             filter: ["!", ["has", "point_count"]],
             paint: {
                 "circle-color": "#11b4da",
@@ -142,60 +170,43 @@ onMounted(() => {
         });
 
         // inspect a cluster on click
-        map.value?.on("click", "clusters", function (e) {
-            var features = map.value?.queryRenderedFeatures(e.point, {
+        map.on("click", "clusters", (e) => {
+            var features = map.queryRenderedFeatures(e.point, {
                 layers: ["clusters"],
             });
             var clusterId = features[0].properties.cluster_id;
-            map.value
-                ?.getSource("earthquakes")
-                .getClusterExpansionZoom(clusterId, function (err, zoom) {
+            // TODO: fix types
+            // @ts-ignore
+            map.getSource("actions")?.getClusterExpansionZoom(
+                clusterId,
+                function (err, zoom) {
                     if (err) return;
 
-                    map.value?.easeTo({
+                    map.easeTo({
+                        // TODO: fix types
+                        // @ts-ignore
                         center: features[0].geometry.coordinates,
                         zoom: zoom,
                     });
-                });
+                }
+            );
         });
 
-        // When a click event occurs on a feature in
-        // the unclustered-point layer, open a popup at
-        // the location of the feature, with
-        // description HTML from its properties.
-        map.value?.on("click", "unclustered-point", function (e) {
-            var coordinates = e.features[0].geometry.coordinates.slice();
-            var mag = e.features[0].properties.mag;
-            var tsunami;
-
-            if (e.features[0].properties.tsunami === 1) {
-                tsunami = "yes";
-            } else {
-                tsunami = "no";
-            }
-
-            // Ensure that if the map is zoomed out such that
-            // multiple copies of the feature are visible, the
-            // popup appears over the copy being pointed to.
-            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-            }
-
-            // new maplibregl.Popup()
-            //   .setLngLat(coordinates)
-            //   .setHTML(
-            //     'magnitude: ' + mag + '<br>Was there a tsunami?: ' + tsunami
-            //   )
-            //   .addTo(map);
+        map.on("click", "unclustered-point", (e) => {
+            console.log("SHOW ACTION IN LIST NEXT TO MAP", e);
         });
 
-        map.value?.on("mouseenter", "clusters", function () {
-            // map.value?.getCanvas().style.cursor = 'pointer';
+        map.on("mouseenter", "clusters", () => {
+            map.getCanvas().style.cursor = "pointer";
         });
-        map.value?.on("mouseleave", "clusters", function () {
-            // map.value?.getCanvas().style.cursor = '';
+        map.on("mouseleave", "clusters", () => {
+            map.getCanvas().style.cursor = "";
         });
     });
+}
+
+onMounted(() => {
+    initMap();
 });
 
 onUnmounted(() => {
@@ -204,9 +215,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="mx-auto mt-12 max-w-md">
-        <p>map component with apiKey: {{ apiKey }}</p>
-        <div ref="el" class="h-96"></div>
-        <p>{{ JSON.stringify(geoData) }}</p>
+    <div class="mx-auto mt-12 grid w-full grid-cols-2 grid-rows-1 gap-8">
+        <div ref="mapCanvas" class="aspect-square"></div>
+        <div>
+            <h2>actions</h2>
+        </div>
     </div>
 </template>
