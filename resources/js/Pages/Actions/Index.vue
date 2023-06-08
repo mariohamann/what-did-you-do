@@ -53,6 +53,7 @@ fetch(props.actions_json_url)
             <Map
                 api-key="pk.ed59a693277d463a0b1bda2317c16928"
                 :geo-data="geoJson"
+                :actions="actions"
             ></Map>
         </div>
 

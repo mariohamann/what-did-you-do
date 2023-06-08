@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ActionsJsonData } from "@/types/generated";
+import { ActionData, ActionsJsonData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
+import { router } from "@inertiajs/vue3";
+import Action from "@/Components/Action.vue";
 
 interface GeoJSON {
     type: string;
@@ -19,29 +21,16 @@ interface GeoJSON {
     }[];
 }
 
-const props = defineProps<{ apiKey: string; geoData: ActionsJsonData[] }>();
+const props = defineProps<{
+    apiKey: string;
+    geoData: ActionsJsonData[];
+    actions: ActionData[];
+}>();
 
 const mapCanvas = ref<HTMLElement>();
 let map = ref<maplibregl.Map>();
 
-function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
-    return {
-        type: "FeatureCollection",
-        features: geoData.map((action) => {
-            return {
-                type: "Feature",
-                properties: {
-                    id: action.id,
-                    category: action.ca,
-                },
-                geometry: {
-                    type: "Point",
-                    coordinates: [action.ln, action.la],
-                },
-            };
-        }),
-    };
-}
+console.log(props.actions);
 
 function initMap(): void {
     map.value = new maplibregl.Map({
@@ -179,7 +168,8 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             // @ts-ignore
             map.getSource("actions")?.getClusterExpansionZoom(
                 clusterId,
-                function (err, zoom) {
+                // @ts-ignore
+                (err, zoom) => {
                     if (err) return;
 
                     map.easeTo({
@@ -192,8 +182,45 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             );
         });
 
+        // when clicking an unclustered point, use id to get action and render it
         map.on("click", "unclustered-point", (e) => {
-            console.log("SHOW ACTION IN LIST NEXT TO MAP", e);
+            if (e.features) {
+                const ids: number[] = [e.features[0].properties?.id];
+                console.log(e.features[0]);
+
+                // TODO: use GetActions component? create utils function?
+                router.get(
+                    "/index",
+                    { ids },
+                    { replace: true, preserveState: true, preserveScroll: true }
+                );
+            }
+        });
+
+        map.on("moveend", (e) => {
+            // TODO: check why elmenets are shown outside of the current view
+            // Check if the GeoJSON source has elements within the current view
+            const features = map.querySourceFeatures("actions", {
+                sourceLayer: "actions",
+                filter: ["!=", "property", "value"],
+            });
+
+            if (features.length > 0) {
+                console.log(
+                    "GeoJSON features within the current view:",
+                    features
+                );
+                const ids: number[] = features.map(
+                    (feature) => feature.properties.id
+                );
+                router.get(
+                    "/index",
+                    { ids },
+                    { replace: true, preserveState: true, preserveScroll: true }
+                );
+            }
+
+            // TODO: if no features, remove all actions from list
         });
 
         map.on("mouseenter", "clusters", () => {
@@ -203,6 +230,25 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             map.getCanvas().style.cursor = "";
         });
     });
+}
+
+function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
+    return {
+        type: "FeatureCollection",
+        features: geoData.map((action) => {
+            return {
+                type: "Feature",
+                properties: {
+                    id: action.id,
+                    category: action.ca,
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [action.ln, action.la],
+                },
+            };
+        }),
+    };
 }
 
 onMounted(() => {
@@ -219,6 +265,11 @@ onUnmounted(() => {
         <div ref="mapCanvas" class="aspect-square"></div>
         <div>
             <h2>actions</h2>
+            <Action
+                v-for="action in actions"
+                v-bind="action"
+                v-bind:key="action.id"
+            />
         </div>
     </div>
 </template>
