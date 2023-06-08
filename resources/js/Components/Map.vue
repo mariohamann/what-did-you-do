@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ActionData, ActionsJsonData } from "@/types/generated";
+import { ActionData, ActionsJsonData, CategoryData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 
 interface GeoJSON {
@@ -21,6 +21,7 @@ interface GeoJSON {
     }[];
 }
 
+// TODO: usePage or pass as prop???
 const props = defineProps<{
     apiKey: string;
     geoData: ActionsJsonData[];
@@ -28,21 +29,26 @@ const props = defineProps<{
 }>();
 
 const mapCanvas = ref<HTMLElement>();
-let map = ref<maplibregl.Map>();
 const visibleActions = ref<number[]>([]);
+// TODO: usePage or pass as prop???
+const categories = ref<CategoryData[]>(
+    usePage().props.categories as CategoryData[]
+);
+let map = ref<maplibregl.Map>();
 
 function initMap(): void {
     map.value = new maplibregl.Map({
         container: mapCanvas.value!,
         attributionControl: false,
         style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
-        center: [-74.5, 40], // starting position [lng, lat]
-        zoom: 12, // starting zoom
+        center: [14.95, 50.02], // starting position [lng, lat]
+        zoom: 3, // starting zoom
     });
     addNavigationControl(map.value);
     addGeolocateControl(map.value);
     addAutoCompleteControl(map.value);
     addSourceAndLayers(map.value);
+    setActionsInView(map.value);
 }
 
 function addNavigationControl(map: maplibregl.Map): void {
@@ -146,14 +152,17 @@ function addSourceAndLayers(map: maplibregl.Map): void {
 
         map.addLayer({
             id: "unclustered-point",
-            type: "circle",
+            type: "symbol",
             source: "actions",
             filter: ["!", ["has", "point_count"]],
+            layout: {
+                // TODO: emojis are not working in text-field
+                "text-field": "emoji🐢",
+                "text-size": 24,
+                "text-anchor": "center",
+            },
             paint: {
-                "circle-color": "#11b4da",
-                "circle-radius": 4,
-                "circle-stroke-width": 1,
-                "circle-stroke-color": "#fff",
+                "text-color": "#000000",
             },
         });
 
@@ -181,40 +190,17 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             );
         });
 
-        // when clicking an unclustered point, use id to get action and render it
+        // when clicking an unclustered point, highlight the action
         map.on("click", "unclustered-point", (e) => {
             if (e.features) {
                 const ids: number[] = [e.features[0].properties?.id];
-                console.log(e.features[0]);
-
-                // TODO: use GetActions component? create utils function?
-                router.get(
-                    "/index",
-                    { ids },
-                    { replace: true, preserveState: true, preserveScroll: true }
-                );
+                // TODO highlight the action
             }
         });
 
         // when the map moves, update the visible actions
         map.on("moveend", () => {
-            const matches: number[] = [];
-            props.geoData.forEach((item) => {
-                const ll = new maplibregl.LngLat(item.ln, item.la);
-                if (map.getBounds().contains(ll)) {
-                    matches.push(item.id);
-                }
-            });
-
-            if (
-                JSON.stringify(visibleActions.value) !== JSON.stringify(matches)
-            ) {
-                router.get(
-                    "/index",
-                    { ids: matches },
-                    { replace: true, preserveState: true, preserveScroll: true }
-                );
-            }
+            setActionsInView(map);
         });
 
         map.on("mouseenter", "clusters", () => {
@@ -243,6 +229,40 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
             };
         }),
     };
+}
+
+function setActionsInView(map: maplibregl.Map): void {
+    const matches = getActionIdsInCurrentView(map);
+    if (hasActiveActionsChanged(visibleActions.value, matches)) {
+        visibleActions.value = matches;
+        getActions(matches);
+    }
+}
+
+function getActionIdsInCurrentView(map: maplibregl.Map): number[] {
+    const matches: number[] = [];
+    props.geoData.forEach((item) => {
+        const ll = new maplibregl.LngLat(item.ln, item.la);
+        if (map.getBounds().contains(ll)) {
+            matches.push(item.id);
+        }
+    });
+    return matches;
+}
+
+function hasActiveActionsChanged(
+    active: number[],
+    currentInView: number[]
+): boolean {
+    return JSON.stringify(active) !== JSON.stringify(currentInView);
+}
+
+function getActions(ids: number[]): void {
+    router.get(
+        "/index",
+        { ids: ids },
+        { replace: true, preserveState: true, preserveScroll: true }
+    );
 }
 
 onMounted(() => {
