@@ -29,8 +29,7 @@ const props = defineProps<{
 
 const mapCanvas = ref<HTMLElement>();
 let map = ref<maplibregl.Map>();
-
-console.log(props.actions);
+const visibleActions = ref<number[]>([]);
 
 function initMap(): void {
     map.value = new maplibregl.Map({
@@ -197,30 +196,25 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             }
         });
 
-        map.on("moveend", (e) => {
-            // TODO: check why elmenets are shown outside of the current view
-            // Check if the GeoJSON source has elements within the current view
-            const features = map.querySourceFeatures("actions", {
-                sourceLayer: "actions",
-                filter: ["!=", "property", "value"],
+        // when the map moves, update the visible actions
+        map.on("moveend", () => {
+            const matches: number[] = [];
+            props.geoData.forEach((item) => {
+                const ll = new maplibregl.LngLat(item.ln, item.la);
+                if (map.getBounds().contains(ll)) {
+                    matches.push(item.id);
+                }
             });
 
-            if (features.length > 0) {
-                console.log(
-                    "GeoJSON features within the current view:",
-                    features
-                );
-                const ids: number[] = features.map(
-                    (feature) => feature.properties.id
-                );
+            if (
+                JSON.stringify(visibleActions.value) !== JSON.stringify(matches)
+            ) {
                 router.get(
                     "/index",
-                    { ids },
+                    { ids: matches },
                     { replace: true, preserveState: true, preserveScroll: true }
                 );
             }
-
-            // TODO: if no features, remove all actions from list
         });
 
         map.on("mouseenter", "clusters", () => {
