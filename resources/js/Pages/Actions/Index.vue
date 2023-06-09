@@ -4,6 +4,7 @@ import { Head } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 import GetActions from "@/Components/GetActions.vue";
+import Map from "@/Components/Map.vue";
 import { ref } from "vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
@@ -13,13 +14,17 @@ let props = defineProps<ActionIndexData>();
 
 // amount of fetched elements from actions_json_url
 let actionsFromJsonLength = ref(0);
+// fetched data from actions_json_url
+let geoJson = ref<ActionsJsonData[]>([]);
 
 // fetch data from actions_json_url and make a console log of the length of the json (array)
+// and set the geoJson ref to the fetched data
 fetch(props.actions_json_url)
     .then((response) => response.json())
-    .then(
-        (data: ActionsJsonData[]) => (actionsFromJsonLength.value = data.length)
-    );
+    .then((data: ActionsJsonData[]) => {
+        actionsFromJsonLength.value = data.length;
+        geoJson.value = data;
+    });
 </script>
 
 <template>
@@ -42,6 +47,14 @@ fetch(props.actions_json_url)
 
         <div class="mx-auto mt-12 max-w-7xl sm:px-6 lg:px-8">
             Fetched elements from actions_json_url: {{ actionsFromJsonLength }}
+        </div>
+
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <Map
+                api-key="pk.ed59a693277d463a0b1bda2317c16928"
+                :geo-data="geoJson"
+                :actions="actions"
+            ></Map>
         </div>
 
         <div class="py-12">
