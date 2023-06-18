@@ -143,9 +143,13 @@ class Action extends Model
         Storage::disk('public')->put('actions.json', $actions->toJson());
     }
 
-    public static function getJsonFileUrl()
+    public static function getJsonFileUrl(): string
     {
-        return asset('storage/actions.json');
+        $filename = 'actions.json';
+        $publicPath = storage_path('app/public/'.$filename);
+        $filemtime = file_exists($publicPath) ? filemtime($publicPath) : '';
+
+        return asset('storage/'.$filename).'?v='.$filemtime;
     }
 
     public function scopeLocatedWithin($query, $neLat, $neLng, $swLat, $swLng)
