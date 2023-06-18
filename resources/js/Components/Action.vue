@@ -5,32 +5,35 @@ import ActionCategory from "@/Components/ActionCategory.vue";
 
 import type { ActionData } from "@/types/generated.d.ts";
 
-defineProps<ActionData>();
+let props = defineProps<ActionData>();
+
+console.log(props.lng, props.lat);
 </script>
 
 <template>
-    <tr>
-        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-            <Link
-                class="underline decoration-gray-300 underline-offset-2 hover:decoration-indigo-300"
-                :href="`/action/${id}`"
-            >
-                {{ description }}
-            </Link>
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <ActionCategory v-bind="category" />
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            {{ user.name }}
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            {{ lng }}, {{ lat }}
-        </td>
-        <td
-            class="flex gap-4 whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+    <section class="rounded-lg bg-black">
+        <div
+            class="relative rounded-lg bg-white p-5 transition-all focus-within:-translate-x-2 focus-within:-translate-y-2 hover:-translate-x-2 hover:-translate-y-2"
         >
-            <ActionInteractions v-bind="$props" />
-        </td>
-    </tr>
+            <Link :href="`/action/${id}`" class="z-0">
+                <span class="absolute inset-0"></span>
+                <h2
+                    class="mb-8 text-xl font-medium decoration-white underline-offset-2 hover:decoration-primary-600"
+                >
+                    {{ description }}
+                </h2></Link
+            >
+            <!-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+            {{ user.name }}
+        </td> -->
+            <div
+                class="pointer-events-none relative z-10 mt-4 flex items-center justify-between"
+            >
+                <div class="pointer-events-auto flex gap-2">
+                    <ActionInteractions v-bind="$props" />
+                </div>
+                <ActionCategory v-bind="category" />
+            </div>
+        </div>
+    </section>
 </template>

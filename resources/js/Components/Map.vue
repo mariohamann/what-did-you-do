@@ -37,13 +37,13 @@ function initMap(): void {
     map.value = new maplibregl.Map({
         container: mapCanvas.value!,
         attributionControl: false,
-        style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
+        style: `https://tiles.locationiq.com/v3/dark/vector.json?key=${props.apiKey}`, // stylesheet location
         center: [14.95, 50.02], // starting position [lng, lat]
         zoom: 3, // starting zoom
     });
     addNavigationControl(map.value);
     addGeolocateControl(map.value);
-    addAutoCompleteControl(map.value);
+    // addAutoCompleteControl(map.value);
     addSourceAndLayers(map.value);
     setActionsInView(map.value);
 }
@@ -68,27 +68,27 @@ function addGeolocateControl(map: maplibregl.Map): void {
             showAccuracyCircle: true,
             showUserLocation: true,
         }),
-        "bottom-right"
-    );
-}
-
-function addAutoCompleteControl(map: maplibregl.Map): void {
-    map.addControl(
-        // new MapbodxGeocder class is loaded via CDN in app.blade.php
-        // @ts-ignore
-        new MapboxGeocoder({
-            accessToken: props.apiKey,
-            mapboxgl: maplibregl,
-            limit: 5,
-            dedupe: 1,
-            flyTo: {
-                screenSpeed: 7,
-                speed: 4,
-            },
-        }),
         "top-left"
     );
 }
+
+// function addAutoCompleteControl(map: maplibregl.Map): void {
+//     map.addControl(
+//         // new MapbodxGeocder class is loaded via CDN in app.blade.php
+//         // @ts-ignore
+//         new MapboxGeocoder({
+//             accessToken: props.apiKey,
+//             mapboxgl: maplibregl,
+//             limit: 5,
+//             dedupe: 1,
+//             flyTo: {
+//                 screenSpeed: 7,
+//                 speed: 4,
+//             },
+//         }),
+//         "top-left"
+//     );
+// }
 
 function addSourceAndLayers(map: maplibregl.Map): void {
     map.on("load", () => {
@@ -117,21 +117,23 @@ function addSourceAndLayers(map: maplibregl.Map): void {
                 "circle-color": [
                     "step",
                     ["get", "point_count"],
-                    "#51bbd6",
+                    "#1947E5",
                     100,
-                    "#f1f075",
+                    "#1947E5",
                     750,
-                    "#f28cb1",
+                    "#1947E5",
                 ],
                 "circle-radius": [
                     "step",
                     ["get", "point_count"],
-                    20,
-                    100,
-                    30,
-                    750,
-                    40,
+                    20, // default size
+                    100, // next step
+                    30, // next size
+                    750, // next step
+                    40, // next size
                 ],
+                "circle-stroke-width": 12,
+                "circle-stroke-color": "hsl(216 100% 71%)",
             },
         });
 
@@ -142,8 +144,11 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             filter: ["has", "point_count"],
             layout: {
                 "text-field": "{point_count_abbreviated}",
-                "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-                "text-size": 12,
+                "text-font": ["Nunito"],
+                "text-size": 16,
+            },
+            paint: {
+                "text-color": "#ffffff",
             },
         });
 
@@ -248,7 +253,8 @@ function getActions(map: string): void {
         "/index",
         { map },
         { replace: true, preserveState: true, preserveScroll: true }
-    );
+    ),
+        500;
 }
 
 onMounted(() => {
@@ -261,5 +267,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div ref="mapCanvas" class="aspect-square"></div>
+    <div ref="mapCanvas" class="h-full w-full"></div>
 </template>

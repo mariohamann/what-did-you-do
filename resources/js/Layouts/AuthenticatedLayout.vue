@@ -1,189 +1,228 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from "vue";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
-import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import {
+    Dialog,
+    DialogPanel,
+    TransitionChild,
+    TransitionRoot,
+} from "@headlessui/vue";
+import {
+    PlusIcon,
+    CalendarIcon,
+    ChartPieIcon,
+    DocumentDuplicateIcon,
+    FolderIcon,
+    HomeIcon,
+    UsersIcon,
+    XIcon,
+} from "@heroicons/vue/solid";
 
-const showingNavigationDropdown = ref(false);
+const navigation = [
+    {
+        name: "Dashboard",
+        href: route("index"),
+        icon: HomeIcon,
+        current: route().current("index"),
+    },
+    { name: "Team", href: "#", icon: UsersIcon, current: false },
+    { name: "Projects", href: "#", icon: FolderIcon, current: false },
+    { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
+    {
+        name: "Documents",
+        href: "#",
+        icon: DocumentDuplicateIcon,
+        current: false,
+    },
+    { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+];
+
+const sidebarOpen = ref(false);
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="border-b border-gray-100 bg-white">
-                <!-- Primary Navigation Menu -->
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="flex shrink-0 items-center">
-                                <Link :href="route('index')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
+    <!--
+    This example requires updating your template:
 
-                            <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
-                            >
-                                <NavLink
-                                    :href="route('index')"
-                                    :active="route().current('index')"
-                                >
-                                    Index
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
-                            <div class="relative ml-3">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="-mr-0.5 ml-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
-                            <button
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
+    ```
+    <html class="h-full bg-white">
+    <body class="h-full">
+    ```
+  -->
+    <div class="text-base">
+        <TransitionRoot as="template" :show="sidebarOpen">
+            <Dialog
+                as="div"
+                class="relative z-50 lg:hidden"
+                @close="sidebarOpen = false"
+            >
+                <TransitionChild
+                    as="template"
+                    enter="transition-opacity ease-linear duration-300"
+                    enter-from="opacity-0"
+                    enter-to="opacity-100"
+                    leave="transition-opacity ease-linear duration-300"
+                    leave-from="opacity-100"
+                    leave-to="opacity-0"
                 >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            :href="route('index')"
-                            :active="route().current('index')"
+                    <div class="fixed inset-0 bg-gray-900/80" />
+                </TransitionChild>
+
+                <div class="fixed inset-0 flex">
+                    <TransitionChild
+                        as="template"
+                        enter="transition ease-in-out duration-300 transform"
+                        enter-from="-translate-x-full"
+                        enter-to="translate-x-0"
+                        leave="transition ease-in-out duration-300 transform"
+                        leave-from="translate-x-0"
+                        leave-to="-translate-x-full"
+                    >
+                        <DialogPanel
+                            class="relative mr-16 flex w-full max-w-xs flex-1"
                         >
-                            Index
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="border-t border-gray-200 pb-1 pt-4">
-                        <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
+                            <TransitionChild
+                                as="template"
+                                enter="ease-in-out duration-300"
+                                enter-from="opacity-0"
+                                enter-to="opacity-100"
+                                leave="ease-in-out duration-300"
+                                leave-from="opacity-100"
+                                leave-to="opacity-0"
                             >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
+                                <div
+                                    class="absolute left-full top-0 flex w-16 justify-center pt-5"
+                                >
+                                    <button
+                                        type="button"
+                                        class="-m-2.5 p-2.5"
+                                        @click="sidebarOpen = false"
+                                    >
+                                        <span class="sr-only"
+                                            >Close sidebar</span
+                                        >
+                                        <XIcon
+                                            class="h-6 w-6 text-white"
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                </div>
+                            </TransitionChild>
+
+                            <div
+                                class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10"
+                            >
+                                <div class="flex h-16 shrink-0 items-center">
+                                    <img
+                                        class="h-8 w-auto"
+                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                                        alt="Your Company"
+                                    />
+                                </div>
+                                <nav class="flex flex-1 flex-col">
+                                    <ul
+                                        role="list"
+                                        class="-mx-2 flex-1 space-y-1"
+                                    >
+                                        <li
+                                            v-for="item in navigation"
+                                            :key="item.name"
+                                        >
+                                            <a
+                                                :href="item.href"
+                                                :class="[
+                                                    item.current
+                                                        ? 'bg-gray-800 text-white'
+                                                        : 'text-gray-400 hover:bg-gray-800 hover:text-white',
+                                                    'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
+                                                ]"
+                                            >
+                                                <component
+                                                    :is="item.icon"
+                                                    class="h-6 w-6 shrink-0"
+                                                    aria-hidden="true"
+                                                />
+                                                {{ item.name }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
                 </div>
+            </Dialog>
+        </TransitionRoot>
+
+        <!-- Static sidebar for desktop -->
+        <div
+            class="hidden border-gray-600 lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:w-20 lg:overflow-y-auto lg:bg-secondary-200 lg:pb-4"
+        >
+            <div class="flex shrink-0 items-center justify-center">
+                <img
+                    class="w-full pt-8"
+                    src="/assets/logo.png"
+                    alt="Your Company"
+                />
+            </div>
+            <nav class="mt-8">
+                <ul role="list" class="flex flex-col items-center space-y-1">
+                    <li v-for="item in navigation" :key="item.name">
+                        <!-- <a
+                            :href="item.href"
+                            :class="[
+                                item.current
+                                    ? 'bg-gray-800 text-white'
+                                    : 'text-gray-400 hover:bg-gray-800 hover:text-white',
+                                'group flex gap-x-3 rounded-md bg-primary-400 p-3 text-sm font-semibold leading-6',
+                            ]"
+                        >
+                            <component
+                                :is="item.icon"
+                                class="h-6 w-6 shrink-0"
+                                aria-hidden="true"
+                            />
+                            <span class="sr-only">{{ item.name }}</span>
+                        </a> -->
+                    </li>
+                </ul>
             </nav>
-
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
         </div>
+
+        <div
+            class="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden"
+        >
+            <button
+                type="button"
+                class="-m-2.5 p-2.5 text-gray-400 lg:hidden"
+                @click="sidebarOpen = true"
+            >
+                <span class="sr-only">Open sidebar</span>
+                <PlusIcon class="h-6 w-6" aria-hidden="true" />
+            </button>
+            <div class="flex-1 text-sm font-semibold leading-6 text-white">
+                <slot name="header" />
+            </div>
+            <a href="#">
+                <span class="sr-only">Your profile</span>
+                <img
+                    class="h-8 w-8 rounded-full bg-gray-800"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                />
+                <div class="mt-3 space-y-1">
+                    <ResponsiveNavLink :href="route('profile.edit')">
+                        Profile
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('logout')"
+                        method="post"
+                        as="button"
+                    >
+                        Log Out
+                    </ResponsiveNavLink>
+                </div>
+            </a>
+        </div>
+        <slot />
     </div>
 </template>

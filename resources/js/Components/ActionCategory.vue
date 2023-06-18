@@ -9,7 +9,7 @@ const props = defineProps<CategoryData>();
 
 <template>
     <span
-        class="mr-2 rounded border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-sm font-medium text-gray-900"
+        class="pointer-events-none select-none text-sm font-medium text-gray-900"
     >
         {{ emoji }} {{ name }}
     </span>

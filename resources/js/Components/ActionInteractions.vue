@@ -45,16 +45,16 @@ const deleteAction = () => {
 const styles = {
     like: {
         default:
-            "inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2",
+            "inline-flex items-center rounded-md px-3 py-2 text-sm font-medium leading-4 focus:outline-none focus:ring-2 focus:ring-offset-2",
         inactive:
-            "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-red-500",
-        active: "border-transparent bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+            "bg-gray-50 text-gray-700 hover:bg-gray-100 transition-all focus:ring-primary-500",
+        active: "border-transparent bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
     },
 };
 </script>
 
 <template>
-    <button
+    <!-- <button
         v-if="isMine"
         type="button"
         v-on:click="openDeleteAction = true"
@@ -62,7 +62,7 @@ const styles = {
     >
         <TrashIcon class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
         Delete
-    </button>
+    </button> -->
     <button
         type="button"
         v-on:click="openCreateAction = true"
@@ -164,10 +164,10 @@ const styles = {
                         >
                             <div class="sm:flex sm:items-start">
                                 <div
-                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10"
                                 >
                                     <ExclamationIcon
-                                        class="h-6 w-6 text-red-600"
+                                        class="h-6 w-6 text-primary-600"
                                         aria-hidden="true"
                                     />
                                 </div>
@@ -196,7 +196,7 @@ const styles = {
                                         deleteAction();
                                         openDeleteAction = false;
                                     "
-                                    class="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                                    class="inline-flex w-full justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                                 >
                                     Delete
                                 </button>
