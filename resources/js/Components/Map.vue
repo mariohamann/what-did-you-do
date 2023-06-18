@@ -4,7 +4,6 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
-import Action from "@/Components/Action.vue";
 
 interface GeoJSON {
     type: string;
@@ -25,7 +24,6 @@ interface GeoJSON {
 const props = defineProps<{
     apiKey: string;
     geoData: ActionsJsonData[];
-    actions: ActionData[];
 }>();
 
 const mapCanvas = ref<HTMLElement>();
@@ -156,7 +154,7 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             filter: ["!", ["has", "point_count"]],
             layout: {
                 // TODO: emojis are not working in text-field
-                "text-field": "emoji🐢",
+                "text-field": "★",
                 "text-size": 24,
                 "text-anchor": "center",
             },
@@ -263,15 +261,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="mx-auto mt-12 grid w-full grid-cols-2 grid-rows-1 gap-8">
-        <div ref="mapCanvas" class="aspect-square"></div>
-        <div>
-            <h2>actions</h2>
-            <Action
-                v-for="action in actions"
-                v-bind="action"
-                v-bind:key="action.id"
-            />
-        </div>
-    </div>
+    <div ref="mapCanvas" class="aspect-square"></div>
 </template>
