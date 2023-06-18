@@ -29,7 +29,6 @@ const props = defineProps<{
 }>();
 
 const mapCanvas = ref<HTMLElement>();
-const visibleActions = ref<number[]>([]);
 // TODO: usePage or pass as prop???
 const categories = ref<CategoryData[]>(
     usePage().props.categories as CategoryData[]
@@ -232,35 +231,24 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
 }
 
 function setActionsInView(map: maplibregl.Map): void {
-    const matches = getActionIdsInCurrentView(map);
-    if (hasActiveActionsChanged(visibleActions.value, matches)) {
-        visibleActions.value = matches;
-        getActions(matches);
-    }
+    const mapBounds = getMapBoundsAsString(map);
+    getActions(mapBounds);
 }
 
-function getActionIdsInCurrentView(map: maplibregl.Map): number[] {
-    const matches: number[] = [];
-    props.geoData.forEach((item) => {
-        const ll = new maplibregl.LngLat(item.ln, item.la);
-        if (map.getBounds().contains(ll)) {
-            matches.push(item.id);
-        }
-    });
-    return matches;
+function getMapBoundsAsString(map: maplibregl.Map): string {
+    const bounds = map.getBounds();
+    return [
+        bounds.getNorthEast().lng.toFixed(5),
+        bounds.getNorthEast().lat.toFixed(5),
+        bounds.getSouthWest().lng.toFixed(5),
+        bounds.getSouthWest().lat.toFixed(5),
+    ].join(",");
 }
 
-function hasActiveActionsChanged(
-    active: number[],
-    currentInView: number[]
-): boolean {
-    return JSON.stringify(active) !== JSON.stringify(currentInView);
-}
-
-function getActions(ids: number[]): void {
+function getActions(map: string): void {
     router.get(
         "/index",
-        { ids: ids },
+        { map },
         { replace: true, preserveState: true, preserveScroll: true }
     );
 }

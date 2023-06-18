@@ -14,8 +14,8 @@ class AddLatLngToActions extends Migration
     public function up()
     {
         Schema::table('actions', function (Blueprint $table) {
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
+            $table->decimal('lat', 10, 8)->nullable();
+            $table->decimal('lng', 11, 8)->nullable();
         });
     }
 
@@ -27,8 +27,8 @@ class AddLatLngToActions extends Migration
     public function down()
     {
         Schema::table('actions', function (Blueprint $table) {
-            $table->dropColumn('latitude');
-            $table->dropColumn('longitude');
+            $table->dropColumn('lat');
+            $table->dropColumn('lng');
         });
     }
 }

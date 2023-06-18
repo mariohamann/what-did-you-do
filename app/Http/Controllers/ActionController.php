@@ -7,6 +7,7 @@ use App\Data\ActionIndexData;
 use App\Models\Action;
 use Faker\Generator as Faker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ActionController extends Controller
@@ -16,11 +17,16 @@ class ActionController extends Controller
      */
     public function index(Request $request)
     {
-        $actionIds = $request->input('ids', []);
+        $map = $request->input('map', '');
 
-        $actions = Action::when(! empty($actionIds), function ($query) use ($actionIds) {
-            return $query->whereIn('id', $actionIds);
-        })->orderBy('created_at', 'desc')->get();
+        $actions = Action::query();
+
+        if (Str::of($map)->isNotEmpty()) {
+            [$neLng, $neLat, $swLng, $swLat] = explode(',', $map);
+            $actions->locatedWithin($neLat, $neLng, $swLat, $swLng);
+        }
+
+        $actions = $actions->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Actions/Index', ActionIndexData::from([
             'actions' => ActionData::collection($actions),
@@ -45,8 +51,8 @@ class ActionController extends Controller
             'description' => 'required',
             'inspired_by' => 'nullable|exists:App\Models\Action,id',
             'category_id' => 'required|exists:App\Models\Category,id',
-            // 'latitude' => 'required|numeric',
-            // 'longitude' => 'required|numeric',
+            // 'lat' => 'required|numeric',
+            // 'lng' => 'required|numeric',
         ]);
 
         $ancestor_ids = null;
@@ -63,8 +69,8 @@ class ActionController extends Controller
         $new_action = Action::create([
             'user_id' => auth()->user()->id,
             'inspirations_ancestors' => json_encode($ancestor_ids),
-            'latitude' => $faker->latitude,
-            'longitude' => $faker->longitude,
+            'lat' => $faker->latitude,
+            'lng' => $faker->longitude,
             ...$attributes,
         ]);
 

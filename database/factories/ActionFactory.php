@@ -20,8 +20,8 @@ class ActionFactory extends Factory
             'description' => $this->faker->paragraph(1),
             'user_id' => random_int(1, 32),
             'category_id' => random_int(1, 5),
-            'latitude' => $this->faker->latitude,
-            'longitude' => $this->faker->longitude,
+            'lat' => $this->faker->latitude,
+            'lng' => $this->faker->longitude,
         ];
     }
 }

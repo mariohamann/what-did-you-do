@@ -11,9 +11,9 @@ class Action extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'category_id', 'description', 'inspirations_ancestors', 'inspirations_descendants', 'inspirations_children', 'latitude', 'longitude'];
+    protected $fillable = ['user_id', 'category_id', 'description', 'inspirations_ancestors', 'inspirations_descendants', 'inspirations_children', 'lat', 'lng'];
 
-    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category', 'descendants_count', 'ancestors', 'latitude', 'longitude'];
+    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category', 'descendants_count', 'ancestors', 'lat', 'lng'];
 
     protected $appends = ['likes', 'category', 'user', 'descendants_count', 'ancestors'];
 
@@ -109,8 +109,8 @@ class Action extends Model
         $actionData = ActionsJsonData::from([
             'id' => $this->id,
             'ca' => $this->category->id,
-            'la' => round($this->latitude, 5),
-            'ln' => round($this->longitude, 5),
+            'la' => round($this->lat, 5),
+            'ln' => round($this->lng, 5),
         ]);
 
         $existingData = json_decode(Storage::disk('public')->get('actions.json'), true);
@@ -135,8 +135,8 @@ class Action extends Model
             return ActionsJsonData::from([
                 'id' => $action->id,
                 'ca' => $action->category->id,
-                'la' => round($action->latitude, 5),
-                'ln' => round($action->longitude, 5),
+                'la' => round($action->lat, 5),
+                'ln' => round($action->lng, 5),
             ]);
         });
 
@@ -146,5 +146,12 @@ class Action extends Model
     public static function getJsonFileUrl()
     {
         return asset('storage/actions.json');
+    }
+
+    public function scopeLocatedWithin($query, $neLat, $neLng, $swLat, $swLng)
+    {
+        return $query
+            ->whereBetween('lat', [$swLat, $neLat])
+            ->whereBetween('lng', [$swLng, $neLng]);
     }
 }
