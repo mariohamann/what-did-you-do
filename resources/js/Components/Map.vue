@@ -159,12 +159,12 @@ function addSourceAndLayers(map: maplibregl.Map): void {
             filter: ["!", ["has", "point_count"]],
             layout: {
                 // TODO: emojis are not working in text-field
-                "text-field": "★",
+                "text-field": "⊙",
                 "text-size": 24,
                 "text-anchor": "center",
             },
             paint: {
-                "text-color": "#000000",
+                "text-color": "#ffffff",
             },
         });
 
@@ -250,7 +250,7 @@ function getMapBoundsAsString(map: maplibregl.Map): string {
 
 function getActions(map: string): void {
     router.get(
-        "/index",
+        route("index"),
         { map },
         { replace: true, preserveState: true, preserveScroll: true }
     ),

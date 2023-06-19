@@ -49,10 +49,12 @@ fetch(props.actions_json_url)
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :geo-data="geoJson"
                     ></Map>
-                    <div class="fixed bottom-12 left-0 z-40 w-full xl:pl-96">
+                    <div
+                        class="pointer-events-none fixed bottom-12 left-0 z-40 w-full xl:pl-96"
+                    >
                         <div class="mx-auto flex justify-center">
                             <form
-                                class="flex gap-3 rounded-[20px] border-black bg-secondary-300 p-3 shadow-sm shadow-secondary-100/10"
+                                class="pointer-events-auto flex gap-3 rounded-[20px] border-black bg-secondary-300 p-3 shadow-sm shadow-secondary-100/10"
                                 action="#"
                                 method="GET"
                             >

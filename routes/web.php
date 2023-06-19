@@ -19,31 +19,19 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', WelcomeData::from([
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]));
-});
-Route::middleware('auth', 'verified')->group(function () {
-    Route::post(
-        '/like/{action}',
-        [LikeController::class, 'store'],
-    )->name('like.create');
-    Route::delete(
-        '/like/{action}',
-        [LikeController::class, 'destroy'],
-    )->name('like.destroy');
-});
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', WelcomeData::from([
+//         'canLogin' => Route::has('login'),
+//         'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]));
+// });
 
-Route::get(
-    '/index',
-    [ActionController::class, 'index']
-)->middleware(['auth', 'verified'])->name('index');
+Route::get('/', [ActionController::class, 'index'])->name('index');
 
 Route::middleware('auth', 'verified')->group(function () {
+    // Actions
     Route::get(
         '/action/{id}',
         [ActionController::class, 'show']
@@ -56,6 +44,16 @@ Route::middleware('auth', 'verified')->group(function () {
         '/action/{action}',
         [ActionController::class, 'destroy'],
     )->name('action.destroy');
+
+    // Likes
+    Route::post(
+        '/like/{action}',
+        [LikeController::class, 'store'],
+    )->name('like.create');
+    Route::delete(
+        '/like/{action}',
+        [LikeController::class, 'destroy'],
+    )->name('like.destroy');
 });
 
 Route::middleware('auth')->group(function () {
