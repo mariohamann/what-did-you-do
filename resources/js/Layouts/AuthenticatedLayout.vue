@@ -78,7 +78,7 @@ const sidebarOpen = ref(false);
                 <ul role="list" class="flex w-full flex-col items-center gap-4">
                     <li v-for="item in navigation" :key="item.name">
                         <Link
-                            class="block rounded-md bg-black"
+                            class="block rounded-full bg-black"
                             :href="item.href"
                             :method="
                                 item.href === route('logout') ? 'post' : 'get'
@@ -88,9 +88,9 @@ const sidebarOpen = ref(false);
                             <div
                                 :class="[
                                     item.current
-                                        ? 'relative -translate-x-2 -translate-y-2 bg-white text-primary-600'
-                                        : 'bg-white text-black hover:-translate-x-1 hover:-translate-y-1',
-                                    'group flex h-12 w-12 rounded-md  p-2 text-2xl font-semibold leading-6 transition-all',
+                                        ? 'relative -translate-x-2 -translate-y-2  text-primary-600'
+                                        : ' text-black hover:-translate-x-1 hover:-translate-y-1 active:-translate-x-2 active:-translate-y-2 active:text-primary-600',
+                                    'border-1 group flex h-12 w-12 rounded-full border-white bg-white p-2 text-2xl font-semibold leading-6 transition-all',
                                 ]"
                             >
                                 <component
