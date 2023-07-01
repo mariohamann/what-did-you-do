@@ -5,6 +5,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 
+const emit = defineEmits(["mapChanged"]);
+
 interface GeoJSON {
     type: string;
     features: {
@@ -235,7 +237,7 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
 
 function setActionsInView(map: maplibregl.Map): void {
     const mapBounds = getMapBoundsAsString(map);
-    getActions(mapBounds);
+    emit("mapChanged", mapBounds);
 }
 
 function getMapBoundsAsString(map: maplibregl.Map): string {

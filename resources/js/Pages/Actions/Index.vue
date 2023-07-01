@@ -13,9 +13,12 @@ import type {
     CategoryData,
     ActionData,
 } from "@/types/generated.d.ts";
+import { visit } from "maplibre-gl";
 
 const form = useForm({
     q: "",
+    category: 0,
+    map: "",
 });
 
 const landmark = ref(null);
@@ -28,8 +31,6 @@ const data = ref<ActionData[]>(props.actions.data);
 watch(
     () => props.actions.data,
     (newData) => {
-        console.log("newData", newData);
-        console.log(props.actions.meta);
         // When we had a pagination request, the new data should be added to the existing data
         if (props.actions.meta.prev_cursor !== null) {
             data.value = [...data.value, ...newData];
@@ -68,6 +69,33 @@ onMounted(() => {
     observer.observe(landmark.value);
 });
 
+const getData = () => {
+    // get current url and append category if available
+    let url = new URL(window.location.href.split("?")[0]);
+    // fetch data from url
+    router.get(
+        url.toString(),
+        {
+            ...(form.q && { q: form.q }),
+            ...(form.category != 0 && { category: form.category }),
+            ...(form.map && { map: form.map }),
+        },
+        {
+            preserveState: true,
+        }
+    );
+};
+
+const setMap = (bounds: string) => {
+    form.map = bounds;
+    getData();
+};
+
+// watch form.category and call getData() when it changes
+watch(form, () => {
+    getData();
+});
+
 // amount of fetched elements from actions_json_url
 let actionsFromJsonLength = ref(0);
 // fetched data from actions_json_url
@@ -93,6 +121,7 @@ fetch(props.actions_json_url)
             <main class="bg-secondary-300 lg:pl-20">
                 <div class="relative h-screen w-full xl:pl-96">
                     <Map
+                        @map-changed="setMap"
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :geo-data="geoJson"
                     ></Map>
@@ -142,11 +171,15 @@ fetch(props.actions_json_url)
                                     <select
                                         id="category"
                                         name="category"
+                                        v-model="form.category"
                                         class="block w-full rounded-xl border-0 py-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6"
                                     >
-                                        <option selected>All Categories</option>
+                                        <option selected value="0">
+                                            All Categories
+                                        </option>
                                         <option
                                             v-for="category in categories"
+                                            :value="category.id"
                                             :key="category.id"
                                         >
                                             {{ category.name }}

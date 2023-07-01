@@ -18,13 +18,17 @@ class ActionController extends Controller
     public function index(Request $request)
     {
         $map = $request->input('map', '');
-        $cursor = $request->input('cursor', '');
+        $category = $request->input('category', '');
 
         $actions = Action::query();
 
         if (Str::of($map)->isNotEmpty()) {
             [$neLng, $neLat, $swLng, $swLat] = explode(',', $map);
             $actions->locatedWithin($neLat, $neLng, $swLat, $swLng);
+        }
+
+        if (Str::of($category)->isNotEmpty()) {
+            $actions->where('category_id', $category);
         }
 
         $actions = $actions->orderBy('id', 'desc')->cursorPaginate(10)->withQueryString();
