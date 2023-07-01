@@ -182,6 +182,7 @@ fetch(props.actions_json_url)
                                             :value="category.id"
                                             :key="category.id"
                                         >
+                                            {{ category.emoji }}
                                             {{ category.name }}
                                         </option>
                                     </select>
