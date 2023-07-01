@@ -22,10 +22,12 @@ const form = useForm({
 });
 
 const landmark = ref(null);
-const aside = ref(null);
+const main = ref(null);
 const categories = usePage().props.categories as CategoryData[];
 const props = defineProps<ActionIndexData>();
 const data = ref<ActionData[]>(props.actions.data);
+const formActive = ref(false);
+const mapCenter = ref(null);
 
 // watch for changes in the data prop and set the data ref to the new data
 watch(
@@ -38,7 +40,7 @@ watch(
         }
         // Otherwise, we should replace the existing data with the new data
         data.value = newData;
-        aside.value.scrollTop = 0;
+        main.value.scrollTop = 0;
     }
 );
 
@@ -86,8 +88,9 @@ const getData = () => {
     );
 };
 
-const setMap = (bounds: string) => {
-    form.map = bounds;
+const setMap = (mapData: string) => {
+    form.map = (mapData as any).bounds;
+    mapCenter.value = (mapData as any).center;
     getData();
 };
 
@@ -117,25 +120,73 @@ fetch(props.actions_json_url)
     <AuthenticatedLayout>
         <template #header> Index </template>
 
-        <div class="">
-            <main class="bg-secondary-300 lg:pl-20">
-                <div class="relative h-screen w-full xl:pl-96">
+        <div class="relative z-0">
+            <main
+                class="fixed inset-y-0 right-0 block h-screen w-[36rem] overflow-y-auto bg-secondary-300"
+                ref="main"
+            >
+                <div
+                    class="sticky top-0 z-10 bg-secondary-200 p-4 shadow-2xl shadow-secondary-300 sm:p-6 lg:p-8"
+                >
+                    <CreateAction
+                        @form-focused="formActive = true"
+                        @form-blurred="formActive = false"
+                        v-bind="{ action: null, mapCenter: mapCenter! }"
+                    />
+                </div>
+                <div
+                    class="relative z-0 flex w-full flex-col gap-6 p-4 sm:p-6 lg:p-8"
+                >
+                    <Action
+                        v-for="action in data"
+                        v-bind="action"
+                        v-bind:key="action.id"
+                    />
+                    <div ref="landmark"></div>
+                </div>
+            </main>
+
+            <aside
+                class="fixed inset-y-0 w-[calc(100vw-36rem)] border-r border-gray-200 xl:block"
+            >
+                <div class="relative h-screen w-full">
                     <Map
                         @map-changed="setMap"
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :geo-data="geoJson"
                     ></Map>
                     <div
-                        class="pointer-events-none fixed bottom-12 left-0 z-40 w-full xl:pl-96"
+                        v-if="formActive"
+                        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full"
+                    >
+                        <svg
+                            width="80"
+                            height="97"
+                            viewBox="0 0 80 97"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M80 40C80 50.9245 75.6206 60.8261 68.5216 68.045L68.5468 68.0702L40.2625 96.3545L15.6286 71.7206C6.12456 64.4076 0 52.919 0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40ZM40 64C53.2548 64 64 53.2548 64 40C64 26.7452 53.2548 16 40 16C26.7452 16 16 26.7452 16 40C16 53.2548 26.7452 64 40 64Z"
+                                fill="#F8D86D"
+                            />
+                        </svg>
+                    </div>
+                    <div
+                        class="pointer-events-none fixed left-0 top-12 z-40 w-[calc(100vw-36rem)]"
                     >
                         <div class="mx-auto flex justify-center">
                             <form
-                                class="pointer-events-auto flex gap-3 rounded-[20px] border-black bg-secondary-300 p-3 shadow-sm shadow-secondary-100/10"
+                                class="border-md pointer-events-auto flex rounded-lg border bg-secondary-300 p-3 shadow-sm shadow-secondary-100/10"
                                 action="#"
                                 method="GET"
                             >
-                                <div class="">
-                                    <div class="relative rounded-md">
+                                <div
+                                    class="overflow-hidden rounded-l-md border border-black"
+                                >
+                                    <div class="relative">
                                         <label for="q" class="sr-only"
                                             >Search value</label
                                         >
@@ -144,7 +195,7 @@ fetch(props.actions_json_url)
                                             type="text"
                                             name="q"
                                             id="q"
-                                            class="block w-full rounded-xl border-0 py-3 pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                                            class="block w-full border-0 py-[15px] pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base sm:leading-6"
                                             placeholder="Search..."
                                         />
                                         <div
@@ -156,7 +207,7 @@ fetch(props.actions_json_url)
                                             <select
                                                 id="mode"
                                                 name="mode"
-                                                class="h-full rounded-xl border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm"
+                                                class="h-full border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base"
                                             >
                                                 <option>Location</option>
                                                 <option>Content</option>
@@ -172,7 +223,7 @@ fetch(props.actions_json_url)
                                         id="category"
                                         name="category"
                                         v-model="form.category"
-                                        class="block w-full rounded-xl border-0 py-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6"
+                                        class="-ml-px block w-full rounded-r-md border border-black py-4 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-base sm:leading-6"
                                     >
                                         <option selected value="0">
                                             All Categories
@@ -190,24 +241,6 @@ fetch(props.actions_json_url)
                             </form>
                         </div>
                     </div>
-                </div>
-            </main>
-
-            <aside
-                ref="aside"
-                class="fixed inset-y-0 left-20 hidden w-96 overflow-y-auto border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block"
-            >
-                <!-- Fetched elements from actions_json_url:
-                {{ actionsFromJsonLength }} -->
-                <!-- <CreateAction v-bind="null" /> -->
-                <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
-                <div class="flex w-full flex-col gap-4">
-                    <Action
-                        v-for="action in data"
-                        v-bind="action"
-                        v-bind:key="action.id"
-                    />
-                    <div ref="landmark"></div>
                 </div>
             </aside>
         </div>

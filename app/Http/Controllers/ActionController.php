@@ -56,8 +56,8 @@ class ActionController extends Controller
             'description' => 'required',
             'inspired_by' => 'nullable|exists:App\Models\Action,id',
             'category_id' => 'required|exists:App\Models\Category,id',
-            // 'lat' => 'required|numeric',
-            // 'lng' => 'required|numeric',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
 
         $ancestor_ids = null;
@@ -74,8 +74,6 @@ class ActionController extends Controller
         $new_action = Action::create([
             'user_id' => auth()->user()->id,
             'inspirations_ancestors' => json_encode($ancestor_ids),
-            'lat' => $faker->latitude,
-            'lng' => $faker->longitude,
             ...$attributes,
         ]);
 
@@ -99,7 +97,7 @@ class ActionController extends Controller
             }
         }
 
-        return to_route('action.show', $new_action->id)->with('success', 'Action created.');
+        return to_route('index')->with('success', 'Action created.');
     }
 
     /**

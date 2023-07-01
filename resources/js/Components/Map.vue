@@ -3,7 +3,7 @@ import { ActionData, ActionsJsonData, CategoryData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted, onUnmounted, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
 
 const emit = defineEmits(["mapChanged"]);
 
@@ -57,7 +57,7 @@ function addNavigationControl(map: maplibregl.Map): void {
             showZoom: true,
             visualizePitch: false,
         }),
-        "top-right"
+        "bottom-right"
     );
 }
 
@@ -70,7 +70,7 @@ function addGeolocateControl(map: maplibregl.Map): void {
             showAccuracyCircle: true,
             showUserLocation: true,
         }),
-        "top-left"
+        "top-right"
     );
 }
 
@@ -237,7 +237,8 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
 
 function setActionsInView(map: maplibregl.Map): void {
     const mapBounds = getMapBoundsAsString(map);
-    emit("mapChanged", mapBounds);
+    const mapCenter = map.getCenter();
+    emit("mapChanged", { bounds: mapBounds, center: mapCenter });
 }
 
 function getMapBoundsAsString(map: maplibregl.Map): string {
@@ -248,15 +249,6 @@ function getMapBoundsAsString(map: maplibregl.Map): string {
         bounds.getSouthWest().lng.toFixed(5),
         bounds.getSouthWest().lat.toFixed(5),
     ].join(",");
-}
-
-function getActions(map: string): void {
-    router.get(
-        route("index"),
-        { map },
-        { replace: true, preserveState: true, preserveScroll: true }
-    ),
-        500;
 }
 
 onMounted(() => {

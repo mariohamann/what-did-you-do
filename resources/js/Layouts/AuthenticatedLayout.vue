@@ -21,28 +21,28 @@ const navigation = [
     {
         name: "Map",
         href: route("index"),
-        icon: MapIcon,
+        icon: "map",
         current: route().current("index"),
         logged: ["in", "out"],
     },
     {
         name: "Profile",
         href: route("profile.edit"),
-        icon: UserIcon,
+        icon: "profile",
         current: route().current("profile.edit"),
         logged: ["in"],
     },
     {
         name: "Log Out",
         href: route("logout"),
-        icon: LogoutIcon,
+        icon: "logout",
         current: false,
         logged: ["in"],
     },
     {
         name: "Log In",
         href: route("login"),
-        icon: LoginIcon,
+        icon: "login",
         current: false,
         logged: ["out"],
     },
@@ -62,49 +62,47 @@ const sidebarOpen = ref(false);
     <body class="h-full">
     ```
   -->
-    <div class="text-base">
+    <div class="z-10 w-full text-base">
         <!-- Static sidebar for desktop -->
-        <div
-            class="hidden flex-col justify-between border-gray-600 lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:flex lg:w-20 lg:overflow-y-auto lg:bg-secondary-200 lg:pb-4"
+
+        <Link class="group fixed left-10 top-6 z-10" href="/">
+            <img
+                class="w-full select-none pt-8 transition-transform group-hover:scale-125"
+                src="/assets/logo.svg"
+                alt="Start"
+        /></Link>
+        <nav
+            class="fixed bottom-12 z-10 flex -translate-x-[calc(100%-3.5rem)] flex-col"
         >
-            <div class="flex shrink-0 items-center justify-center">
-                <img
-                    class="w-full pt-8"
-                    src="/assets/logo.png"
-                    alt="Your Company"
-                />
-            </div>
-            <nav class="flex flex-col">
-                <ul role="list" class="flex w-full flex-col items-center gap-4">
-                    <li v-for="item in navigation" :key="item.name">
-                        <Link
-                            class="block rounded-full bg-black"
-                            :href="item.href"
-                            :method="
-                                item.href === route('logout') ? 'post' : 'get'
-                            "
-                            :as="item.href === route('logout') ? 'button' : 'a'"
+            <ul role="list" class="flex w-full flex-col items-end gap-4">
+                <li v-for="item in navigation" :key="item.name">
+                    <Link
+                        class="block -rotate-6 bg-white"
+                        :href="item.href"
+                        :method="item.href === route('logout') ? 'post' : 'get'"
+                        :as="item.href === route('logout') ? 'button' : 'a'"
+                    >
+                        <div
+                            :class="[
+                                item.current
+                                    ? 'relative translate-x-[calc(100%-3.5rem)] '
+                                    : ' text-black hover:translate-x-[calc(100%-3rem)] active:translate-x-[calc(100%-3rem)]',
+                                'border-1  group flex h-12 items-center gap-4 border-white bg-white p-2 text-2xl font-semibold leading-6 transition-all',
+                            ]"
                         >
-                            <div
-                                :class="[
-                                    item.current
-                                        ? 'relative -translate-x-2 -translate-y-2  text-primary-600'
-                                        : ' text-black hover:-translate-x-1 hover:-translate-y-1 active:-translate-x-2 active:-translate-y-2 active:text-primary-600',
-                                    'border-1 group flex h-12 w-12 rounded-full border-white bg-white p-2 text-2xl font-semibold leading-6 transition-all',
-                                ]"
-                            >
-                                <component
-                                    :is="item.icon"
-                                    class="h-8 w-8 shrink-0"
-                                    aria-hidden="true"
-                                />
-                            </div>
-                            <span class="sr-only">{{ item.name }}</span>
-                        </Link>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+                            <span class="text-base uppercase italic">{{
+                                item.name
+                            }}</span>
+                            <img
+                                class="px-1"
+                                :src="`/assets/icons/${item.icon}.svg`"
+                                style="font-size: 0.5rem"
+                            />
+                        </div>
+                    </Link>
+                </li>
+            </ul>
+        </nav>
         <slot />
     </div>
 </template>
