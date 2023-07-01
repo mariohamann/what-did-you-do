@@ -126,22 +126,32 @@ fetch(props.actions_json_url)
                 ref="main"
             >
                 <div
-                    class="sticky top-0 z-10 bg-secondary-200 p-4 shadow-2xl shadow-secondary-300 sm:p-6 lg:p-8"
-                >
-                    <CreateAction
-                        @form-focused="formActive = true"
-                        @form-blurred="formActive = false"
-                        v-bind="{ action: null, mapCenter: mapCenter! }"
-                    />
-                </div>
-                <div
                     class="relative z-0 flex w-full flex-col gap-6 p-4 sm:p-6 lg:p-8"
                 >
+                    <div>
+                        <button
+                            @click="formActive = !formActive"
+                            :class="`inline-flex h-[54px] w-full items-center justify-center whitespace-nowrap rounded-md border border-transparent ${
+                                formActive
+                                    ? 'bg-red-600 hover:bg-red-700'
+                                    : 'bg-primary-600  hover:bg-primary-700'
+                            } px-6 text-base font-medium uppercase text-white shadow-sm`"
+                        >
+                            {{
+                                formActive ? "x Cancel" : "+ Create new action"
+                            }}
+                        </button>
+                    </div>
                     <Action
+                        v-if="!formActive"
                         v-for="action in data"
                         v-bind="action"
                         v-bind:key="action.id"
                     />
+                    <p v-else>
+                        Describe your action, select location & category – and
+                        start to inspire people.
+                    </p>
                     <div ref="landmark"></div>
                 </div>
             </main>
@@ -157,22 +167,27 @@ fetch(props.actions_json_url)
                     ></Map>
                     <div
                         v-if="formActive"
-                        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full"
+                        class="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-5 shadow-2xl"
                     >
-                        <svg
-                            width="80"
-                            height="97"
-                            viewBox="0 0 80 97"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M80 40C80 50.9245 75.6206 60.8261 68.5216 68.045L68.5468 68.0702L40.2625 96.3545L15.6286 71.7206C6.12456 64.4076 0 52.919 0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40ZM40 64C53.2548 64 64 53.2548 64 40C64 26.7452 53.2548 16 40 16C26.7452 16 16 26.7452 16 40C16 53.2548 26.7452 64 40 64Z"
-                                fill="#F8D86D"
+                        <div class="z-10 rounded-lg">
+                            <svg
+                                class="absolute -top-5 left-1/2 -translate-x-1/2 rotate-180 fill-white"
+                                width="80"
+                                height="97"
+                                viewBox="0 0 80 97"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M80 40C80 50.9245 75.6206 60.8261 68.5216 68.045L68.5468 68.0702L40.2625 96.3545L15.6286 71.7206C6.12456 64.4076 0 52.919 0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40ZM40 64C53.2548 64 64 53.2548 64 40C64 26.7452 53.2548 16 40 16C26.7452 16 16 26.7452 16 40C16 53.2548 26.7452 64 40 64Z"
+                                />
+                            </svg>
+                            <CreateAction
+                                v-bind="{ action: null, mapCenter: mapCenter! }"
                             />
-                        </svg>
+                        </div>
                     </div>
                     <div
                         class="pointer-events-none fixed left-0 top-12 z-40 w-[calc(100vw-36rem)]"
@@ -215,7 +230,7 @@ fetch(props.actions_json_url)
                                         </div>
                                     </div>
                                 </div>
-                                <div>
+                                <div v-if="!formActive">
                                     <label for="category" class="sr-only"
                                         >Mode for Search</label
                                     >

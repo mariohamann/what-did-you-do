@@ -51,7 +51,7 @@ let createAction = () => {
         @focusout="emit('formBlurred')"
     >
         <div
-            class="overflow-hidden rounded-md border border-black shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
+            class="w-[360px] overflow-hidden rounded-md shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
         >
             <label for="description" class="sr-only">Content</label>
             <textarea
@@ -72,13 +72,13 @@ let createAction = () => {
             </div>
         </div>
 
-        <div class="absolute inset-x-px bottom-0">
+        <div class="absolute inset-x-0 bottom-0">
             <!-- Actions: These are just examples to demonstrate the concept, replace/wire these up however makes sense for your project. -->
 
             <div
                 class="flex h-14 items-center justify-between border-t border-black"
             >
-                <div class="ml-px flex h-[55px] w-full flex-nowrap justify-end">
+                <div class="flex w-full flex-nowrap justify-end">
                     <Listbox
                         as="div"
                         v-model="categorized"
@@ -87,7 +87,7 @@ let createAction = () => {
                         <ListboxLabel class="sr-only"> Category </ListboxLabel>
                         <div class="relative">
                             <ListboxButton
-                                class="relative mb-px flex h-[54px] w-[calc(100%-1px)] items-center justify-between whitespace-nowrap rounded-bl-lg px-4 text-base font-medium text-primary-600 hover:bg-gray-50"
+                                class="relative flex h-[54px] w-[calc(100%)] items-center justify-between whitespace-nowrap rounded-bl-lg px-4 text-base font-medium text-primary-600 hover:bg-gray-50"
                             >
                                 <div class="inline-flex">
                                     <TagIcon
@@ -177,7 +177,7 @@ let createAction = () => {
                 <div>
                     <button
                         type="submit"
-                        class="mb-px inline-flex h-[55px] items-center whitespace-nowrap rounded-br-md border border-transparent bg-primary-600 px-6 text-base font-medium uppercase text-white shadow-sm hover:bg-primary-700"
+                        class="inline-flex h-[54px] items-center whitespace-nowrap rounded-br-md border border-transparent bg-primary-600 px-6 text-base font-medium uppercase text-white shadow-sm hover:bg-primary-700"
                     >
                         + Create
                     </button>
