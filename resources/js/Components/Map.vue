@@ -5,7 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import AutoComplete from "@/Components/AutoComplete.vue";
 import CategoryFilter from "@/Components/CategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 
 interface GeoJSON {
     type: string;
@@ -25,13 +25,10 @@ interface GeoJSON {
 const props = defineProps<{
     apiKey: string;
     geoData: ActionsJsonData[];
+    categories: CategoryData[];
 }>();
 
 const mapCanvas = ref<HTMLElement>();
-// TODO: usePage or pass as prop???
-const categories = ref<CategoryData[]>(
-    usePage().props.categories as CategoryData[]
-);
 let map = ref<maplibregl.Map>();
 
 function initMap(): void {
@@ -271,7 +268,7 @@ onUnmounted(() => {
     <div class="fixed left-0 top-12 z-40 w-full xl:pl-96">
         <div class="mx-auto flex justify-center">
             <AutoComplete :api-key="props.apiKey"></AutoComplete>
-            <CategoryFilter :categories="categories"></CategoryFilter>
+            <CategoryFilter :categories="props.categories"></CategoryFilter>
         </div>
     </div>
     <div ref="mapCanvas" class="h-full w-full"></div>

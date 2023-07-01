@@ -46,6 +46,7 @@ fetch(props.actions_json_url)
                 <div class="relative h-screen w-full xl:pl-96">
                     <Map
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
+                        :categories="categories"
                         :geo-data="geoJson"
                     ></Map>
                 </div>
