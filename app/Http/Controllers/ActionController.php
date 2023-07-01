@@ -18,6 +18,7 @@ class ActionController extends Controller
     public function index(Request $request)
     {
         $map = $request->input('map', '');
+        $cursor = $request->input('cursor', '');
 
         $actions = Action::query();
 
@@ -26,7 +27,7 @@ class ActionController extends Controller
             $actions->locatedWithin($neLat, $neLng, $swLat, $swLng);
         }
 
-        $actions = $actions->orderBy('created_at', 'desc')->get();
+        $actions = $actions->orderBy('id', 'desc')->cursorPaginate(10)->withQueryString();
 
         return Inertia::render('Actions/Index', ActionIndexData::from([
             'actions' => ActionData::collection($actions),

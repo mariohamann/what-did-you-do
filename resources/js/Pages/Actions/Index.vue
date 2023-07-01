@@ -1,25 +1,72 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { usePage, Head, useForm } from "@inertiajs/vue3";
+import { usePage, Head, useForm, Link, router } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 import CreateAction from "@/Components/CreateAction.vue";
 import Map from "@/Components/Map.vue";
-import { ref } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
 import type {
     ActionIndexData,
     ActionsJsonData,
     CategoryData,
+    ActionData,
 } from "@/types/generated.d.ts";
 
 const form = useForm({
     q: "",
 });
 
-let categories = usePage().props.categories as CategoryData[];
+const landmark = ref(null);
+const aside = ref(null);
+const categories = usePage().props.categories as CategoryData[];
+const props = defineProps<ActionIndexData>();
+const data = ref<ActionData[]>(props.actions.data);
 
-let props = defineProps<ActionIndexData>();
+// watch for changes in the data prop and set the data ref to the new data
+watch(
+    () => props.actions.data,
+    (newData) => {
+        console.log("newData", newData);
+        console.log(props.actions.meta);
+        // When we had a pagination request, the new data should be added to the existing data
+        if (props.actions.meta.prev_cursor !== null) {
+            data.value = [...data.value, ...newData];
+            return;
+        }
+        // Otherwise, we should replace the existing data with the new data
+        data.value = newData;
+        aside.value.scrollTop = 0;
+    }
+);
+
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (
+                entry.isIntersecting &&
+                (props.actions.meta as any).next_page_url
+            ) {
+                router.get(
+                    (props.actions.meta as any).next_page_url!,
+                    {},
+                    {
+                        preserveState: true,
+                        replace: true,
+                    }
+                );
+            }
+        });
+    },
+    {
+        rootMargin: "200% 0px 0px 0px",
+    }
+);
+
+onMounted(() => {
+    observer.observe(landmark.value);
+});
 
 // amount of fetched elements from actions_json_url
 let actionsFromJsonLength = ref(0);
@@ -113,6 +160,7 @@ fetch(props.actions_json_url)
             </main>
 
             <aside
+                ref="aside"
                 class="fixed inset-y-0 left-20 hidden w-96 overflow-y-auto border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block"
             >
                 <!-- Fetched elements from actions_json_url:
@@ -121,10 +169,11 @@ fetch(props.actions_json_url)
                 <div class="mx-auto max-w-7xl sm:px-6 lg:px-8"></div>
                 <div class="flex w-full flex-col gap-4">
                     <Action
-                        v-for="action in actions"
+                        v-for="action in data"
                         v-bind="action"
                         v-bind:key="action.id"
                     />
+                    <div ref="landmark"></div>
                 </div>
             </aside>
         </div>

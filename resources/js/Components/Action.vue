@@ -6,8 +6,6 @@ import ActionCategory from "@/Components/ActionCategory.vue";
 import type { ActionData } from "@/types/generated.d.ts";
 
 let props = defineProps<ActionData>();
-
-console.log(props.lng, props.lat);
 </script>
 
 <template>
