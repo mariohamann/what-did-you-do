@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Data\ActionData;
 use App\Data\ActionIndexData;
 use App\Models\Action;
-use Faker\Generator as Faker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -50,7 +49,7 @@ class ActionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Faker $faker)
+    public function store(Request $request)
     {
         $attributes = $request->validate([
             'description' => 'required',

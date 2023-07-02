@@ -31,10 +31,22 @@ const isMine = computed(() => {
 });
 
 const likeAction = () => {
+    // current url from window
     if (props.likes.liked) {
-        router.delete(`/like/${props.id}`, { preserveScroll: true });
+        router.delete(`/like/${props.id}`, {
+            preserveScroll: true,
+            replace: true,
+        });
     } else {
-        router.post(`/like/${props.id}`, {}, { preserveScroll: true });
+        router.post(
+            `/like/${props.id}`,
+            {},
+            {
+                preserveScroll: true,
+                replace: true,
+                onSuccess: () => window.history.replaceState({}, "", url),
+            }
+        );
     }
 };
 
