@@ -247,7 +247,14 @@ fetch(props.actions_json_url)
                                             :value="category.id"
                                             :key="category.id"
                                         >
-                                            {{ category.emoji }}
+                                            <span
+                                                class="ml-0.5 inline-block w-6"
+                                            >
+                                                <img
+                                                    class="h-5 w-5"
+                                                    style="font-size: 2rem"
+                                                    :src="`/assets/icons/${category.slug}.svg`"
+                                            /></span>
                                             {{ category.name }}
                                         </option>
                                     </select>

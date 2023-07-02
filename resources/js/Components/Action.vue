@@ -17,11 +17,6 @@ let props = defineProps<ActionData>();
                 <h2
                     class="relative mb-8 text-xl font-medium leading-relaxed decoration-white underline-offset-2 hover:decoration-primary-600"
                 >
-                    <span
-                        class="absolute -mt-0 h-8 w-8 rounded-full bg-gray-100 text-center text-sm leading-8"
-                        >{{ category.emoji }}
-                    </span>
-                    <span class="inline-block w-10"> </span>
                     {{ description }}
                 </h2></Link
             >
@@ -34,7 +29,18 @@ let props = defineProps<ActionData>();
                 <div class="pointer-events-auto flex gap-2">
                     <ActionInteractions v-bind="$props" />
                 </div>
-                <p class="text-sm italic">by {{ user.name }}</p>
+                <div class="flex items-center gap-5">
+                    <span
+                        class="flex items-center justify-center rounded-full text-lg leading-8"
+                    >
+                        <img
+                            class="h-5 w-5"
+                            style="font-size: 2rem"
+                            :src="`/assets/icons/${category.slug}.svg`"
+                        />
+                    </span>
+                    <p class="text-sm italic">by {{ user.name }}</p>
+                </div>
             </div>
         </div>
     </section>

@@ -99,8 +99,12 @@ let createAction = () => {
                                     <span
                                         class="ml-0.5 inline-block w-6"
                                         v-else
-                                        >{{ categorized.emoji }}</span
                                     >
+                                        <img
+                                            class="h-5 w-5"
+                                            style="font-size: 2rem"
+                                            :src="`/assets/icons/${categorized.slug}.svg`"
+                                    /></span>
 
                                     <span
                                         :class="[
@@ -156,11 +160,11 @@ let createAction = () => {
                                             <div
                                                 class="flex items-center text-base"
                                             >
-                                                <span
-                                                    class="block w-6 text-center"
-                                                >
-                                                    {{ category.emoji }}</span
-                                                >
+                                                <img
+                                                    class="h-5 w-5"
+                                                    style="font-size: 2rem"
+                                                    :src="`/assets/icons/${category.slug}.svg`"
+                                                />
                                                 <span
                                                     class="ml-3 block truncate font-medium"
                                                 >
