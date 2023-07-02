@@ -44,7 +44,6 @@ const likeAction = () => {
             {
                 preserveScroll: true,
                 replace: true,
-                onSuccess: () => window.history.replaceState({}, "", url),
             }
         );
     }
