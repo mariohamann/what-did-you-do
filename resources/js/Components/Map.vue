@@ -57,7 +57,7 @@ function addNavigationControl(map: maplibregl.Map): void {
             showZoom: true,
             visualizePitch: false,
         }),
-        "bottom-right"
+        "top-right"
     );
 }
 

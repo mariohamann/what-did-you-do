@@ -122,42 +122,27 @@ fetch(props.actions_json_url)
 
         <div class="relative z-0">
             <main
-                class="fixed inset-y-0 right-0 block h-screen w-[36rem] overflow-y-auto bg-secondary-300"
+                :class="`fixed inset-y-0 right-0 block h-screen ${
+                    formActive ? 'w-0' : 'w-[36rem]'
+                } overflow-y-auto bg-secondary-300 transition-all`"
                 ref="main"
             >
                 <div
                     class="relative z-0 flex w-full flex-col gap-6 p-4 sm:p-6 lg:p-8"
                 >
-                    <div>
-                        <button
-                            @click="formActive = !formActive"
-                            :class="`inline-flex h-[54px] w-full items-center justify-center whitespace-nowrap border border-transparent ${
-                                formActive
-                                    ? 'bg-red-600 hover:bg-red-700'
-                                    : 'bg-primary-600  hover:bg-primary-700'
-                            } px-6 text-base font-medium uppercase text-white shadow-sm`"
-                        >
-                            {{
-                                formActive ? "x Cancel" : "+ Create new action"
-                            }}
-                        </button>
-                    </div>
                     <Action
-                        v-if="!formActive"
                         v-for="action in data"
                         v-bind="action"
                         v-bind:key="action.id"
                     />
-                    <p v-else>
-                        Describe your action, select location & category – and
-                        start to inspire people.
-                    </p>
                     <div ref="landmark"></div>
                 </div>
             </main>
 
             <aside
-                class="fixed inset-y-0 w-[calc(100vw-36rem)] border-r border-gray-200 xl:block"
+                :class="`fixed inset-y-0 ${
+                    formActive ? 'w-full' : 'w-[calc(100vw-36rem)]'
+                } border-r border-gray-200 transition-all xl:block`"
             >
                 <div class="relative h-screen w-full">
                     <Map
@@ -165,6 +150,17 @@ fetch(props.actions_json_url)
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :geo-data="geoJson"
                     ></Map>
+
+                    <button
+                        @click="formActive = !formActive"
+                        :class="`absolute bottom-12 right-12 z-10 h-[54px] items-center justify-center whitespace-nowrap border border-transparent ${
+                            formActive
+                                ? 'bg-red-600 hover:bg-red-700'
+                                : 'bg-primary-600  hover:bg-primary-700'
+                        } px-6 text-base font-medium uppercase text-white shadow-sm`"
+                    >
+                        {{ formActive ? "x Cancel" : "+ Add action" }}
+                    </button>
                     <div
                         v-if="formActive"
                         class="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-5 shadow-2xl"
@@ -190,7 +186,7 @@ fetch(props.actions_json_url)
                         </div>
                     </div>
                     <div
-                        class="pointer-events-none fixed left-0 top-12 z-40 w-[calc(100vw-36rem)]"
+                        class="pointer-events-none absolute left-1/2 top-12 z-40 -translate-x-1/2"
                     >
                         <div class="mx-auto flex justify-center">
                             <form
