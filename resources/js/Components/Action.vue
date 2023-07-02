@@ -8,9 +8,9 @@ let props = defineProps<ActionData>();
 </script>
 
 <template>
-    <section class="rounded-md bg-black">
+    <section class="bg-black">
         <div
-            class="relative rounded-md border border-black bg-white p-5 transition-all focus-within:-translate-x-2 focus-within:-translate-y-2 hover:-translate-x-2 hover:-translate-y-2"
+            class="relative border border-black bg-white p-5 transition-all focus-within:-translate-x-2 focus-within:-translate-y-2 hover:-translate-x-2 hover:-translate-y-2"
         >
             <Link :href="`/action/${id}`" class="z-0">
                 <span class="absolute inset-0"></span>

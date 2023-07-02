@@ -131,7 +131,7 @@ fetch(props.actions_json_url)
                     <div>
                         <button
                             @click="formActive = !formActive"
-                            :class="`inline-flex h-[54px] w-full items-center justify-center whitespace-nowrap rounded-md border border-transparent ${
+                            :class="`inline-flex h-[54px] w-full items-center justify-center whitespace-nowrap border border-transparent ${
                                 formActive
                                     ? 'bg-red-600 hover:bg-red-700'
                                     : 'bg-primary-600  hover:bg-primary-700'
@@ -194,23 +194,22 @@ fetch(props.actions_json_url)
                     >
                         <div class="mx-auto flex justify-center">
                             <form
-                                class="border-md pointer-events-auto flex rounded-lg border bg-secondary-300 p-3 shadow-sm shadow-secondary-100/10"
+                                class="pointer-events-auto flex border border-black shadow-sm shadow-secondary-100/10"
                                 action="#"
                                 method="GET"
                             >
-                                <div
-                                    class="overflow-hidden rounded-l-md border border-black"
-                                >
+                                <div class="border-r border-black">
                                     <div class="relative">
                                         <label for="q" class="sr-only"
                                             >Search value</label
                                         >
+                                        <!-- TODO: The height calculation of the the search box and the categoty has to be fixed! -->
                                         <input
                                             autofocus
                                             type="text"
                                             name="q"
                                             id="q"
-                                            class="block w-full border-0 py-[15px] pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base sm:leading-6"
+                                            class="mt-px block w-full border-0 py-[15.5px] pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base sm:leading-6"
                                             placeholder="Search..."
                                         />
                                         <div
@@ -238,7 +237,7 @@ fetch(props.actions_json_url)
                                         id="category"
                                         name="category"
                                         v-model="form.category"
-                                        class="-ml-px block w-full rounded-r-md border border-black py-4 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-base sm:leading-6"
+                                        class="-ml-px block w-full py-4 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-base sm:leading-6"
                                     >
                                         <option selected value="0">
                                             All Categories
