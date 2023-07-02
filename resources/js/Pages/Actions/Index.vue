@@ -167,7 +167,7 @@ fetch(props.actions_json_url)
                     >
                         <div class="z-10 rounded-lg">
                             <svg
-                                class="absolute -top-5 left-1/2 -translate-x-1/2 rotate-180 fill-white"
+                                class="absolute -top-5 left-1/2 -translate-x-1/2 rotate-180 fill-black"
                                 width="80"
                                 height="97"
                                 viewBox="0 0 80 97"
@@ -217,7 +217,7 @@ fetch(props.actions_json_url)
                                             <select
                                                 id="mode"
                                                 name="mode"
-                                                class="h-full border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base"
+                                                class="h-full border-0 bg-white py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base"
                                             >
                                                 <option>Location</option>
                                                 <option>Content</option>
@@ -233,7 +233,7 @@ fetch(props.actions_json_url)
                                         id="category"
                                         name="category"
                                         v-model="form.category"
-                                        class="-ml-px block w-full py-4 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-white focus:ring-2 focus:ring-primary-600 sm:text-base sm:leading-6"
+                                        class="-ml-px block w-full border-0 border-l border-black py-4 pl-3 pr-10 text-gray-900 sm:text-base sm:leading-6"
                                     >
                                         <option selected value="0">
                                             All Categories

@@ -39,7 +39,7 @@ function initMap(): void {
     map.value = new maplibregl.Map({
         container: mapCanvas.value!,
         attributionControl: false,
-        style: `https://tiles.locationiq.com/v3/dark/vector.json?key=${props.apiKey}`, // stylesheet location
+        style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
         center: [14.95, 50.02], // starting position [lng, lat]
         zoom: 3, // starting zoom
     });
@@ -166,7 +166,7 @@ function addSourceAndLayers(map: maplibregl.Map): void {
                 "text-anchor": "center",
             },
             paint: {
-                "text-color": "#ffffff",
+                "text-color": "#1947E5",
             },
         });
 

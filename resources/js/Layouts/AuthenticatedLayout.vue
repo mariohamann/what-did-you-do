@@ -67,7 +67,7 @@ const sidebarOpen = ref(false);
 
         <Link class="group fixed left-10 top-6 z-10" href="/">
             <img
-                class="w-full select-none pt-8 transition-transform group-hover:scale-125"
+                class="w-full select-none pt-8 invert transition-transform group-hover:scale-125"
                 src="/assets/logo.svg"
                 alt="Start"
         /></Link>
@@ -85,9 +85,9 @@ const sidebarOpen = ref(false);
                         <div
                             :class="[
                                 item.current
-                                    ? 'relative translate-x-[calc(100%-3.5rem)] '
-                                    : ' text-black hover:translate-x-[calc(100%-3rem)] active:translate-x-[calc(100%-3rem)]',
-                                'border-1  group flex h-12 items-center gap-4 border-white bg-white p-2 text-2xl font-semibold leading-6 transition-all',
+                                    ? 'relative translate-x-[calc(100%-5rem)] '
+                                    : ' text-black hover:translate-x-[calc(100%-5rem)] active:translate-x-[calc(100%-5rem)]',
+                                'group flex h-12 items-center gap-4 border border-black bg-white p-2 pl-8 text-2xl font-semibold leading-6 transition-all',
                             ]"
                         >
                             <span class="text-base uppercase italic">{{

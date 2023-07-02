@@ -51,7 +51,7 @@ let createAction = () => {
         @focusout="emit('formBlurred')"
     >
         <div
-            class="w-[360px] overflow-hidden rounded-md shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
+            class="w-[360px] overflow-hidden border border-black shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500"
         >
             <label for="description" class="sr-only">Content</label>
             <textarea
@@ -87,7 +87,7 @@ let createAction = () => {
                         <ListboxLabel class="sr-only"> Category </ListboxLabel>
                         <div class="relative">
                             <ListboxButton
-                                class="relative flex h-[54px] w-[calc(100%)] items-center justify-between whitespace-nowrap rounded-bl-lg px-4 text-base font-medium text-primary-600 hover:bg-gray-50"
+                                class="relative flex h-[54px] w-[calc(100%)] items-center justify-between whitespace-nowrap px-4 text-base font-medium text-primary-600"
                             >
                                 <div class="inline-flex">
                                     <TagIcon
@@ -140,7 +140,7 @@ let createAction = () => {
                                 leave-to-class="opacity-0"
                             >
                                 <ListboxOptions
-                                    class="absolute -left-px z-10 mt-1 max-h-56 w-[calc(100%+3px)] overflow-auto rounded-md border border-black bg-white py-3 text-base shadow shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                    class="absolute -left-px z-10 mt-1 max-h-56 w-[calc(100%+3px)] overflow-auto border border-black bg-white py-3 text-base shadow shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                                 >
                                     <ListboxOption
                                         as="template"
@@ -181,7 +181,7 @@ let createAction = () => {
                 <div>
                     <button
                         type="submit"
-                        class="inline-flex h-[54px] items-center whitespace-nowrap rounded-br-md border border-transparent bg-primary-600 px-6 text-base font-medium uppercase text-white shadow-sm hover:bg-primary-700"
+                        class="inline-flex h-[54px] items-center whitespace-nowrap border border-transparent bg-primary-600 px-6 text-base font-medium uppercase text-white shadow-sm hover:bg-primary-700"
                     >
                         + Create
                     </button>
