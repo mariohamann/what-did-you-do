@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { usePage } from "@inertiajs/vue3";
 import { debounce } from "throttle-debounce";
 import { ref, watch } from "vue";
 import {
@@ -12,7 +11,10 @@ import {
 } from "@headlessui/vue";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/vue/solid";
 
-interface PlacesData {
+// TODO add types
+const emit = defineEmits(["placeSelected"]);
+
+export interface PlacesData {
     name: string;
     ln: number;
     la: number;
@@ -54,7 +56,7 @@ watch(searchTerm, async (newTerm) => {
 </script>
 
 <template>
-    <Combobox>
+    <Combobox @update:model-value="(value) => emit('placeSelected', value)">
         <div class="relative mt-1">
             <div
                 class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"

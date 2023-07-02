@@ -2,10 +2,9 @@
 import { ActionsJsonData, CategoryData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import AutoComplete from "@/Components/AutoComplete.vue";
+import AutoComplete, { PlacesData } from "@/Components/AutoComplete.vue";
 import CategoryFilter from "@/Components/CategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
 
 const emit = defineEmits(["mapChanged"]);
 
@@ -249,6 +248,14 @@ function getMapBoundsAsString(map: maplibregl.Map): string {
     ].join(",");
 }
 
+function flyToLocation(location: PlacesData): void {
+    map.value?.flyTo({
+        center: [location.ln, location.la],
+        zoom: 14,
+        essential: true,
+    });
+}
+
 onMounted(() => {
     initMap();
 });
@@ -259,9 +266,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="fixed left-0 top-12 z-40 w-full xl:pl-96">
+    <div class="absolute left-0 right-0 top-12 z-40 w-full">
         <div class="mx-auto flex justify-center">
-            <AutoComplete :api-key="props.apiKey"></AutoComplete>
+            <AutoComplete
+                @place-selected="flyToLocation"
+                :api-key="props.apiKey"
+            ></AutoComplete>
+            <!-- TODO add search filter -> content / location -->
             <CategoryFilter :categories="props.categories"></CategoryFilter>
         </div>
     </div>
