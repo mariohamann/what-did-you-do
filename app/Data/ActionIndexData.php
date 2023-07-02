@@ -8,7 +8,7 @@ class ActionIndexData extends Data
 {
     public function __construct(
         /** @var ActionData[] */
-        public \Spatie\LaravelData\DataCollection $actions,
+        public \Spatie\LaravelData\CursorPaginatedDataCollection $actions,
         public string $actions_json_url,
     ) {
     }

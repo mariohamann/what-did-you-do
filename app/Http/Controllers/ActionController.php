@@ -18,6 +18,7 @@ class ActionController extends Controller
     public function index(Request $request)
     {
         $map = $request->input('map', '');
+        $category = $request->input('category', '');
 
         $actions = Action::query();
 
@@ -26,7 +27,11 @@ class ActionController extends Controller
             $actions->locatedWithin($neLat, $neLng, $swLat, $swLng);
         }
 
-        $actions = $actions->orderBy('created_at', 'desc')->get();
+        if (Str::of($category)->isNotEmpty()) {
+            $actions->where('category_id', $category);
+        }
+
+        $actions = $actions->orderBy('id', 'desc')->cursorPaginate(10)->withQueryString();
 
         return Inertia::render('Actions/Index', ActionIndexData::from([
             'actions' => ActionData::collection($actions),
@@ -51,8 +56,8 @@ class ActionController extends Controller
             'description' => 'required',
             'inspired_by' => 'nullable|exists:App\Models\Action,id',
             'category_id' => 'required|exists:App\Models\Category,id',
-            // 'lat' => 'required|numeric',
-            // 'lng' => 'required|numeric',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
 
         $ancestor_ids = null;
@@ -69,8 +74,6 @@ class ActionController extends Controller
         $new_action = Action::create([
             'user_id' => auth()->user()->id,
             'inspirations_ancestors' => json_encode($ancestor_ids),
-            'lat' => $faker->latitude,
-            'lng' => $faker->longitude,
             ...$attributes,
         ]);
 
@@ -94,7 +97,7 @@ class ActionController extends Controller
             }
         }
 
-        return to_route('action.show', $new_action->id)->with('success', 'Action created.');
+        return to_route('index')->with('success', 'Action created.');
     }
 
     /**

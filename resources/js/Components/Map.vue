@@ -5,7 +5,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import AutoComplete from "@/Components/AutoComplete.vue";
 import CategoryFilter from "@/Components/CategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
+
+const emit = defineEmits(["mapChanged"]);
 
 interface GeoJSON {
     type: string;
@@ -35,7 +37,7 @@ function initMap(): void {
     map.value = new maplibregl.Map({
         container: mapCanvas.value!,
         attributionControl: false,
-        style: `https://tiles.locationiq.com/v3/dark/vector.json?key=${props.apiKey}`, // stylesheet location
+        style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
         center: [14.95, 50.02], // starting position [lng, lat]
         zoom: 3, // starting zoom
     });
@@ -66,7 +68,7 @@ function addGeolocateControl(map: maplibregl.Map): void {
             showAccuracyCircle: true,
             showUserLocation: true,
         }),
-        "top-left"
+        "top-right"
     );
 }
 
@@ -162,7 +164,7 @@ function addSourceAndLayers(map: maplibregl.Map): void {
                 "text-anchor": "center",
             },
             paint: {
-                "text-color": "#ffffff",
+                "text-color": "#1947E5",
             },
         });
 
@@ -233,7 +235,8 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
 
 function setActionsInView(map: maplibregl.Map): void {
     const mapBounds = getMapBoundsAsString(map);
-    getActions(mapBounds);
+    const mapCenter = map.getCenter();
+    emit("mapChanged", { bounds: mapBounds, center: mapCenter });
 }
 
 function getMapBoundsAsString(map: maplibregl.Map): string {
@@ -244,15 +247,6 @@ function getMapBoundsAsString(map: maplibregl.Map): string {
         bounds.getSouthWest().lng.toFixed(5),
         bounds.getSouthWest().lat.toFixed(5),
     ].join(",");
-}
-
-function getActions(map: string): void {
-    router.get(
-        route("index"),
-        { map },
-        { replace: true, preserveState: true, preserveScroll: true }
-    ),
-        500;
 }
 
 onMounted(() => {

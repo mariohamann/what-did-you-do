@@ -11,7 +11,18 @@ export type ActionData = {
     lng: number;
 };
 export type ActionIndexData = {
-    actions: Array<ActionData>;
+    actions: {
+        data: Array<ActionData>;
+        links: Array<any>;
+        meta: {
+            path: string;
+            per_page: number;
+            next_cursor: string | null;
+            next_cursor_url: string | null;
+            prev_cursor: string | null;
+            prev_cursor_url: string | null;
+        };
+    };
     actions_json_url: string;
 };
 export type ActionLikesData = {
