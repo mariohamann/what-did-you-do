@@ -9,6 +9,9 @@ import {
 import { CheckIcon, ChevronDownIcon } from "@heroicons/vue/solid";
 import { CategoryData } from "@/types/generated";
 
+// TODO add types
+const emit = defineEmits(["categorySelected"]);
+
 const props = defineProps<{
     categories: CategoryData[];
 }>();
@@ -17,7 +20,10 @@ const selectedCategory = ref(props.categories[0]);
 </script>
 
 <template>
-    <Listbox v-model="selectedCategory">
+    <Listbox
+        v-model="selectedCategory"
+        @update:model-value="(value) => emit('categorySelected', value)"
+    >
         <div class="relative mt-1">
             <ListboxButton
                 class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
