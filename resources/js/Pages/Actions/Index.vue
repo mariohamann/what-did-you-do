@@ -12,7 +12,6 @@ import type {
     CategoryData,
     ActionData,
 } from "@/types/generated.d.ts";
-import { visit } from "maplibre-gl";
 
 const form = useForm({
     q: "",
@@ -204,7 +203,7 @@ fetch(props.actions_json_url)
                             />
                         </div>
                     </div>
-                    <div
+                    <!-- <div
                         class="pointer-events-none absolute left-1/2 top-12 z-40 -translate-x-1/2"
                     >
                         <div class="mx-auto flex justify-center">
@@ -218,7 +217,7 @@ fetch(props.actions_json_url)
                                         <label for="q" class="sr-only"
                                             >Search value</label
                                         >
-                                        <!-- TODO: The height calculation of the the search box and the categoty has to be fixed! -->
+                                        TODO: The height calculation of the the search box and the categoty has to be fixed!
                                         <input
                                             autofocus
                                             type="text"
@@ -276,7 +275,7 @@ fetch(props.actions_json_url)
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </aside>
         </div>

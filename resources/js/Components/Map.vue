@@ -6,8 +6,6 @@ import AutoComplete, { PlacesData } from "@/Components/AutoComplete.vue";
 import CategoryFilter from "@/Components/CategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 
-const emit = defineEmits(["mapChanged"]);
-
 interface GeoJSON {
     type: string;
     features: {
@@ -29,25 +27,41 @@ const props = defineProps<{
     categories: CategoryData[];
 }>();
 
+const emit = defineEmits(["mapChanged"]);
+
+let map: maplibregl.Map;
 const mapCanvas = ref<HTMLElement>();
-let map = ref<maplibregl.Map>();
+
+onMounted(() => {
+    initMap();
+    setActionsInView();
+});
+
+onUnmounted(() => {
+    map.remove();
+});
 
 function initMap(): void {
-    map.value = new maplibregl.Map({
+    map = new maplibregl.Map({
         container: mapCanvas.value!,
         attributionControl: false,
-        style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`, // stylesheet location
-        center: [14.95, 50.02], // starting position [lng, lat]
-        zoom: 3, // starting zoom
+        style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`,
+        center: [14.95, 50.02],
+        zoom: 3,
     });
-    addNavigationControl(map.value);
-    addGeolocateControl(map.value);
-    // addAutoCompleteControl(map.value);
-    addSourceAndLayers(map.value);
-    setActionsInView(map.value);
+    addControls();
+    map.on("load", () => {
+        addSourceAndLayers();
+        addListeners();
+    });
 }
 
-function addNavigationControl(map: maplibregl.Map): void {
+function addControls(): void {
+    addNavigationControl();
+    addGeolocateControl();
+}
+
+function addNavigationControl(): void {
     map.addControl(
         new maplibregl.NavigationControl({
             showCompass: false,
@@ -58,7 +72,7 @@ function addNavigationControl(map: maplibregl.Map): void {
     );
 }
 
-function addGeolocateControl(map: maplibregl.Map): void {
+function addGeolocateControl(): void {
     map.addControl(
         new maplibregl.GeolocateControl({
             positionOptions: undefined,
@@ -71,145 +85,141 @@ function addGeolocateControl(map: maplibregl.Map): void {
     );
 }
 
-// function addAutoCompleteControl(map: maplibregl.Map): void {
-//     map.addControl(
-//         // new MapbodxGeocder class is loaded via CDN in app.blade.php
-//         // @ts-ignore
-//         new MapboxGeocoder({
-//             accessToken: props.apiKey,
-//             mapboxgl: maplibregl,
-//             limit: 5,
-//             dedupe: 1,
-//             flyTo: {
-//                 screenSpeed: 7,
-//                 speed: 4,
-//             },
-//         }),
-//         "top-left"
-//     );
-// }
+function addSourceAndLayers(): void {
+    map.addSource("actions", {
+        type: "geojson",
+        // TODO: what happens when internet is slow and geoData is not yet loaded?
+        // does this have to be reactive?
+        data: createGeoJson(props.geoData),
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
+    });
+    // map.addLayer({
+    //     id: "clusters",
+    //     type: "circle",
+    //     source: "actions",
+    //     filter: ["has", "point_count"],
+    //     paint: {
+    //         // Use step expressions (https://maplibre.org/maplibre-style-spec/#expressions-step)
+    //         // with three steps to implement three types of circles:
+    //         //   * Blue, 20px circles when point count is less than 100
+    //         //   * Yellow, 30px circles when point count is between 100 and 750
+    //         //   * Pink, 40px circles when point count is greater than or equal to 750
+    //         "circle-color": [
+    //             "step",
+    //             ["get", "point_count"],
+    //             "#1947E5",
+    //             100,
+    //             "#1947E5",
+    //             750,
+    //             "#1947E5",
+    //         ],
+    //         "circle-radius": [
+    //             "step",
+    //             ["get", "point_count"],
+    //             20, // default size
+    //             100, // next step
+    //             30, // next size
+    //             750, // next step
+    //             40, // next size
+    //         ],
+    //         "circle-stroke-width": 12,
+    //         "circle-stroke-color": "hsl(216 100% 71%)",
+    //     },
+    // });
 
-function addSourceAndLayers(map: maplibregl.Map): void {
-    map.on("load", () => {
-        // Add a new source from our GeoJSON data and
-        // set the 'cluster' option to true. GL-JS will
-        // add the point_count property to your source data.
-        map.addSource("actions", {
-            type: "geojson",
-            data: createGeoJson(props.geoData),
-            cluster: true,
-            clusterMaxZoom: 14, // Max zoom to cluster points on
-            clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-        });
-
+    // map.addLayer({
+    //     id: "cluster-count",
+    //     type: "symbol",
+    //     source: "actions",
+    //     filter: ["has", "point_count"],
+    //     layout: {
+    //         "text-field": "{point_count_abbreviated}",
+    //         "text-font": ["Nunito"],
+    //         "text-size": 16,
+    //     },
+    //     paint: {
+    //         "text-color": "#ffffff",
+    //     },
+    // });
+    props.categories.forEach((category) => {
         map.addLayer({
-            id: "clusters",
-            type: "circle",
-            source: "actions",
-            filter: ["has", "point_count"],
-            paint: {
-                // Use step expressions (https://maplibre.org/maplibre-style-spec/#expressions-step)
-                // with three steps to implement three types of circles:
-                //   * Blue, 20px circles when point count is less than 100
-                //   * Yellow, 30px circles when point count is between 100 and 750
-                //   * Pink, 40px circles when point count is greater than or equal to 750
-                "circle-color": [
-                    "step",
-                    ["get", "point_count"],
-                    "#1947E5",
-                    100,
-                    "#1947E5",
-                    750,
-                    "#1947E5",
-                ],
-                "circle-radius": [
-                    "step",
-                    ["get", "point_count"],
-                    20, // default size
-                    100, // next step
-                    30, // next size
-                    750, // next step
-                    40, // next size
-                ],
-                "circle-stroke-width": 12,
-                "circle-stroke-color": "hsl(216 100% 71%)",
-            },
-        });
-
-        map.addLayer({
-            id: "cluster-count",
+            id: category.name,
             type: "symbol",
             source: "actions",
-            filter: ["has", "point_count"],
+            filter: ["==", ["get", "category"], category.id],
             layout: {
-                "text-field": "{point_count_abbreviated}",
-                "text-font": ["Nunito"],
+                "text-field": category.name,
                 "text-size": 16,
-            },
-            paint: {
-                "text-color": "#ffffff",
-            },
-        });
-
-        map.addLayer({
-            id: "unclustered-point",
-            type: "symbol",
-            source: "actions",
-            filter: ["!", ["has", "point_count"]],
-            layout: {
-                // TODO: emojis are not working in text-field
-                "text-field": "⊙",
-                "text-size": 24,
                 "text-anchor": "center",
             },
             paint: {
                 "text-color": "#1947E5",
             },
         });
+    });
 
-        // inspect a cluster on click
-        map.on("click", "clusters", (e) => {
-            var features = map.queryRenderedFeatures(e.point, {
-                layers: ["clusters"],
-            });
-            var clusterId = features[0].properties.cluster_id;
-            // TODO: fix types
+    // map.addLayer({
+    //   id: "unclustered-point",
+    //   type: "symbol",
+    //   source: "actions",
+    //   filter: ["!", ["has", "point_count"]],
+    //   layout: {
+    //     // TODO: emojis are not working in text-field
+    //     "text-field": "⊙",
+    //     "text-size": 24,
+    //     "text-anchor": "center",
+    //   },
+    //   paint: {
+    //     "text-color": "#1947E5",
+    //   },
+    // });
+}
+
+function addListeners(): void {
+    // inspect a cluster on click
+    map.on("click", "clusters", (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: ["clusters"],
+        });
+        const clusterId = features[0].properties.cluster_id;
+        // TODO: fix types
+        // @ts-ignore
+        map.getSource("actions")?.getClusterExpansionZoom(
+            clusterId,
             // @ts-ignore
-            map.getSource("actions")?.getClusterExpansionZoom(
-                clusterId,
-                // @ts-ignore
-                (err, zoom) => {
-                    if (err) return;
+            (err, zoom) => {
+                if (err) return;
 
-                    map.easeTo({
-                        // TODO: fix types
-                        // @ts-ignore
-                        center: features[0].geometry.coordinates,
-                        zoom: zoom,
-                    });
-                }
-            );
-        });
-
-        // when clicking an unclustered point, highlight the action
-        map.on("click", "unclustered-point", (e) => {
-            if (e.features) {
-                const ids: number[] = [e.features[0].properties?.id];
-                // TODO highlight the action
+                map.easeTo({
+                    // TODO: fix types
+                    // @ts-ignore
+                    center: features[0].geometry.coordinates,
+                    zoom: zoom,
+                });
             }
-        });
+        );
+    });
 
-        // when the map moves, update the visible actions
-        map.on("moveend", () => {
-            setActionsInView(map);
-        });
+    // when clicking an unclustered point, highlight the action
+    map.on("click", "unclustered-point", (e) => {
+        if (e.features) {
+            const ids: number[] = [e.features[0].properties?.id];
+            // TODO highlight the action
+        }
+    });
 
-        map.on("mouseenter", "clusters", () => {
-            map.getCanvas().style.cursor = "pointer";
-        });
-        map.on("mouseleave", "clusters", () => {
-            map.getCanvas().style.cursor = "";
-        });
+    // when the map moves, update the visible actions
+    map.on("moveend", () => {
+        setActionsInView();
+    });
+
+    map.on("mouseenter", "clusters", () => {
+        map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "clusters", () => {
+        map.getCanvas().style.cursor = "";
     });
 }
 
@@ -232,13 +242,13 @@ function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
     };
 }
 
-function setActionsInView(map: maplibregl.Map): void {
-    const mapBounds = getMapBoundsAsString(map);
+function setActionsInView(): void {
+    const mapBounds = getMapBoundsAsString();
     const mapCenter = map.getCenter();
     emit("mapChanged", { bounds: mapBounds, center: mapCenter });
 }
 
-function getMapBoundsAsString(map: maplibregl.Map): string {
+function getMapBoundsAsString(): string {
     const bounds = map.getBounds();
     return [
         bounds.getNorthEast().lng.toFixed(5),
@@ -249,20 +259,22 @@ function getMapBoundsAsString(map: maplibregl.Map): string {
 }
 
 function flyToLocation(location: PlacesData): void {
-    map.value?.flyTo({
+    map.flyTo({
         center: [location.ln, location.la],
         zoom: 14,
         essential: true,
     });
 }
 
-onMounted(() => {
-    initMap();
-});
-
-onUnmounted(() => {
-    map.value?.remove();
-});
+function filterData(selectedCategory: CategoryData): void {
+    props.categories.forEach((category) => {
+        if (category.name === selectedCategory.name) {
+            map.setLayoutProperty(category.name, "visibility", "visible");
+        } else {
+            map.setLayoutProperty(category.name, "visibility", "none");
+        }
+    });
+}
 </script>
 
 <template>
@@ -273,7 +285,10 @@ onUnmounted(() => {
                 :api-key="props.apiKey"
             ></AutoComplete>
             <!-- TODO add search filter -> content / location -->
-            <CategoryFilter :categories="props.categories"></CategoryFilter>
+            <CategoryFilter
+                @category-selected="filterData"
+                :categories="props.categories"
+            ></CategoryFilter>
         </div>
     </div>
     <div ref="mapCanvas" class="h-full w-full"></div>
