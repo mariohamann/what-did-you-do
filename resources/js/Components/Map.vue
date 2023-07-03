@@ -95,60 +95,66 @@ function addSourceAndLayers(): void {
         clusterMaxZoom: 14,
         clusterRadius: 50,
     });
-    // map.addLayer({
-    //     id: "clusters",
-    //     type: "circle",
-    //     source: "actions",
-    //     filter: ["has", "point_count"],
-    //     paint: {
-    //         // Use step expressions (https://maplibre.org/maplibre-style-spec/#expressions-step)
-    //         // with three steps to implement three types of circles:
-    //         //   * Blue, 20px circles when point count is less than 100
-    //         //   * Yellow, 30px circles when point count is between 100 and 750
-    //         //   * Pink, 40px circles when point count is greater than or equal to 750
-    //         "circle-color": [
-    //             "step",
-    //             ["get", "point_count"],
-    //             "#1947E5",
-    //             100,
-    //             "#1947E5",
-    //             750,
-    //             "#1947E5",
-    //         ],
-    //         "circle-radius": [
-    //             "step",
-    //             ["get", "point_count"],
-    //             20, // default size
-    //             100, // next step
-    //             30, // next size
-    //             750, // next step
-    //             40, // next size
-    //         ],
-    //         "circle-stroke-width": 12,
-    //         "circle-stroke-color": "hsl(216 100% 71%)",
-    //     },
-    // });
 
-    // map.addLayer({
-    //     id: "cluster-count",
-    //     type: "symbol",
-    //     source: "actions",
-    //     filter: ["has", "point_count"],
-    //     layout: {
-    //         "text-field": "{point_count_abbreviated}",
-    //         "text-font": ["Nunito"],
-    //         "text-size": 16,
-    //     },
-    //     paint: {
-    //         "text-color": "#ffffff",
-    //     },
-    // });
+    map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "actions",
+        filter: ["has", "point_count"],
+        paint: {
+            // Use step expressions (https://maplibre.org/maplibre-style-spec/#expressions-step)
+            // with three steps to implement three types of circles:
+            //   * Blue, 20px circles when point count is less than 100
+            //   * Yellow, 30px circles when point count is between 100 and 750
+            //   * Pink, 40px circles when point count is greater than or equal to 750
+            "circle-color": [
+                "step",
+                ["get", "point_count"],
+                "#1947E5",
+                100,
+                "#1947E5",
+                750,
+                "#1947E5",
+            ],
+            "circle-radius": [
+                "step",
+                ["get", "point_count"],
+                20, // default size
+                100, // next step
+                30, // next size
+                750, // next step
+                40, // next size
+            ],
+            "circle-stroke-width": 12,
+            "circle-stroke-color": "hsl(216 100% 71%)",
+        },
+    });
+
+    map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "actions",
+        filter: ["has", "point_count"],
+        layout: {
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["Nunito"],
+            "text-size": 16,
+        },
+        paint: {
+            "text-color": "#ffffff",
+        },
+    });
+
     props.categories.forEach((category) => {
         map.addLayer({
             id: category.name,
             type: "symbol",
             source: "actions",
-            filter: ["==", ["get", "category"], category.id],
+            filter: [
+                "all",
+                ["==", ["get", "category"], category.id],
+                ["!", ["has", "point_count"]],
+            ],
             layout: {
                 "text-field": category.name,
                 "text-size": 16,
