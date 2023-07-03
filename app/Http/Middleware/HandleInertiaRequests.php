@@ -41,6 +41,10 @@ class HandleInertiaRequests extends Middleware
             },
             // output categories
             'categories' => \App\Models\Category::all(),
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'updated' => fn () => $request->session()->get('updated'),
+            ],
         ]);
     }
 }

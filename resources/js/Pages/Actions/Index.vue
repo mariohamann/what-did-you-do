@@ -32,6 +32,25 @@ const mapCenter = ref(null);
 watch(
     () => props.actions.data,
     (newData) => {
+        // When we had an update request, the updated actions should be replaced in the existing data
+        if (usePage().props?.flash?.updated?.actions) {
+            const updatedActions = usePage().props.flash.updated
+                .actions as ActionData[];
+            // update all actions
+            data.value = data.value.map((action) => {
+                // find the action that was updated
+                const updatedAction = updatedActions.find(
+                    (updatedAction) => updatedAction.id === action.id
+                );
+                // if the action was updated, return the updated action
+                if (updatedAction) {
+                    return updatedAction;
+                }
+                // otherwise return the original action
+                return action;
+            });
+            return;
+        }
         // When we had a pagination request, the new data should be added to the existing data
         if (props.actions.meta.prev_cursor !== null) {
             data.value = [...data.value, ...newData];
