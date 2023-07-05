@@ -28,6 +28,7 @@ const searchTerm = ref("");
 const searchResults = ref([] as PlacesData[]);
 
 // TODO: add debounce?
+// https://vueuse.org/shared/watchDebounced/
 watch(searchTerm, async (newTerm) => {
     if (newTerm.length > 2) {
         try {

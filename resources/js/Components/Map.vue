@@ -165,22 +165,6 @@ function addSourceAndLayers(): void {
             },
         });
     });
-
-    // map.addLayer({
-    //   id: "unclustered-point",
-    //   type: "symbol",
-    //   source: "actions",
-    //   filter: ["!", ["has", "point_count"]],
-    //   layout: {
-    //     // TODO: emojis are not working in text-field
-    //     "text-field": "⊙",
-    //     "text-size": 24,
-    //     "text-anchor": "center",
-    //   },
-    //   paint: {
-    //     "text-color": "#1947E5",
-    //   },
-    // });
 }
 
 function addListeners(): void {
@@ -229,22 +213,30 @@ function addListeners(): void {
     });
 }
 
-function createGeoJson(geoData: ActionsJsonData[]): GeoJSON {
+function createGeoJson(
+    geoData: ActionsJsonData[],
+    categoryFilter?: number
+): GeoJSON {
     return {
         type: "FeatureCollection",
-        features: geoData.map((action) => {
-            return {
-                type: "Feature",
-                properties: {
-                    id: action.id,
-                    category: action.ca,
-                },
-                geometry: {
-                    type: "Point",
-                    coordinates: [action.ln, action.la],
-                },
-            };
-        }),
+        features: geoData
+            .filter((elem) => {
+                if (categoryFilter) return elem.ca === categoryFilter;
+                return true;
+            })
+            .map((action) => {
+                return {
+                    type: "Feature",
+                    properties: {
+                        id: action.id,
+                        category: action.ca,
+                    },
+                    geometry: {
+                        type: "Point",
+                        coordinates: [action.ln, action.la],
+                    },
+                };
+            }),
     };
 }
 
@@ -273,6 +265,10 @@ function flyToLocation(location: PlacesData): void {
 }
 
 function filterData(selectedCategory: CategoryData): void {
+    const newSource = createGeoJson(props.geoData, selectedCategory.id);
+    console.log(newSource, map.getSource("actions"));
+    // @ts-ignore
+    map.getSource("actions")?.setData(newSource);
     props.categories.forEach((category) => {
         if (category.name === selectedCategory.name) {
             map.setLayoutProperty(category.name, "visibility", "visible");
