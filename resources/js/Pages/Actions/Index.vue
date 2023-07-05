@@ -112,7 +112,6 @@ const setMap = (mapData: string): void => {
 };
 
 const setCategory = (categoryId: number): void => {
-    console.log(categoryId);
     form.category = categoryId;
     getData();
 };
