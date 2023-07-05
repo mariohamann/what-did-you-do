@@ -264,9 +264,9 @@ function flyToLocation(location: PlacesData): void {
     });
 }
 
-function filterData(selectedCategory: CategoryData): void {
+function filterDataAndSetNewSource(selectedCategory: CategoryData): void {
     const newSource = createGeoJson(props.geoData, selectedCategory.id);
-    console.log(newSource, map.getSource("actions"));
+    // TODO: check why types don't match
     // @ts-ignore
     map.getSource("actions")?.setData(newSource);
     props.categories.forEach((category) => {
@@ -288,7 +288,7 @@ function filterData(selectedCategory: CategoryData): void {
             ></AutoComplete>
             <!-- TODO add search filter -> content / location -->
             <CategoryFilter
-                @category-selected="filterData"
+                @category-selected="filterDataAndSetNewSource"
                 :categories="props.categories"
             ></CategoryFilter>
         </div>
