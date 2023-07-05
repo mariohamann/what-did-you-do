@@ -12,7 +12,7 @@ import {
 import { CheckIcon, ChevronDownIcon } from "@heroicons/vue/solid";
 
 // TODO add types
-const emit = defineEmits(["placeSelected"]);
+const emit = defineEmits(["placeChanged"]);
 
 export interface PlacesData {
     name: string;
@@ -57,7 +57,7 @@ watch(searchTerm, async (newTerm) => {
 </script>
 
 <template>
-    <Combobox @update:model-value="(value) => emit('placeSelected', value)">
+    <Combobox @update:model-value="(value) => emit('placeChanged', value)">
         <div class="relative mt-1">
             <div
                 class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"

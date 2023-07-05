@@ -27,7 +27,7 @@ const props = defineProps<{
     categories: CategoryData[];
 }>();
 
-const emit = defineEmits(["mapChanged"]);
+const emit = defineEmits(["mapChanged", "categoryChanged"]);
 
 let map: maplibregl.Map;
 const mapCanvas = ref<HTMLElement>();
@@ -263,12 +263,20 @@ function flyToLocation(location: PlacesData): void {
         essential: true,
     });
 }
+function handleCategoryChange(selectedCategory: CategoryData): void {
+    updateSource(selectedCategory);
+    hideLayers(selectedCategory);
+    emit("categoryChanged", selectedCategory.id);
+}
 
-function filterDataAndSetNewSource(selectedCategory: CategoryData): void {
+function updateSource(selectedCategory: CategoryData): void {
     const newSource = createGeoJson(props.geoData, selectedCategory.id);
     // TODO: check why types don't match
     // @ts-ignore
     map.getSource("actions")?.setData(newSource);
+}
+
+function hideLayers(selectedCategory: CategoryData): void {
     props.categories.forEach((category) => {
         if (category.name === selectedCategory.name) {
             map.setLayoutProperty(category.name, "visibility", "visible");
@@ -283,12 +291,12 @@ function filterDataAndSetNewSource(selectedCategory: CategoryData): void {
     <div class="absolute left-0 right-0 top-12 z-40 w-full">
         <div class="mx-auto flex justify-center">
             <AutoComplete
-                @place-selected="flyToLocation"
+                @place-changed="flyToLocation"
                 :api-key="props.apiKey"
             ></AutoComplete>
             <!-- TODO add search filter -> content / location -->
             <CategoryFilter
-                @category-selected="filterDataAndSetNewSource"
+                @category-changed="handleCategoryChange"
                 :categories="props.categories"
             ></CategoryFilter>
         </div>

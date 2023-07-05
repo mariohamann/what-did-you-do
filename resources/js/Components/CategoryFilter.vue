@@ -10,7 +10,7 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/vue/solid";
 import { CategoryData } from "@/types/generated";
 
 // TODO add types
-const emit = defineEmits(["categorySelected"]);
+const emit = defineEmits(["categoryChanged"]);
 
 const props = defineProps<{
     categories: CategoryData[];
@@ -22,7 +22,7 @@ const selectedCategory = ref(props.categories[0]);
 <template>
     <Listbox
         v-model="selectedCategory"
-        @update:model-value="(value) => emit('categorySelected', value)"
+        @update:model-value="(value) => emit('categoryChanged', value)"
     >
         <div class="relative mt-1">
             <ListboxButton
