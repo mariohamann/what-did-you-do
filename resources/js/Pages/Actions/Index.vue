@@ -116,6 +116,10 @@ const setCategory = (categoryId: number): void => {
     getData();
 };
 
+const highlightAction = (actionId: number): void => {
+    console.log("highlightAction", actionId);
+};
+
 // amount of fetched elements from actions_json_url
 let actionsFromJsonLength = ref(0);
 // fetched data from actions_json_url
@@ -165,6 +169,7 @@ fetch(props.actions_json_url)
                     <Map
                         @map-changed="setMap"
                         @category-changed="setCategory"
+                        @action-selected="highlightAction"
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :categories="categories"
                         :geo-data="geoJson"

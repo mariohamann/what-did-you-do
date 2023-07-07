@@ -29,7 +29,7 @@ const props = defineProps<{
     categories: CategoryData[];
 }>();
 
-const emit = defineEmits(["mapChanged", "categoryChanged"]);
+const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
 
 let map: maplibregl.Map;
 const mapCanvas = ref<HTMLElement>();
@@ -178,7 +178,6 @@ function addSourceAndLayers(): void {
 }
 
 function addListeners(): void {
-    // inspect a cluster on click
     map.on("click", "clusters", (e) => {
         const features = map.queryRenderedFeatures(e.point, {
             layers: ["clusters"],
@@ -202,24 +201,31 @@ function addListeners(): void {
         );
     });
 
-    // when clicking an unclustered point, highlight the action
-    map.on("click", "unclustered-point", (e) => {
-        if (e.features) {
-            const ids: number[] = [e.features[0].properties?.id];
-            // TODO highlight the action
-        }
-    });
-
-    // when the map moves, update the visible actions
-    map.on("moveend", () => {
-        setActionsInView();
-    });
-
     map.on("mouseenter", "clusters", () => {
         map.getCanvas().style.cursor = "pointer";
     });
     map.on("mouseleave", "clusters", () => {
         map.getCanvas().style.cursor = "";
+    });
+
+    props.categories.forEach((category) => {
+        map.on("click", category.name, (e) => {
+            const id = e.features![0].properties?.id;
+            emit("actionSelected", id);
+        });
+
+        map.on("mouseenter", category.name, () => {
+            map.getCanvas().style.cursor = "pointer";
+        });
+
+        map.on("mouseleave", category.name, () => {
+            map.getCanvas().style.cursor = "";
+        });
+    });
+
+    // when the map moves, update the visible actions
+    map.on("moveend", () => {
+        setActionsInView();
     });
 }
 
