@@ -36,7 +36,7 @@
         "@headlessui/vue": "^1.7.14",
         "@heroicons/vue": "1.0.6",
         "@vueuse/core": "^10.2.1",
-        "maplibre-gl": "^3.0.1",
+        "maplibre-gl": "^3.1.0",
         "vite-svg-loader": "^4.0.0"
     }
 }

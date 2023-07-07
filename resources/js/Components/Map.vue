@@ -1,27 +1,12 @@
 <script setup lang="ts">
 import { ActionsJsonData, CategoryData } from "@/types/generated";
-import maplibregl from "maplibre-gl";
+import maplibregl, { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import SearchAutoComplete, {
     PlacesData,
 } from "@/Components/SearchAutoComplete.vue";
 import SearchCategoryFilter from "@/Components/SearchCategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
-
-interface GeoJSON {
-    type: string;
-    features: {
-        type: string;
-        properties: {
-            id: number;
-            category: number;
-        };
-        geometry: {
-            type: string;
-            coordinates: number[];
-        };
-    }[];
-}
 
 const props = defineProps<{
     apiKey: string;
@@ -192,19 +177,22 @@ function addListeners(): void {
             layers: ["clusters"],
         });
         const clusterId = features[0].properties.cluster_id;
-        // TODO: fix types
-        // @ts-ignore
-        map.getSource("actions")?.getClusterExpansionZoom(
+        (map.getSource("actions") as GeoJSONSource).getClusterExpansionZoom(
             clusterId,
-            // @ts-ignore
             (err, zoom) => {
                 if (err) return;
+                const geometry = features[0].geometry;
+                let coordinates;
 
+                if (geometry.type === "Point") {
+                    coordinates = {
+                        lng: geometry.coordinates[0],
+                        lat: geometry.coordinates[1],
+                    };
+                }
                 map.easeTo({
-                    // TODO: fix types
-                    // @ts-ignore
-                    center: features[0].geometry.coordinates,
-                    zoom: zoom,
+                    center: coordinates,
+                    zoom: zoom as number,
                 });
             }
         );
@@ -241,7 +229,7 @@ function addListeners(): void {
 function createGeoJson(
     geoData: ActionsJsonData[],
     categoryFilter?: number
-): GeoJSON {
+): GeoJSON.GeoJSON {
     return {
         type: "FeatureCollection",
         features: geoData
@@ -296,9 +284,7 @@ function handleCategoryChange(selectedCategory: CategoryData): void {
 
 function updateSource(selectedCategory: CategoryData): void {
     const newSource = createGeoJson(props.geoData, selectedCategory.id);
-    // TODO: check why types don't match
-    // @ts-ignore
-    map.getSource("actions")?.setData(newSource);
+    (map.getSource("actions") as GeoJSONSource).setData(newSource);
 }
 
 function hideLayers(selectedCategory: CategoryData): void {
