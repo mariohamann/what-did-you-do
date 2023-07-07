@@ -27,7 +27,7 @@ const updatedCategories = computed(() => {
     ];
 });
 
-const selectedCategory = ref(props.categories[0]);
+const selectedCategory = ref(updatedCategories.value[0]);
 </script>
 
 <template>

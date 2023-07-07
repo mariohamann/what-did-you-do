@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { debounce } from "throttle-debounce";
+import { watchThrottled } from "@vueuse/core";
 import { ref, watch } from "vue";
 import {
     Combobox,
@@ -27,33 +27,36 @@ const props = defineProps<{
 const searchTerm = ref("");
 const searchResults = ref([] as PlacesData[]);
 
-// TODO: add debounce?
-// https://vueuse.org/shared/watchDebounced/
-watch(searchTerm, async (newTerm) => {
-    if (newTerm.length > 2) {
-        try {
-            const response = await fetch(
-                `https://api.locationiq.com/v1/autocomplete?key=${props.apiKey}&q=${newTerm}&limit=5&dedupe=1`
-            );
-            const data = await response.json();
-            if (data.error) {
-                console.log(data.error);
-                return;
+watchThrottled(
+    searchTerm,
+    async (newTerm) => {
+        if (newTerm.length > 2) {
+            console.log(newTerm, "searching");
+            try {
+                const response = await fetch(
+                    `https://api.locationiq.com/v1/autocomplete?key=${props.apiKey}&q=${newTerm}&limit=5&dedupe=1`
+                );
+                const data = await response.json();
+                if (data.error) {
+                    console.log(data.error);
+                    return;
+                }
+                searchResults.value = data.map((place: any) => {
+                    return {
+                        name: place.display_name,
+                        ln: place.lon,
+                        la: place.lat,
+                    };
+                });
+            } catch (error) {
+                console.log(error);
             }
-            searchResults.value = data.map((place: any) => {
-                return {
-                    name: place.display_name,
-                    ln: place.lon,
-                    la: place.lat,
-                };
-            });
-        } catch (error) {
-            console.log(error);
+        } else {
+            searchResults.value = [];
         }
-    } else {
-        searchResults.value = [];
-    }
-});
+    },
+    { throttle: 500 }
+);
 </script>
 
 <template>
