@@ -2,7 +2,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { usePage, Head, useForm, Link, router } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
-import CreateAction from "@/Components/CreateAction.vue";
 import Map from "@/Components/Map.vue";
 import { ref, watch, onMounted } from "vue";
 
@@ -13,7 +12,6 @@ import type {
     CategoryData,
     ActionData,
 } from "@/types/generated.d.ts";
-import { visit } from "maplibre-gl";
 
 const form = useForm({
     q: "",
@@ -107,16 +105,16 @@ const getData = () => {
     );
 };
 
-const setMap = (mapData: string) => {
+const setMap = (mapData: string): void => {
     form.map = (mapData as any).bounds;
     mapCenter.value = (mapData as any).center;
     getData();
 };
 
-// watch form.category and call getData() when it changes
-watch(form, () => {
+const setCategory = (categoryId: number): void => {
+    form.category = categoryId;
     getData();
-});
+};
 
 // amount of fetched elements from actions_json_url
 let actionsFromJsonLength = ref(0);
@@ -166,7 +164,9 @@ fetch(props.actions_json_url)
                 <div class="relative h-screen w-full">
                     <Map
                         @map-changed="setMap"
+                        @category-changed="setCategory"
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
+                        :categories="categories"
                         :geo-data="geoJson"
                     ></Map>
 
@@ -202,79 +202,6 @@ fetch(props.actions_json_url)
                             <CreateAction
                                 v-bind="{ action: null, mapCenter: mapCenter! }"
                             />
-                        </div>
-                    </div>
-                    <div
-                        class="pointer-events-none absolute left-1/2 top-12 z-40 -translate-x-1/2"
-                    >
-                        <div class="mx-auto flex justify-center">
-                            <form
-                                class="pointer-events-auto flex border border-black shadow-sm shadow-secondary-100/10"
-                                action="#"
-                                method="GET"
-                            >
-                                <div class="border-r border-black">
-                                    <div class="relative">
-                                        <label for="q" class="sr-only"
-                                            >Search value</label
-                                        >
-                                        <!-- TODO: The height calculation of the the search box and the categoty has to be fixed! -->
-                                        <input
-                                            autofocus
-                                            type="text"
-                                            name="q"
-                                            id="q"
-                                            class="mt-px block w-full border-0 py-[15.5px] pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-white placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base sm:leading-6"
-                                            placeholder="Search..."
-                                        />
-                                        <div
-                                            class="absolute inset-y-0 right-0 flex items-center"
-                                        >
-                                            <label for="mode" class="sr-only"
-                                                >Mode for Search</label
-                                            >
-                                            <select
-                                                id="mode"
-                                                name="mode"
-                                                class="h-full border-0 bg-white py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-base"
-                                            >
-                                                <option>Location</option>
-                                                <option>Content</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-if="!formActive">
-                                    <label for="category" class="sr-only"
-                                        >Mode for Search</label
-                                    >
-                                    <select
-                                        id="category"
-                                        name="category"
-                                        v-model="form.category"
-                                        class="-ml-px block w-full border-0 border-l border-black py-4 pl-3 pr-10 text-gray-900 sm:text-base sm:leading-6"
-                                    >
-                                        <option selected value="0">
-                                            All Categories
-                                        </option>
-                                        <option
-                                            v-for="category in categories"
-                                            :value="category.id"
-                                            :key="category.id"
-                                        >
-                                            <span
-                                                class="ml-0.5 inline-block w-6"
-                                            >
-                                                <img
-                                                    class="h-5 w-5"
-                                                    style="font-size: 2rem"
-                                                    :src="`/assets/icons/${category.slug}.svg`"
-                                            /></span>
-                                            {{ category.name }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
