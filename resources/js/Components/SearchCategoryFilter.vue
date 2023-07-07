@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import {
     Listbox,
     ListboxButton,
@@ -15,6 +15,17 @@ const emit = defineEmits(["categoryChanged"]);
 const props = defineProps<{
     categories: CategoryData[];
 }>();
+
+const updatedCategories = computed(() => {
+    return [
+        {
+            id: 0,
+            name: "All",
+            slug: "all",
+        },
+        ...props.categories,
+    ];
+});
 
 const selectedCategory = ref(props.categories[0]);
 </script>
@@ -49,8 +60,8 @@ const selectedCategory = ref(props.categories[0]);
                 >
                     <ListboxOption
                         v-slot="{ active, selected }"
-                        v-for="category in props.categories"
-                        :key="category.name"
+                        v-for="category in updatedCategories"
+                        :key="category.id"
                         :value="category"
                         as="template"
                     >

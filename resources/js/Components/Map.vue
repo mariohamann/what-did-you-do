@@ -2,8 +2,10 @@
 import { ActionsJsonData, CategoryData } from "@/types/generated";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import AutoComplete, { PlacesData } from "@/Components/AutoComplete.vue";
-import CategoryFilter from "@/Components/CategoryFilter.vue";
+import SearchAutoComplete, {
+    PlacesData,
+} from "@/Components/SearchAutoComplete.vue";
+import SearchCategoryFilter from "@/Components/SearchCategoryFilter.vue";
 import { onMounted, onUnmounted, ref } from "vue";
 
 interface GeoJSON {
@@ -286,7 +288,10 @@ function updateSource(selectedCategory: CategoryData): void {
 
 function hideLayers(selectedCategory: CategoryData): void {
     props.categories.forEach((category) => {
-        if (category.name === selectedCategory.name) {
+        if (
+            category.name === selectedCategory.name ||
+            selectedCategory.id === 0
+        ) {
             map.setLayoutProperty(category.name, "visibility", "visible");
         } else {
             map.setLayoutProperty(category.name, "visibility", "none");
@@ -298,15 +303,15 @@ function hideLayers(selectedCategory: CategoryData): void {
 <template>
     <div class="absolute left-0 right-0 top-12 z-40 w-full">
         <div class="mx-auto flex justify-center">
-            <AutoComplete
+            <SearchAutoComplete
                 @place-changed="flyToLocation"
                 :api-key="props.apiKey"
-            ></AutoComplete>
-            <!-- TODO add search filter -> content / location -->
-            <CategoryFilter
+            ></SearchAutoComplete>
+            <!-- TODO add search filter: content / location -->
+            <SearchCategoryFilter
                 @category-changed="handleCategoryChange"
                 :categories="props.categories"
-            ></CategoryFilter>
+            ></SearchCategoryFilter>
         </div>
     </div>
     <div ref="mapCanvas" class="h-full w-full"></div>
