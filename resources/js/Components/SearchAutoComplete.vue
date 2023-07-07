@@ -31,7 +31,6 @@ watchThrottled(
     searchTerm,
     async (newTerm) => {
         if (newTerm.length > 2) {
-            console.log(newTerm, "searching");
             try {
                 const response = await fetch(
                     `https://api.locationiq.com/v1/autocomplete?key=${props.apiKey}&q=${newTerm}&limit=5&dedupe=1`
