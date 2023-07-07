@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watchThrottled } from "@vueuse/core";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import {
     Combobox,
     ComboboxInput,
