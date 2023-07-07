@@ -51,6 +51,7 @@ function initMap(): void {
     });
     addControls();
     map.on("load", () => {
+        addImages();
         addSourceAndLayers();
         addListeners();
     });
@@ -83,6 +84,18 @@ function addGeolocateControl(): void {
         }),
         "top-right"
     );
+}
+
+function addImages(): void {
+    props.categories.forEach((category) => {
+        map.loadImage(
+            `./assets/icons/map/${category.slug}.png`,
+            (error, image) => {
+                if (error) throw error;
+                map.addImage(category.slug, image as ImageBitmap);
+            }
+        );
+    });
 }
 
 function addSourceAndLayers(): void {
@@ -156,12 +169,7 @@ function addSourceAndLayers(): void {
                 ["!", ["has", "point_count"]],
             ],
             layout: {
-                "text-field": category.name,
-                "text-size": 16,
-                "text-anchor": "center",
-            },
-            paint: {
-                "text-color": "#1947E5",
+                "icon-image": category.slug,
             },
         });
     });
