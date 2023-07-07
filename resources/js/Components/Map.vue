@@ -32,28 +32,37 @@ const props = defineProps<{
 const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
 
 let map: maplibregl.Map;
-const mapCanvas = ref<HTMLElement>();
+const mapRef = ref<HTMLElement>();
+// Workaround for flickering when resizing the map
+const resizeObserver = new ResizeObserver(() => {
+    window.setTimeout(() => {
+        map.resize();
+    }, 0);
+});
 
 onMounted(() => {
     initMap();
     setActionsInView();
+    resizeObserver.observe(mapRef.value!);
 });
 
 onUnmounted(() => {
     map.remove();
+    resizeObserver.unobserve(mapRef.value!);
 });
 
 function initMap(): void {
     map = new maplibregl.Map({
-        container: mapCanvas.value!,
+        container: mapRef.value!,
         attributionControl: false,
         style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`,
         center: [14.95, 50.02],
         zoom: 3,
+        trackResize: false, // Automatical resizing leads to flickering
     });
+    addImages();
     addControls();
     map.on("load", () => {
-        addImages();
         addSourceAndLayers();
         addListeners();
     });
@@ -108,7 +117,7 @@ function addSourceAndLayers(): void {
         data: createGeoJson(props.geoData),
         cluster: true,
         clusterMaxZoom: 14,
-        clusterRadius: 50,
+        clusterRadius: 40,
     });
 
     map.addLayer({
@@ -320,5 +329,5 @@ function hideLayers(selectedCategory: CategoryData): void {
             ></SearchCategoryFilter>
         </div>
     </div>
-    <div ref="mapCanvas" class="h-full w-full"></div>
+    <div ref="mapRef" class="h-full w-full"></div>
 </template>
