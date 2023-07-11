@@ -59,10 +59,13 @@ watchThrottled(
 </script>
 
 <template>
-    <Combobox @update:model-value="(value) => emit('placeChanged', value)">
-        <div class="relative mt-1">
+    <Combobox
+        class="border border-solid border-black"
+        @update:model-value="(value) => emit('placeChanged', value)"
+    >
+        <div class="relative">
             <div
-                class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
+                class="relative w-full cursor-default overflow-hidden bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-300 sm:text-sm"
             >
                 <ComboboxInput
                     class="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
@@ -105,7 +108,7 @@ watchThrottled(
                         <li
                             class="relative cursor-default select-none py-2 pl-10 pr-4"
                             :class="{
-                                'bg-teal-600 text-white': active,
+                                'bg-amber-100 text-gray-900': active,
                                 'text-gray-900': !active,
                             }"
                         >
@@ -123,7 +126,7 @@ watchThrottled(
                                 class="absolute inset-y-0 left-0 flex items-center pl-3"
                                 :class="{
                                     'text-white': active,
-                                    'text-teal-600': !active,
+                                    'text-amber-100': !active,
                                 }"
                             >
                                 <CheckIcon class="h-5 w-5" aria-hidden="true" />

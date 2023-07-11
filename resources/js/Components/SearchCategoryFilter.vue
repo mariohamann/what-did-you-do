@@ -32,12 +32,13 @@ const selectedCategory = ref(updatedCategories.value[0]);
 
 <template>
     <Listbox
+        class="w-40 border border-l-0 border-solid border-black"
         v-model="selectedCategory"
         @update:model-value="(value) => emit('categoryChanged', value)"
     >
-        <div class="relative mt-1">
+        <div class="relative">
             <ListboxButton
-                class="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+                class="relative h-full w-full cursor-default bg-white py-2 pl-3 pr-10 text-left focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
             >
                 <span class="block truncate">{{ selectedCategory.name }}</span>
                 <span
@@ -67,9 +68,7 @@ const selectedCategory = ref(updatedCategories.value[0]);
                     >
                         <li
                             :class="[
-                                active
-                                    ? 'bg-amber-100 text-amber-900'
-                                    : 'text-gray-900',
+                                active && 'bg-amber-100 text-gray-900',
                                 'relative cursor-default select-none py-2 pl-10 pr-4',
                             ]"
                         >
@@ -82,7 +81,7 @@ const selectedCategory = ref(updatedCategories.value[0]);
                             >
                             <span
                                 v-if="selected"
-                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"
+                                class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-900"
                             >
                                 <CheckIcon class="h-5 w-5" aria-hidden="true" />
                             </span>
