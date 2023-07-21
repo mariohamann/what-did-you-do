@@ -7,6 +7,7 @@ import SearchAutoComplete, {
 } from "@/Components/SearchAutoComplete.vue";
 import SearchCategoryFilter from "@/Components/SearchCategoryFilter.vue";
 import { onMounted, onUnmounted, ref, watch } from "vue";
+import { useThrottleFn } from "@vueuse/core";
 
 const props = defineProps<{
     apiKey: string;
@@ -265,6 +266,10 @@ function setActionsInView(): void {
     const mapBounds = getMapBoundsAsString();
     const mapCenter = map.getCenter();
     emit("mapChanged", { bounds: mapBounds, center: mapCenter });
+
+    useThrottleFn(() => {
+        emit("mapChanged", { bounds: mapBounds, center: mapCenter });
+    }, 200);
 }
 
 function getMapBoundsAsString(): string {
