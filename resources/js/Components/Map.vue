@@ -21,19 +21,21 @@ const mapRef = ref<HTMLElement>();
 // Workaround for flickering when resizing the map
 const resizeObserver = new ResizeObserver(() => {
     window.setTimeout(() => {
-        map.resize();
+        map?.resize();
     }, 0);
 });
 
 onMounted(() => {
     initMap();
     setActionsInView();
-    resizeObserver.observe(mapRef.value!);
+    if (!mapRef?.value) return;
+    resizeObserver?.observe(mapRef?.value!);
 });
 
 onUnmounted(() => {
     map.remove();
-    resizeObserver.unobserve(mapRef.value!);
+    if (!mapRef?.value) return;
+    resizeObserver?.unobserve(mapRef?.value!);
 });
 
 function initMap(): void {
