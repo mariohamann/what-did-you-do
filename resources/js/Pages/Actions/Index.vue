@@ -4,6 +4,7 @@ import { usePage, Head, useForm, Link, router } from "@inertiajs/vue3";
 import Action from "@/Components/Action.vue";
 import Map from "@/Components/Map.vue";
 import { ref, watch, onMounted } from "vue";
+import CreateAction from "@/Components/CreateAction.vue";
 
 // It should be possible to remove this import as soon as https://github.com/vuejs/core/issues/4294 is completely done in Vue 3.3.0, but currently it is still needed.
 import type {

@@ -71,6 +71,7 @@ watchThrottled(
                     class="w-full border-none py-3 pl-3 pr-10 text-base leading-5 text-gray-900 focus:ring-0"
                     :displayValue="(place) => place.name"
                     @change="searchTerm = $event.target.value"
+                    placeholder="Search for a location..."
                 />
                 <ComboboxButton
                     v-if="searchResults.length > 0"
