@@ -6,12 +6,13 @@ import SearchAutoComplete, {
     PlacesData,
 } from "@/Components/SearchAutoComplete.vue";
 import SearchCategoryFilter from "@/Components/SearchCategoryFilter.vue";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 
 const props = defineProps<{
     apiKey: string;
     geoData: ActionsJsonData[];
     categories: CategoryData[];
+    formActive: boolean;
 }>();
 
 const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
@@ -24,6 +25,8 @@ const resizeObserver = new ResizeObserver(() => {
         map?.resize();
     }, 0);
 });
+
+let currentCategory: CategoryData;
 
 onMounted(() => {
     initMap();
@@ -282,6 +285,9 @@ function flyToLocation(location: PlacesData): void {
     });
 }
 function handleCategoryChange(selectedCategory: CategoryData): void {
+    if (selectedCategory.name !== "empty") {
+        currentCategory = selectedCategory;
+    }
     updateSource(selectedCategory);
     hideLayers(selectedCategory);
     emit("categoryChanged", selectedCategory.id);
@@ -304,6 +310,26 @@ function hideLayers(selectedCategory: CategoryData): void {
         }
     });
 }
+
+// watch for changes in categories prop and update the map accordingly
+watch(
+    () => props.formActive,
+    (formActive) => {
+        console.log("categories changed");
+        // hide layers if categories are empty
+        if (formActive) {
+            updateSource({ id: -1, name: "empty", slug: "empty", emoji: "" });
+        } else {
+            updateSource(
+                currentCategory || {
+                    id: 0,
+                    name: "All categories",
+                    slug: "all",
+                }
+            );
+        }
+    }
+);
 </script>
 
 <template>

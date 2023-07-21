@@ -172,7 +172,8 @@ fetch(props.actions_json_url)
                         @category-changed="setCategory"
                         @action-selected="highlightAction"
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
-                        :categories="categories"
+                        :categories="[...categories]"
+                        :formActive="formActive"
                         :geo-data="geoJson"
                     ></Map>
 
