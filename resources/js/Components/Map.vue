@@ -168,6 +168,9 @@ function addSourceAndLayers(): void {
             ],
             layout: {
                 "icon-image": category.slug,
+                "icon-size": 0.5,
+                "icon-allow-overlap": true,
+                "icon-anchor": "bottom",
             },
         });
     });

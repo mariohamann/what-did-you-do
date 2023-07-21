@@ -105,9 +105,13 @@ watchThrottled(
                         as="template"
                         :key="place.name"
                         :value="place"
+                        v-slot="{ active }"
                     >
                         <li
                             class="relative cursor-default select-none px-4 py-3 text-gray-900"
+                            :class="{
+                                'bg-amber-100': active,
+                            }"
                         >
                             <span class="block truncate font-normal">
                                 {{ place.name }}
