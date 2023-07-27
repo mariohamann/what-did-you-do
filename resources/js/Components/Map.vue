@@ -47,10 +47,22 @@ function initMap(): void {
         container: mapRef.value!,
         attributionControl: false,
         style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`,
-        center: [14.95, 50.02],
-        zoom: 3,
+        // center: [14.95, 50.02],
+        // zoom: 3,
         trackResize: false, // Automatical resizing leads to flickering
     });
+    const setInitialBounds = () => {
+        const bounds = new URLSearchParams(window.location.search)
+            .get("map")
+            ?.split(",");
+        if (bounds) {
+            map.fitBounds([
+                [parseFloat(bounds[0]), parseFloat(bounds[1])],
+                [parseFloat(bounds[2]), parseFloat(bounds[3])],
+            ]);
+        }
+    };
+    setInitialBounds();
     addImages();
     addControls();
     map.on("load", () => {
