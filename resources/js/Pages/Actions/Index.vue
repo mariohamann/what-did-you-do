@@ -25,8 +25,11 @@ const main = ref(null);
 const categories = usePage().props.categories as CategoryData[];
 const props = defineProps<ActionIndexData>();
 const data = ref<ActionData[]>(props.actions.data);
+const mapGeoData = ref<ActionsJsonData[]>([]);
 const formActive = ref(false);
 const mapCenter = ref(null);
+
+setActionsData();
 
 // watch for changes in the data prop and set the data ref to the new data
 watch(
@@ -121,19 +124,26 @@ const highlightAction = (actionId: number): void => {
     console.log("highlightAction", actionId);
 };
 
-// amount of fetched elements from actions_json_url
-let actionsFromJsonLength = ref(0);
-// fetched data from actions_json_url
-let geoJson = ref<ActionsJsonData[]>([]);
+function onActionCreated(): void {
+    console.log("onActionCreated");
+    // formActive.value = false;
+    // setActionsData()
+}
 
-// fetch data from actions_json_url and make a console log of the length of the json (array)
-// and set the geoJson ref to the fetched data
-fetch(props.actions_json_url)
-    .then((response) => response.json())
-    .then((data: ActionsJsonData[]) => {
-        actionsFromJsonLength.value = data.length;
-        geoJson.value = data;
-    });
+// fetch data from actions_json_url
+async function fetchActionsData(): Promise<ActionsJsonData[]> {
+    try {
+        const response = await fetch(props.actions_json_url);
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching or parsing data:", error);
+        throw error;
+    }
+}
+
+async function setActionsData(): Promise<void> {
+    mapGeoData.value = await fetchActionsData().then((data) => data);
+}
 </script>
 
 <template>
@@ -174,7 +184,7 @@ fetch(props.actions_json_url)
                         api-key="pk.ed59a693277d463a0b1bda2317c16928"
                         :categories="[...categories]"
                         :formActive="formActive"
-                        :geo-data="geoJson"
+                        :geo-data="mapGeoData"
                     ></Map>
 
                     <button
@@ -207,7 +217,8 @@ fetch(props.actions_json_url)
                                 />
                             </svg>
                             <CreateAction
-                                v-bind="{ action: null, mapCenter: mapCenter! }"
+                                @action-created="onActionCreated"
+                                v-bind="{ action: undefined, mapCenter: mapCenter! }"
                             />
                         </div>
                     </div>

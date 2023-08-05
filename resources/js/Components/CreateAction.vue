@@ -21,7 +21,7 @@ const categories = usePage().props.categories as CategoryData[];
 
 const categorized = ref(categories[props?.action?.category?.id - 1 || 0]);
 
-const emit = defineEmits(["formFocused", "formBlurred"]);
+const emit = defineEmits(["formFocused", "formBlurred", "actionCreated"]);
 
 let form = reactive({
     description: props.action?.description || "",
@@ -37,9 +37,10 @@ let createAction = () => {
             lat: (props.mapCenter as any).lat,
             lng: (props.mapCenter as any).lng,
         },
-        { preserveScroll: true, preserveState: false }
+        { preserveScroll: true, preserveState: true }
     );
     form.description = "";
+    emit("actionCreated");
 };
 </script>
 
