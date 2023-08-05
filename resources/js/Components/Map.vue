@@ -304,13 +304,13 @@ function handleCategoryChange(selectedCategory: CategoryData): void {
     if (selectedCategory.name !== "empty") {
         currentCategory = selectedCategory;
     }
-    updateSource(selectedCategory);
+    updateSource(selectedCategory.id);
     hideLayers(selectedCategory);
     emit("categoryChanged", selectedCategory.id);
 }
 
-function updateSource(selectedCategory: CategoryData): void {
-    const newSource = createGeoJson(props.geoData, selectedCategory.id);
+function updateSource(selectedCategoryId: number): void {
+    const newSource = createGeoJson(props.geoData, selectedCategoryId);
     (map.getSource("actions") as GeoJSONSource).setData(newSource);
 }
 
@@ -334,15 +334,9 @@ watch(
         console.log("categories changed");
         // hide layers if categories are empty
         if (formActive) {
-            updateSource({ id: -1, name: "empty", slug: "empty", emoji: "" });
+            updateSource(-1);
         } else {
-            updateSource(
-                currentCategory || {
-                    id: 0,
-                    name: "All categories",
-                    slug: "all",
-                }
-            );
+            updateSource(currentCategory.id || 0);
         }
     }
 );
