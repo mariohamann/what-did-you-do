@@ -51,17 +51,6 @@ function initMap(): void {
         // zoom: 3,
         trackResize: false, // Automatical resizing leads to flickering
     });
-    const setInitialBounds = () => {
-        const bounds = new URLSearchParams(window.location.search)
-            .get("map")
-            ?.split(",");
-        if (bounds) {
-            map.fitBounds([
-                [parseFloat(bounds[0]), parseFloat(bounds[1])],
-                [parseFloat(bounds[2]), parseFloat(bounds[3])],
-            ]);
-        }
-    };
     setInitialBounds();
     addImages();
     addControls();
@@ -69,6 +58,18 @@ function initMap(): void {
         addSourceAndLayers();
         addListeners();
     });
+}
+
+function setInitialBounds(): void {
+    const bounds = new URLSearchParams(window.location.search)
+        .get("map")
+        ?.split(",");
+    if (bounds) {
+        map.fitBounds([
+            [parseFloat(bounds[0]), parseFloat(bounds[1])],
+            [parseFloat(bounds[2]), parseFloat(bounds[3])],
+        ]);
+    }
 }
 
 function addControls(): void {
@@ -243,7 +244,9 @@ function addListeners(): void {
 
     // when the map moves, update the visible actions
     map.on("moveend", () => {
-        setActionsInView();
+        useThrottleFn(() => {
+            setActionsInView();
+        }, 200)();
     });
 }
 
@@ -278,10 +281,6 @@ function setActionsInView(): void {
     const mapBounds = getMapBoundsAsString();
     const mapCenter = map.getCenter();
     emit("mapChanged", { bounds: mapBounds, center: mapCenter });
-
-    useThrottleFn(() => {
-        emit("mapChanged", { bounds: mapBounds, center: mapCenter });
-    }, 200);
 }
 
 function getMapBoundsAsString(): string {
