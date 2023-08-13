@@ -68,7 +68,7 @@ watchThrottled(
                 class="relative w-full cursor-default overflow-hidden bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-300"
             >
                 <ComboboxInput
-                    class="w-full border-none py-3 pl-3 pr-10 text-base leading-5 text-gray-900 focus:ring-0"
+                    class="w-64 border-none py-3 pl-3 pr-10 text-base leading-5 text-gray-900 focus:ring-0"
                     :displayValue="(place) => place.name"
                     @change="searchTerm = $event.target.value"
                     placeholder="Search for a location..."
