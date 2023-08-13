@@ -75,14 +75,6 @@ const styles = {
         Delete
     </button> -->
     <button
-        type="button"
-        v-on:click="openCreateAction = true"
-        :class="[styles.like.inactive, styles.like.default]"
-    >
-        <LightBulbIcon class="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
-        {{ descendants_count }}
-    </button>
-    <button
         v-on:click="likeAction"
         type="submit"
         :class="[

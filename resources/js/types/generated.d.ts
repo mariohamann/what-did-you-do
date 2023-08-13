@@ -5,8 +5,6 @@ export type ActionData = {
     created_at: string;
     likes: ActionLikesData;
     category: CategoryData;
-    descendants_count: number;
-    ancestors: Array<ActionData>;
     lat: number;
     lng: number;
 };

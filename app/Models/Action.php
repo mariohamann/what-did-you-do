@@ -11,17 +11,11 @@ class Action extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'category_id', 'description', 'inspirations_ancestors', 'inspirations_descendants', 'inspirations_children', 'lat', 'lng'];
+    protected $fillable = ['user_id', 'category_id', 'description', 'lat', 'lng'];
 
-    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category', 'descendants_count', 'ancestors', 'lat', 'lng'];
+    protected $visible = ['id', 'user', 'category_id', 'description', 'created_at', 'likes', 'category', 'lat', 'lng'];
 
-    protected $appends = ['likes', 'category', 'user', 'descendants_count', 'ancestors'];
-
-    protected $casts = [
-        'inspirations_ancestors' => 'array',
-        'inspirations_descendants' => 'array',
-        'inspirations_children' => 'array',
-    ];
+    protected $appends = ['likes', 'category', 'user'];
 
     protected static function booted()
     {
@@ -55,16 +49,6 @@ class Action extends Model
     }
 
     /**
-     * Get original action from which this action was forked.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function original()
-    {
-        return $this->belongsTo($this, 'action_id');
-    }
-
-    /**
      * Get the likes for the action.
      */
     public function likes()
@@ -90,18 +74,6 @@ class Action extends Model
     public function getCategoryAttribute()
     {
         return $this->category()->first();
-    }
-
-    public function getDescendantsCountAttribute()
-    {
-        return count($this->inspirations_descendants ?? []);
-    }
-
-    public function getAncestorsAttribute()
-    {
-        $ancestors = json_decode($this->inspirations_ancestors, true) ?? [];
-
-        return $this->whereIn('id', $ancestors)->get();
     }
 
     public function addToJsonFile()
