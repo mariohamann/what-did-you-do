@@ -125,9 +125,8 @@ const highlightAction = (actionId: number): void => {
 };
 
 function onActionCreated(): void {
-    console.log("onActionCreated");
-    // formActive.value = false;
-    // setActionsData()
+    formActive.value = false;
+    setActionsData();
 }
 
 // fetch data from actions_json_url

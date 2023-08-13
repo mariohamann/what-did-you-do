@@ -43,33 +43,33 @@ onUnmounted(() => {
 });
 
 function initMap(): void {
-    map = new maplibregl.Map({
+    const bounds = new URLSearchParams(window.location.search)
+        .get("map")
+        ?.split(",");
+
+    const mapConfig = {
         container: mapRef.value!,
         attributionControl: false,
         style: `https://tiles.locationiq.com/v3/light/vector.json?key=${props.apiKey}`,
-        // center: [14.95, 50.02],
-        // zoom: 3,
         trackResize: false, // Automatical resizing leads to flickering
-    });
-    setInitialBounds();
+    } as any;
+
+    if (bounds) {
+        mapConfig.bounds = [
+            [parseFloat(bounds[0]), parseFloat(bounds[1])],
+            [parseFloat(bounds[2]), parseFloat(bounds[3])],
+        ];
+    } else {
+        mapConfig.center = [14.95, 50.02];
+    }
+
+    map = new maplibregl.Map(mapConfig);
     addImages();
     addControls();
     map.on("load", () => {
         addSourceAndLayers();
         addListeners();
     });
-}
-
-function setInitialBounds(): void {
-    const bounds = new URLSearchParams(window.location.search)
-        .get("map")
-        ?.split(",");
-    if (bounds) {
-        map.fitBounds([
-            [parseFloat(bounds[0]), parseFloat(bounds[1])],
-            [parseFloat(bounds[2]), parseFloat(bounds[3])],
-        ]);
-    }
 }
 
 function addControls(): void {
