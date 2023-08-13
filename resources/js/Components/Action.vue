@@ -12,7 +12,7 @@ let props = defineProps<ActionData>();
         <div
             class="relative border border-black bg-white p-5 transition-all focus-within:-translate-x-2 focus-within:-translate-y-2 hover:-translate-x-2 hover:-translate-y-2"
         >
-            <Link :href="`/action/${id}`" class="z-0">
+            <Link :href="`/action/${id}`" class="z-0" preserve-state>
                 <span class="absolute inset-0"></span>
                 <h2
                     class="relative mb-8 text-xl font-medium leading-relaxed decoration-white underline-offset-2 hover:decoration-primary-600"
@@ -20,9 +20,6 @@ let props = defineProps<ActionData>();
                     {{ description }}
                 </h2></Link
             >
-            <!-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            {{ user.name }}
-        </td> -->
             <div
                 class="pointer-events-none relative z-10 mt-4 flex flex-row-reverse items-center justify-between"
             >

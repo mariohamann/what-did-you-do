@@ -70,15 +70,23 @@ class ActionController extends Controller
     public function show($id)
     {
 
-        $action = Action::findOrFail($id);
-        $actionArray = $action->toArray();
+        // $action = Action::findOrFail($id);
+        // $actionArray = $action->toArray();
 
         // Log the serialized model for debugging
         // \Log::info($actionArray);
-        return Inertia::render(
-            'Actions/Show',
-            ActionData::from($actionArray)
-        );
+        // return Inertia::render(
+        //     'Actions/Show',
+        //     ActionData::from($actionArray)
+        // );
+
+        // get collection with only the action
+        $actions = Action::query()->where('id', $id)->cursorPaginate(1);
+
+        return Inertia::render('Actions/Index', ActionIndexData::from([
+            'actions' => ActionData::collection($actions),
+            'actions_json_url' => Action::getJsonFileUrl(),
+        ]));
     }
 
     /**

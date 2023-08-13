@@ -93,11 +93,9 @@ onMounted(() => {
 });
 
 const getData = () => {
-    // get current url and append category if available
-    let url = new URL(window.location.href.split("?")[0]);
     // fetch data from url
     router.get(
-        url.toString(),
+        window.location.origin,
         {
             ...(form.q && { q: form.q }),
             ...(form.category != 0 && { category: form.category }),
@@ -121,6 +119,13 @@ const setCategory = (categoryId: number): void => {
 };
 
 const highlightAction = (actionId: number): void => {
+    router.get(
+        "/action/" + actionId,
+        {},
+        {
+            preserveState: true,
+        }
+    );
     console.log("highlightAction", actionId);
 };
 
@@ -184,6 +189,11 @@ async function setActionsData(): Promise<void> {
                         :categories="[...categories]"
                         :formActive="formActive"
                         :geo-data="mapGeoData"
+                        :focused-action="
+                            actions.meta.per_page === 1
+                                ? actions.data[0]
+                                : undefined
+                        "
                     ></Map>
 
                     <button

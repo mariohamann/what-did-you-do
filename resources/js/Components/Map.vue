@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ActionsJsonData, CategoryData } from "@/types/generated";
+import { ActionData, ActionsJsonData, CategoryData } from "@/types/generated";
 import maplibregl, { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import SearchAutoComplete, {
@@ -14,9 +14,12 @@ const props = defineProps<{
     geoData: ActionsJsonData[];
     categories: CategoryData[];
     formActive: boolean;
+    focusedAction?: ActionData;
 }>();
 
 const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
+
+let actionIsFocused = false;
 
 let map: maplibregl.Map;
 const mapRef = ref<HTMLElement>();
@@ -70,6 +73,7 @@ function initMap(): void {
         addSourceAndLayers();
         addListeners();
     });
+    toggleFocusedAction(props.focusedAction);
 }
 
 function addControls(): void {
@@ -104,7 +108,7 @@ function addGeolocateControl(): void {
 function addImages(): void {
     props.categories.forEach((category) => {
         map.loadImage(
-            `./assets/icons/map/${category.slug}.png`,
+            `/assets/icons/map/${category.slug}.png`,
             (error, image) => {
                 if (error) throw error;
                 map.addImage(category.slug, image as ImageBitmap);
@@ -280,6 +284,7 @@ function createGeoJson(
 function setActionsInView(): void {
     const mapBounds = getMapBoundsAsString();
     const mapCenter = map.getCenter();
+    if (actionIsFocused) return;
     emit("mapChanged", { bounds: mapBounds, center: mapCenter });
 }
 
@@ -340,6 +345,41 @@ watch(
         }
     }
 );
+
+// watch for focused action and update the map accordingly if an action is focused
+watch(
+    () => props.focusedAction,
+    (focusedAction) => {
+        toggleFocusedAction(focusedAction);
+    }
+);
+
+async function toggleFocusedAction(focusedAction: ActionData | undefined) {
+    if (focusedAction) {
+        console.log("focused action changed");
+        actionIsFocused = true;
+        await map.flyTo(
+            {
+                center: [focusedAction.lng, focusedAction.lat],
+                zoom: 10,
+                essential: true,
+            },
+            { focusedAction: true }
+        );
+
+        map.on("move", (event) => {
+            if (!event.focusedAction) {
+                /**
+                 * When an action was focused and something moves, we want switch to "index view"
+                 */
+                if (!actionIsFocused) return;
+                console.log("reset focused action");
+                actionIsFocused = false;
+                setActionsInView();
+            }
+        });
+    }
+}
 </script>
 
 <template>
