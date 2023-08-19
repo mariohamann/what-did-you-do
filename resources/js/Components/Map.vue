@@ -319,6 +319,7 @@ function updateSource(selectedCategoryId: number): void {
     (map.getSource("actions") as GeoJSONSource).setData(newSource);
 }
 
+// TODO: check if this is still needed
 function hideLayers(selectedCategory: CategoryData): void {
     props.categories.forEach((category) => {
         if (
@@ -366,6 +367,7 @@ async function toggleFocusedAction(focusedAction: ActionData | undefined) {
             },
             { focusedAction: true }
         );
+        setActionsOpacity(focusedAction.id);
 
         map.on("move", (event) => {
             if (!event.focusedAction) {
@@ -376,7 +378,25 @@ async function toggleFocusedAction(focusedAction: ActionData | undefined) {
                 console.log("reset focused action");
                 actionIsFocused = false;
                 setActionsInView();
+                setActionsOpacity();
             }
+        });
+    }
+}
+// makes all actions except the one with the given id half transparent
+function setActionsOpacity(idToExclude?: number): void {
+    if (idToExclude) {
+        props.categories.forEach((category) => {
+            map.setPaintProperty(category.name, "icon-opacity", [
+                "case",
+                ["==", ["get", "id"], idToExclude],
+                1, // Opacity for the element you want to exclude
+                0.5, // Opacity for all other elements
+            ]);
+        });
+    } else {
+        props.categories.forEach((category) => {
+            map.setPaintProperty(category.name, "icon-opacity", 1);
         });
     }
 }
