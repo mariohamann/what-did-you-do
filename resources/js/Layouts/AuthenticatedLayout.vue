@@ -65,9 +65,9 @@ const sidebarOpen = ref(false);
     <div class="z-10 w-full text-base">
         <!-- Static sidebar for desktop -->
 
-        <Link class="group fixed left-10 top-6 z-10" href="/">
+        <Link class="group fixed left-4 z-10 lg:left-10 lg:top-6" href="/">
             <img
-                class="w-full select-none pt-8 invert transition-transform group-hover:scale-125"
+                class="w-full select-none pt-4 invert transition-transform group-hover:scale-125 lg:pt-8"
                 src="/assets/logo.svg"
                 alt="Start"
         /></Link>

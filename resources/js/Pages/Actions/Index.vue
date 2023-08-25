@@ -156,11 +156,11 @@ async function setActionsData(): Promise<void> {
     <AuthenticatedLayout>
         <template #header> Index </template>
 
-        <div class="relative z-0">
+        <div class="relative z-0 flex flex-col-reverse">
             <main
-                :class="`fixed inset-y-0 right-0 block h-screen ${
-                    formActive ? 'w-0' : 'w-[36rem]'
-                } overflow-y-auto bg-secondary-300 transition-all`"
+                :class="`block w-full lg:fixed lg:inset-y-0 lg:right-0 lg:h-screen ${
+                    formActive ? 'lg:w-0' : 'lg:w-[36rem]'
+                } overflow-y-auto border-t border-black bg-secondary-300 transition-all lg:border-l`"
                 ref="main"
             >
                 <div
@@ -176,11 +176,11 @@ async function setActionsData(): Promise<void> {
             </main>
 
             <aside
-                :class="`fixed inset-y-0 ${
-                    formActive ? 'w-full' : 'w-[calc(100vw-36rem)]'
-                } border-r border-gray-200 transition-all xl:block`"
+                :class="`lg:fixed lg:inset-y-0 ${
+                    formActive ? 'w-full' : 'lg:w-[calc(100vw-36rem)]'
+                } transition-all xl:block`"
             >
-                <div class="relative h-screen w-full">
+                <div class="relative h-[80svh] w-full lg:h-screen">
                     <Map
                         @map-changed="setMap"
                         @category-changed="setCategory"
@@ -198,7 +198,7 @@ async function setActionsData(): Promise<void> {
 
                     <button
                         @click="formActive = !formActive"
-                        :class="`absolute bottom-12 right-12 z-10 h-[54px] items-center justify-center whitespace-nowrap border border-transparent ${
+                        :class="`lg-bottom-12 lg-right-12 absolute bottom-4 right-4 z-10 h-[54px] items-center justify-center whitespace-nowrap border border-transparent ${
                             formActive
                                 ? 'bg-red-600 hover:bg-red-700'
                                 : 'bg-primary-600  hover:bg-primary-700'

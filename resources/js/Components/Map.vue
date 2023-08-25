@@ -418,3 +418,17 @@ function setActionsOpacity(idToExclude?: number): void {
     </div>
     <div ref="mapRef" class="h-full w-full"></div>
 </template>
+
+<style>
+.maplibregl-ctrl-group .maplibregl-ctrl-zoom-in,
+.maplibregl-ctrl-group .maplibregl-ctrl-zoom-out {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .maplibregl-ctrl-group .maplibregl-ctrl-zoom-in,
+    .maplibregl-ctrl-group .maplibregl-ctrl-zoom-out {
+        display: block;
+    }
+}
+</style>
