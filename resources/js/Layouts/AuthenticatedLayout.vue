@@ -67,7 +67,7 @@ const sidebarOpen = ref(false);
 
         <Link class="group fixed left-4 z-10 lg:left-10 lg:top-6" href="/">
             <img
-                class="w-full select-none pt-4 invert transition-transform group-hover:scale-125 lg:pt-8"
+                class="w-full select-none pt-4 transition-transform group-hover:scale-125 lg:pt-8"
                 src="/assets/logo.svg"
                 alt="Start"
         /></Link>

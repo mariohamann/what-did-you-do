@@ -405,15 +405,19 @@ function setActionsOpacity(idToExclude?: number): void {
 <template>
     <div class="absolute left-0 right-0 top-12 z-40 w-full">
         <div class="mx-auto flex justify-center">
-            <SearchAutoComplete
-                @place-changed="flyToLocation"
-                :api-key="props.apiKey"
-            ></SearchAutoComplete>
-            <!-- TODO add search filter: content / location -->
-            <SearchCategoryFilter
-                @category-changed="handleCategoryChange"
-                :categories="props.categories"
-            ></SearchCategoryFilter>
+            <div class="flex justify-center bg-black">
+                <div class="flex -translate-x-1 -translate-y-1">
+                    <SearchAutoComplete
+                        @place-changed="flyToLocation"
+                        :api-key="props.apiKey"
+                    ></SearchAutoComplete>
+                    <!-- TODO add search filter: content / location -->
+                    <SearchCategoryFilter
+                        @category-changed="handleCategoryChange"
+                        :categories="props.categories"
+                    ></SearchCategoryFilter>
+                </div>
+            </div>
         </div>
     </div>
     <div ref="mapRef" class="h-full w-full"></div>
