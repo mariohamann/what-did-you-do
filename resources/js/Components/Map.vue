@@ -22,8 +22,6 @@ const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
 
 let actionIsFocused = false;
 
-let searchAutoCompleteRef = ref(null);
-
 let map: maplibregl.Map;
 const mapRef = ref<HTMLElement>();
 // Workaround for flickering when resizing the map
@@ -416,7 +414,6 @@ function setActionsOpacity(idToExclude?: number): void {
                         <SearchIcon class="h-5 w-5 text-white"></SearchIcon>
                     </div>
                     <SearchAutoComplete
-                        ref="searchAutoCompleteRef"
                         id="location-search"
                         @place-changed="flyToLocation"
                         :api-key="props.apiKey"
