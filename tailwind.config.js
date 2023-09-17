@@ -12,6 +12,9 @@ export default {
 
     theme: {
         extend: {
+            boxShadow: {
+                hard: "4px 4px 0px 0px #000000",
+            },
             fontFamily: {
                 sans: ["Poppins", ...defaultTheme.fontFamily.sans],
             },

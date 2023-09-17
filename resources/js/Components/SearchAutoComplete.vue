@@ -91,7 +91,7 @@ watchThrottled(
             >
                 <ComboboxOptions
                     v-if="searchTerm.length > 2"
-                    class="absolute mt-px max-h-56 w-full overflow-auto bg-white py-1 text-base shadow-lg outline outline-1 outline-black"
+                    class="absolute mt-px max-h-56 w-full overflow-auto bg-white py-1 text-base shadow-hard outline outline-1 outline-black"
                 >
                     <div
                         v-if="searchResults.length === 0 && searchTerm !== ''"

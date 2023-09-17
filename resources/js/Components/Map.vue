@@ -406,25 +406,23 @@ function setActionsOpacity(idToExclude?: number): void {
 <template>
     <div class="absolute left-0 right-0 top-12 z-40 w-full">
         <div class="mx-auto flex justify-center">
-            <div class="flex justify-center bg-black">
-                <div class="flex -translate-x-1 -translate-y-1">
-                    <div
-                        class="flex h-full w-12 items-center justify-center border border-r-0 border-black bg-primary-600"
-                    >
-                        <SearchIcon class="h-5 w-5 text-white"></SearchIcon>
-                    </div>
-                    <SearchAutoComplete
-                        id="location-search"
-                        @place-changed="flyToLocation"
-                        :api-key="props.apiKey"
-                    ></SearchAutoComplete>
-                    <!-- TODO add search filter: content / location -->
-                    <SearchCategoryFilter
-                        v-if="!formActive"
-                        @category-changed="handleCategoryChange"
-                        :categories="props.categories"
-                    ></SearchCategoryFilter>
+            <div class="flex justify-center shadow-hard">
+                <div
+                    class="flex h-full w-12 items-center justify-center border border-r-0 border-black bg-primary-600"
+                >
+                    <SearchIcon class="h-5 w-5 text-white"></SearchIcon>
                 </div>
+                <SearchAutoComplete
+                    id="location-search"
+                    @place-changed="flyToLocation"
+                    :api-key="props.apiKey"
+                ></SearchAutoComplete>
+                <!-- TODO add search filter: content / location -->
+                <SearchCategoryFilter
+                    v-if="!formActive"
+                    @category-changed="handleCategoryChange"
+                    :categories="props.categories"
+                ></SearchCategoryFilter>
             </div>
         </div>
     </div>

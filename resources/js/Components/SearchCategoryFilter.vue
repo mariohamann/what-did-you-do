@@ -67,7 +67,7 @@ const selectedCategory = ref(updatedCategories.value[0]);
                 leave-to-class="opacity-0"
             >
                 <ListboxOptions
-                    class="absolute -mx-px mt-px w-[calc(100%+2px)] overflow-auto border border-black bg-white text-base shadow-lg"
+                    class="absolute -mx-px mt-px w-[calc(100%+2px)] overflow-auto border border-black bg-white text-base shadow-hard"
                 >
                     <ListboxOption
                         v-slot="{ active, selected }"

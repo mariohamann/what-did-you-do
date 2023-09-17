@@ -208,27 +208,112 @@ async function setActionsData(): Promise<void> {
                     </button>
                     <div
                         v-if="formActive"
-                        class="absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-5 shadow-2xl"
+                        class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2"
                     >
-                        <div class="z-10 rounded-lg">
+                        <div class="z-10">
                             <svg
-                                class="absolute -top-5 left-1/2 -translate-x-1/2 rotate-180 fill-black"
-                                width="80"
-                                height="97"
-                                viewBox="0 0 80 97"
+                                width="26"
+                                height="26"
+                                viewBox="0 0 26 26"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
+                                class="absolute left-1/2 h-14 w-14 -translate-x-1/2 rotate-180 rounded-full text-black backdrop-brightness-50 backdrop-grayscale backdrop-invert"
                             >
                                 <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M80 40C80 50.9245 75.6206 60.8261 68.5216 68.045L68.5468 68.0702L40.2625 96.3545L15.6286 71.7206C6.12456 64.4076 0 52.919 0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40ZM40 64C53.2548 64 64 53.2548 64 40C64 26.7452 53.2548 16 40 16C26.7452 16 16 26.7452 16 40C16 53.2548 26.7452 64 40 64Z"
+                                    opacity="0.2"
+                                    d="M25 13C25 15.3734 24.2962 17.6935 22.9776 19.6668C21.6591 21.6402 19.7849 23.1783 17.5922 24.0866C15.3995 24.9948 12.9867 25.2324 10.6589 24.7694C8.33115 24.3064 6.19295 23.1635 4.51472 21.4853C2.83649 19.8071 1.6936 17.6689 1.23058 15.3411C0.767559 13.0133 1.0052 10.6005 1.91345 8.4078C2.8217 6.21509 4.35977 4.34094 6.33316 3.02236C8.30655 1.70379 10.6266 1 13 1C16.1826 1 19.2349 2.26428 21.4853 4.51472C23.7357 6.76516 25 9.8174 25 13Z"
+                                    fill="yellow"
+                                />
+                                <path
+                                    d="M13 0C10.4288 0 7.91543 0.762437 5.77759 2.1909C3.63975 3.61935 1.97351 5.64968 0.989572 8.02512C0.0056327 10.4006 -0.251811 13.0144 0.249797 15.5362C0.751405 18.0579 1.98953 20.3743 3.80762 22.1924C5.6257 24.0105 7.94208 25.2486 10.4638 25.7502C12.9856 26.2518 15.5995 25.9944 17.9749 25.0104C20.3503 24.0265 22.3807 22.3603 23.8091 20.2224C25.2376 18.0846 26 15.5712 26 13C25.9964 9.5533 24.6256 6.24882 22.1884 3.81163C19.7512 1.37445 16.4467 0.00363977 13 0ZM14 23.9538V20C14 19.7348 13.8946 19.4804 13.7071 19.2929C13.5196 19.1054 13.2652 19 13 19C12.7348 19 12.4804 19.1054 12.2929 19.2929C12.1054 19.4804 12 19.7348 12 20V23.9538C9.44014 23.7167 7.04377 22.5919 5.22593 20.7741C3.40809 18.9562 2.28326 16.5599 2.04626 14H6.00001C6.26522 14 6.51958 13.8946 6.70711 13.7071C6.89465 13.5196 7.00001 13.2652 7.00001 13C7.00001 12.7348 6.89465 12.4804 6.70711 12.2929C6.51958 12.1054 6.26522 12 6.00001 12H2.04626C2.28326 9.44013 3.40809 7.04376 5.22593 5.22592C7.04377 3.40808 9.44014 2.28325 12 2.04625V6C12 6.26522 12.1054 6.51957 12.2929 6.70711C12.4804 6.89464 12.7348 7 13 7C13.2652 7 13.5196 6.89464 13.7071 6.70711C13.8946 6.51957 14 6.26522 14 6V2.04625C16.5599 2.28325 18.9562 3.40808 20.7741 5.22592C22.5919 7.04376 23.7168 9.44013 23.9538 12H20C19.7348 12 19.4804 12.1054 19.2929 12.2929C19.1054 12.4804 19 12.7348 19 13C19 13.2652 19.1054 13.5196 19.2929 13.7071C19.4804 13.8946 19.7348 14 20 14H23.9538C23.7168 16.5599 22.5919 18.9562 20.7741 20.7741C18.9562 22.5919 16.5599 23.7167 14 23.9538Z"
+                                    fill="black"
                                 />
                             </svg>
-                            <CreateAction
-                                @action-created="onActionCreated"
-                                v-bind="{ action: undefined, mapCenter: mapCenter! }"
-                            />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 256 256"
+                                class="hidden"
+                            >
+                                <rect width="256" height="256" fill="none" />
+                                <circle
+                                    cx="128"
+                                    cy="128"
+                                    r="32"
+                                    opacity="0.2"
+                                />
+                                <line
+                                    x1="128"
+                                    y1="232"
+                                    x2="128"
+                                    y2="200"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                                <circle
+                                    cx="128"
+                                    cy="128"
+                                    r="88"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                                <line
+                                    x1="128"
+                                    y1="24"
+                                    x2="128"
+                                    y2="56"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                                <line
+                                    x1="24"
+                                    y1="128"
+                                    x2="56"
+                                    y2="128"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                                <line
+                                    x1="232"
+                                    y1="128"
+                                    x2="200"
+                                    y2="128"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                                <circle
+                                    cx="128"
+                                    cy="128"
+                                    r="32"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16"
+                                />
+                            </svg>
+                            <div class="pt-20">
+                                <div class="pointer-events-auto shadow-hard">
+                                    <CreateAction
+                                        @action-created="onActionCreated"
+                                        v-bind="{ action: undefined, mapCenter: mapCenter! }"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
