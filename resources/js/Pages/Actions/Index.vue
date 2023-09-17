@@ -108,8 +108,9 @@ const getData = () => {
 };
 
 const setMap = (mapData: string): void => {
-    form.map = (mapData as any).bounds;
-    mapCenter.value = (mapData as any).center;
+    if (!mapData || mapData.center || mapData.bounds) return;
+    form.map = (mapData as any)?.bounds;
+    mapCenter.value = (mapData as any)?.center;
     getData();
 };
 
