@@ -9,7 +9,7 @@ import {
     ComboboxOption,
     TransitionRoot,
 } from "@headlessui/vue";
-import { CheckIcon, ChevronDownIcon } from "@heroicons/vue/solid";
+import { ChevronDownIcon } from "@heroicons/vue/solid";
 
 // TODO add types
 const emit = defineEmits(["placeChanged"]);
@@ -68,7 +68,7 @@ watchThrottled(
                 class="relative w-full cursor-default overflow-hidden bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-300"
             >
                 <ComboboxInput
-                    class="w-64 border-none py-3 pl-3 pr-10 text-base leading-5 text-gray-900 focus:ring-0"
+                    class="w-64 border-none py-4 pl-3 pr-10 text-base leading-5 text-gray-900 focus:ring-0"
                     :displayValue="(place) => place.name"
                     @change="searchTerm = $event.target.value"
                     placeholder="Search for a location..."
@@ -91,7 +91,7 @@ watchThrottled(
             >
                 <ComboboxOptions
                     v-if="searchTerm.length > 2"
-                    class="absolute mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg outline outline-1 outline-black"
+                    class="absolute mt-px max-h-56 w-full overflow-auto bg-white py-1 text-base shadow-lg outline outline-1 outline-black"
                 >
                     <div
                         v-if="searchResults.length === 0 && searchTerm !== ''"

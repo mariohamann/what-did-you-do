@@ -8,6 +8,7 @@ import SearchAutoComplete, {
 import SearchCategoryFilter from "@/Components/SearchCategoryFilter.vue";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useThrottleFn } from "@vueuse/core";
+import { SearchIcon } from "@heroicons/vue/solid";
 
 const props = defineProps<{
     apiKey: string;
@@ -20,6 +21,8 @@ const props = defineProps<{
 const emit = defineEmits(["mapChanged", "categoryChanged", "actionSelected"]);
 
 let actionIsFocused = false;
+
+let searchAutoCompleteRef = ref(null);
 
 let map: maplibregl.Map;
 const mapRef = ref<HTMLElement>();
@@ -407,12 +410,20 @@ function setActionsOpacity(idToExclude?: number): void {
         <div class="mx-auto flex justify-center">
             <div class="flex justify-center bg-black">
                 <div class="flex -translate-x-1 -translate-y-1">
+                    <div
+                        class="flex h-full w-12 items-center justify-center border border-r-0 border-black bg-primary-600"
+                    >
+                        <SearchIcon class="h-5 w-5 text-white"></SearchIcon>
+                    </div>
                     <SearchAutoComplete
+                        ref="searchAutoCompleteRef"
+                        id="location-search"
                         @place-changed="flyToLocation"
                         :api-key="props.apiKey"
                     ></SearchAutoComplete>
                     <!-- TODO add search filter: content / location -->
                     <SearchCategoryFilter
+                        v-if="!formActive"
                         @category-changed="handleCategoryChange"
                         :categories="props.categories"
                     ></SearchCategoryFilter>
