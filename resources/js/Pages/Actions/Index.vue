@@ -108,7 +108,7 @@ const getData = () => {
 };
 
 const setMap = (mapData: string): void => {
-    if (!mapData || mapData.center || mapData.bounds) return;
+    // if (!mapData || mapData.center || mapData.bounds) return;
     form.map = (mapData as any)?.bounds;
     mapCenter.value = (mapData as any)?.center;
     getData();
@@ -308,7 +308,7 @@ async function setActionsData(): Promise<void> {
                                 />
                             </svg>
                             <div class="pt-20">
-                                <div class="pointer-events-auto shadow-hard">
+                                <div class="pointer-events-auto">
                                     <CreateAction
                                         @action-created="onActionCreated"
                                         v-bind="{ action: undefined, mapCenter: mapCenter! }"
