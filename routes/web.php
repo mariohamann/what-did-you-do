@@ -1,12 +1,9 @@
 <?php
 
-use App\Data\WelcomeData;
 use App\Http\Controllers\ActionController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,23 +16,10 @@ use Inertia\Inertia;
 |
 */
 
-// Route::get('/', function () {
-//     return Inertia::render('Welcome', WelcomeData::from([
-//         'canLogin' => Route::has('login'),
-//         'canRegister' => Route::has('register'),
-//         'laravelVersion' => Application::VERSION,
-//         'phpVersion' => PHP_VERSION,
-//     ]));
-// });
-
 Route::get('/', [ActionController::class, 'index'])->name('index');
+Route::get('/action/{id}', [ActionController::class, 'show'])->name('action.show');
 
 Route::middleware('auth', 'verified')->group(function () {
-    // Actions
-    Route::get(
-        '/action/{id}',
-        [ActionController::class, 'show']
-    )->name('action.show');
     Route::post(
         '/action',
         [ActionController::class, 'store']
