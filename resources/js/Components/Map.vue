@@ -342,7 +342,7 @@ watch(
         if (formActive) {
             updateSource(-1);
         } else {
-            updateSource(currentCategory.id || 0);
+            updateSource(currentCategory?.id || 0);
         }
     }
 );
